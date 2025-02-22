@@ -5,5 +5,6 @@ import (
 )
 
 func main() {
+	functions.CreateDatabase()
 	functions.Routers()
 }

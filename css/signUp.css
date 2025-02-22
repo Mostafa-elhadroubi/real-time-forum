@@ -1,0 +1,66 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: rgb(24, 22, 22);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.signUpContainer{
+    width: 400px;
+    display: flex;
+    flex-direction: column;
+    background: rgb(189, 185, 185);
+    align-items: center;
+    padding-top: 20px;
+    border-radius: 10px;
+    /* justify-content: center; */
+}
+label:not([for]) {
+    display: block;
+    font-size: 18px;
+    margin-top: 10px;
+    /* color: white; */
+}
+input:not([type="radio"]):not([type="submit"]){
+    display: block;
+    padding: 10px;
+    width: 300px;
+    outline: none;
+    border: none;
+    margin: 5px 0;
+    font-size: 16px;
+    border-radius: 10px;
+}
+input[type="radio"] {
+    transform: scale(1.2);  
+    margin-right: 5PX;
+}
+label[for]{
+    margin-right: 10px;
+}
+input[type="submit"] {
+    font-size: 20px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    margin-top: 10px;
+    cursor: pointer;
+    background: rgb(24, 22, 22);
+    color: whitesmoke;
+}
+.emailError, .passwordError{
+    color: red;
+}
+.hasAccount {
+    margin: 40px;
+    font-size: 22px;
+}
+.hasAccount a{
+    text-decoration: none;
+}
