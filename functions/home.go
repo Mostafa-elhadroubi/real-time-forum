@@ -6,7 +6,7 @@ import (
 )
 
 func Home(w http.ResponseWriter, r *http.Request) {
-	tmp, err := template.ParseFiles("../html/main.html")
+	tmp, err := template.ParseFiles("./html/main.html")
 	if err != nil {
 		http.Error(w, "Can not parse the main file", http.StatusNotFound)
 	}
