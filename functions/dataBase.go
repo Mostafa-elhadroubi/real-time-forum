@@ -2,7 +2,6 @@ package functions
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"os"
 
@@ -24,5 +23,4 @@ func CreateDatabase() {
 	if err != nil {
 		log.Fatal("Error: ", err)
 	}
-	fmt.Println("excution successfully")
 }

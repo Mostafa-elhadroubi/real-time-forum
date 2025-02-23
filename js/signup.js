@@ -1,6 +1,7 @@
-export const signUp = () => {
+export const signup = () => {
     const signup = `
-    <div class="signUpContainer">
+    <div class="signupContainer">
+                        <h1>Sign Up</h1>
                         <form id="signupForm">
                             <label>Username:<input type="text" name="username" placeholder="Enter your Username" required></label>
                             <label>First Name:<input type="text" name="firstName" placeholder="Enter your First Name" required></label>
@@ -14,7 +15,7 @@ export const signUp = () => {
                             <div class="emailError"></div>
                             <label>Password:<input type="password" name="password" placeholder="Enter your Password" required></label>
                             <div class="passwordError"></div>
-                            <input type="submit" id="submit">
+                            <button>Sign Up</button>
                         </form>
                         <div class="hasAccount">Already has an account? <a href="/login">Login</a></div>
                     </div>  
@@ -27,27 +28,35 @@ export const signUp = () => {
         e.preventDefault()
         emailError.innerHTML = ''
         passwordError.innerHTML = ''
-        submitSignUpForm(emailError, passwordError)
+        submitsignupForm(emailError, passwordError)
         
     })
 }
 
-const submitSignUpForm = (emailError, passwordError) => {
-//    emailError = document.querySelector('.emailError')
-//     passwordError = document.querySelector('.passwordError')
+const submitsignupForm = (emailError, passwordError) => {
     const formData = new FormData(signupForm)
     console.log(formData)
     let email = formData.get('email')
     let password = formData.get('password')
-    const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
-    if(!regex.test(email)){
+    const regexEmail = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+    const regexPassword = /[a-zA-Z0-9]{8,}/
+    if(!regexEmail.test(email)){
         emailError.innerHTML = 'Invalid Email'
-    }else if(password.length <= 5){
-        passwordError.innerHTML = 'password must contains more than 8 charachters!'
+    }else if(!regexPassword.test(password)){
+        passwordError.innerHTML = 'Must contains Upper, Lower, Digit and more than 8 charachters!'
     } else {
-        fetch("/api/signUp/", {
+        fetch("/api/signup/", {
             method: 'POST',
             body: formData
+        })
+        .then(response => {
+            console.log(response)
+            if(response.redirected) {
+                window.location.href = response.url
+            }
+        })
+        .catch(error => {
+            console.log('Error: ', error)
         })
     }
 

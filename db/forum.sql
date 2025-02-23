@@ -8,10 +8,11 @@ CREATE TABLE IF NOT EXISTS `users` (
     `age` INTEGER NOT NULL,
     `gender` TEXT NOT NULL,
     `email` TEXT NOT NULL UNIQUE,
+    `password` TEXT NOT NULL,
     `image` TEXT  NOT NULL,
     `token` TEXT UNIQUE,
     `token_exp` INTEGER,
-    `created_at` INTEGER NOT NULL
+    `created_at` INTEGER
 );
 
 CREATE TABLE IF NOT EXISTS `posts` (
@@ -21,7 +22,6 @@ CREATE TABLE IF NOT EXISTS `posts` (
     `body` TEXT NOT NULL,
     `image` TEXT,
     `created_at` INTEGER NOT NULL, 
-    `modified_at` INTEGER NOT NULL, 
     FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE
 );
 
@@ -41,9 +41,9 @@ CREATE TABLE IF NOT EXISTS `categories` (
 );
 
 CREATE TABLE IF NOT EXISTS `posts_categories` (
+    `post_category_id` INTEGER PRIMARY KEY AUTOINCREMENT,
     `post_id` INTEGER NOT NULL,
     `category_id` INTEGER NOT NULL,
-    PRIMARY KEY (`category_id`, `post_id`),
     FOREIGN KEY (`category_id`) REFERENCES `categories` (`category_id`) ON DELETE CASCADE,
     FOREIGN KEY (`post_id`) REFERENCES `posts` (`post_id`) ON DELETE CASCADE
 );

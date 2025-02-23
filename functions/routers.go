@@ -6,11 +6,14 @@ import (
 )
 
 func Routers() {
+	http.HandleFunc("/signup", Home)
+	http.HandleFunc("/api/signup/", SignupAuth)
+	http.HandleFunc("/login", Home)
+	http.HandleFunc("/api/login/", Login)
 	http.HandleFunc("/home", Home)
-	http.HandleFunc("/api/signUp/", SignUp)
 	http.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("js"))))
 	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("css"))))
-	fmt.Println("Server is running on www.localhost:8084/home")
+	fmt.Println("Server is running on www.localhost:8084/signup")
 	if err := http.ListenAndServe(":8084", nil); err != nil {
 		fmt.Println("error in listen and serve!!")
 	}

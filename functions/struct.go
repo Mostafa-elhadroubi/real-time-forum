@@ -14,6 +14,13 @@ type User struct {
 	ErrorEmail string
 }
 
+type PageErrors struct {
+	Code    int
+	Message string
+}
+
 var (
 	DB *sql.DB
+	user User
+	// error PageErrors
 )

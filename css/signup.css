@@ -11,11 +11,11 @@ body {
     justify-content: center;
     align-items: center;
 }
-.signUpContainer{
+.signupContainer, .loginContainer{
     width: 400px;
     display: flex;
     flex-direction: column;
-    background: rgb(189, 185, 185);
+    background: rgb(255, 255, 255);
     align-items: center;
     padding-top: 20px;
     border-radius: 10px;
@@ -32,10 +32,14 @@ input:not([type="radio"]):not([type="submit"]){
     padding: 10px;
     width: 300px;
     outline: none;
-    border: none;
+    border: 2px solid rgb(206, 203, 203);
     margin: 5px 0;
     font-size: 16px;
     border-radius: 10px;
+}
+input:focus{
+    border: 3px solid rgb(175, 173, 173);
+    box-shadow: 0 0 5px rgb(168, 165, 165);
 }
 input[type="radio"] {
     transform: scale(1.2);  
@@ -44,7 +48,7 @@ input[type="radio"] {
 label[for]{
     margin-right: 10px;
 }
-input[type="submit"] {
+button {
     font-size: 20px;
     padding: 10px 20px;
     border: none;
@@ -58,7 +62,7 @@ input[type="submit"] {
     color: red;
 }
 .hasAccount {
-    margin: 40px;
+    margin: 10px 0;
     font-size: 22px;
 }
 .hasAccount a{
