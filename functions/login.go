@@ -23,21 +23,10 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	row := DB.QueryRow(query, username, username)
 	err := row.Scan(&user.Id, &user.Username, &user.Email, &user.Password)
 	if err != nil || bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))  != nil {
-		setErrorCookie(w, "Invalid credentials!", "/login", 60)
+		setErrorCookie(w, "Invalid credentials!", "/login", 5)
 		http.Redirect(w, r, "/login", http.StatusFound)
 		return
-
 	}
-	fmt.Println(user)
-	fmt.Println(username, password)
-
-	// Id         int
-	// Username   string
-	// Email      string
-	// Password   string
-	// Token      any
-	// Token_Exp  int
-	// Image      string
-	// Log        int
-	// ErrorEmail string
+	setErrorCookie(w, "", "/login", -1)
+	http.Redirect(w, r, "/home", http.StatusFound)
 }

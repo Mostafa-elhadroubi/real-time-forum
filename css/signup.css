@@ -4,8 +4,9 @@
     box-sizing: border-box;
 }
 
-body {
+.containerBody {
     background: rgb(24, 22, 22);
+    width: 100vw;
     height: 100vh;
     display: flex;
     justify-content: center;
@@ -20,6 +21,20 @@ body {
     padding-top: 20px;
     border-radius: 10px;
     /* justify-content: center; */
+}
+.loginHeader, .signupHeader{
+    margin-bottom: 20px;
+}
+.errorCookie {
+    background: rgba(255, 0, 0, 0.336);
+    padding: 10px 0;
+    margin: 10px 0;
+    width: 300px;
+    border: 2px solid red;
+    color: rgb(197, 26, 26);
+    text-align: center;
+    font-size: 20px;
+    border-radius: 10px;
 }
 label:not([for]) {
     display: block;
@@ -58,12 +73,18 @@ button {
     background: rgb(24, 22, 22);
     color: whitesmoke;
 }
+.loginBtn, .signupBtn{
+    margin-bottom: 20px;
+}
 .emailError, .passwordError{
     color: red;
 }
 .hasAccount {
     margin: 10px 0;
     font-size: 22px;
+}
+.hasnotAccount {
+    margin-bottom: 20px;
 }
 .hasAccount a{
     text-decoration: none;

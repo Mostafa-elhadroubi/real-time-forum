@@ -1,7 +1,11 @@
+import { getCookie } from "./getcookie.js"
+
 export const signup = () => {
     const signup = `
-    <div class="signupContainer">
-                        <h1>Sign Up</h1>
+                <div class="containerBody">
+                    <div class="signupContainer">
+                        <h1 class="signupHeader">Sign Up</h1>
+                        <div class="errorCookie"></div>
                         <form id="signupForm">
                             <label>Username:<input type="text" name="username" placeholder="Enter your Username" required></label>
                             <label>First Name:<input type="text" name="firstName" placeholder="Enter your First Name" required></label>
@@ -15,15 +19,21 @@ export const signup = () => {
                             <div class="emailError"></div>
                             <label>Password:<input type="password" name="password" placeholder="Enter your Password" required></label>
                             <div class="passwordError"></div>
-                            <button>Sign Up</button>
+                            <button class="signupBtn">Sign Up</button>
                         </form>
-                        <div class="hasAccount">Already has an account? <a href="/login">Login</a></div>
+                        <div class="hasAccount hasnotAccount">Already has an account? <a href="/login">Login</a></div>
                     </div>  
+                </div>
     `
     document.body.innerHTML = signup
     const emailError = document.querySelector('.emailError')
     const passwordError = document.querySelector('.passwordError')
     const signupForm = document.querySelector('#signupForm')
+    const errorCookie = document.querySelector('.errorCookie')
+        errorCookie.innerHTML = getCookie()
+        if(getCookie() == "") {
+            errorCookie.classList.remove("errorCookie")
+        }
     signupForm.addEventListener('submit', (e) => {
         e.preventDefault()
         emailError.innerHTML = ''
