@@ -13,4 +13,27 @@ export const login = () => {
                 </div>
     `
     document.body.innerHTML = login
+    const emailError = document.querySelector('.emailError')
+    const passwordError = document.querySelector('.passwordError')
+    const loginForm = document.querySelector('#loginForm')
+    const getcokkie = document.getcokkie("errors")
+    loginForm.addEventListener('submit', (e) => {
+        e.preventDefault()
+        emailError.innerHTML = ''
+        passwordError.innerHTML = ''
+        submitLoginForm(emailError, passwordError)
+    })
+}
+const submitLoginForm = (emailError, passwordError) => {
+    let formData = new FormData(loginForm)
+    fetch('/api/login/', {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => {
+        console.log(res)
+    })
+    .catch(error => {
+        console.log('Error: ', error)
+    })
 }
