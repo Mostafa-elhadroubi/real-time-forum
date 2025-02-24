@@ -13,7 +13,7 @@
 }
 .chatBox {
     width: 350px;
-    max-height: 300px;
+    max-height: 600px;
     background: whitesmoke;
     overflow-y: scroll;
     overflow-x: hidden;
@@ -41,22 +41,44 @@ hr{
 .img-username{
     display: flex;
     align-items: center;
+    position: relative;
 
 }
 .img-username img{
-    width: 50px;
+    width: 70px;
     object-fit: cover;
     vertical-align: middle;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+.img-username .connected {
+    display: block;
+    width: 15px;
+    height: 15px;
+    background: red;
+    border-radius: 50%;
+    position: absolute;
+    left: 50px;
+    bottom: 5px;
 }
 .time-msgNumber{
-    background: red;
     margin-right: 8px;
 }
 .time-msgNumber .time{
     font-size: 18px;
+    margin-bottom: 7px;
+    color: red;
+    font-weight: 600;
 }
 .time-msgNumber span{
-    /* width: 100%; */
     display: block;
     text-align: center;
+    background: green;
+    width: 30px;
+    height: 30px;
+    padding-top: 5px;
+    border-radius: 50%;
+    margin: auto;
+    font-size: 18px;
+    font-weight: 700;
 }

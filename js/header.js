@@ -1,6 +1,6 @@
 export const header = `
     <header>
-        <div class="logo">FORUM</div>
+        <div class="logo"><img src="../images/forum.png"/></div>
         <nav>
             <ul>
                 <li><a href="/post"><i class="fa-solid fa-circle-plus"></i>Add Post</a></li>

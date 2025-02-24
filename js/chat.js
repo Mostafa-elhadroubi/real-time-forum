@@ -5,6 +5,7 @@ export const chat = () => {
                         <div class="userBox">
                             <div class="img-username">
                                 <img src="../images/profile.jpg" alt="profile picture">
+                                <span class="connected"></span>
                                 <h2>username</h2>
                             </div>
                             <div class="time-msgNumber">
@@ -16,6 +17,7 @@ export const chat = () => {
                         <div class="userBox">
                             <div class="img-username">
                                 <img src="../images/profile.jpg" alt="profile picture">
+                                <span class="connected"></span>
                                 <h2>username</h2>
                             </div>
                             <div class="time-msgNumber">
@@ -27,6 +29,7 @@ export const chat = () => {
                         <div class="userBox">
                             <div class="img-username">
                                 <img src="../images/profile.jpg" alt="profile picture">
+                                <span class="connected"></span>
                                 <h2>username</h2>
                             </div>
                             <div class="time-msgNumber">
@@ -38,6 +41,7 @@ export const chat = () => {
                         <div class="userBox">
                             <div class="img-username">
                                 <img src="../images/profile.jpg" alt="profile picture">
+                                <span class="connected"></span>
                                 <h2>username</h2>
                             </div>
                             <div class="time-msgNumber">
@@ -49,6 +53,7 @@ export const chat = () => {
                         <div class="userBox">
                             <div class="img-username">
                                 <img src="../images/profile.jpg" alt="profile picture">
+                                <span class="connected"></span>
                                 <h2>username</h2>
                             </div>
                             <div class="time-msgNumber">
@@ -60,6 +65,43 @@ export const chat = () => {
                         <div class="userBox">
                             <div class="img-username">
                                 <img src="../images/profile.jpg" alt="profile picture">
+                                <span class="connected"></span>
+                                <h2>username</h2>
+                            </div>
+                            <div class="time-msgNumber">
+                                <div class="time">yesterday</div>
+                                <span>3</span>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="userBox">
+                            <div class="img-username">
+                                <img src="../images/profile.jpg" alt="profile picture">
+                                <span class="connected"></span>
+                                <h2>username</h2>
+                            </div>
+                            <div class="time-msgNumber">
+                                <div class="time">yesterday</div>
+                                <span>3</span>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="userBox">
+                            <div class="img-username">
+                                <img src="../images/profile.jpg" alt="profile picture">
+                                <span class="connected"></span>
+                                <h2>username</h2>
+                            </div>
+                            <div class="time-msgNumber">
+                                <div class="time">yesterday</div>
+                                <span>3</span>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="userBox">
+                            <div class="img-username">
+                                <img src="../images/profile.jpg" alt="profile picture">
+                                <span class="connected"></span>
                                 <h2>username</h2>
                             </div>
                             <div class="time-msgNumber">
