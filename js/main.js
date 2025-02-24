@@ -1,3 +1,4 @@
+import { chat } from "./chat.js";
 import { home } from "./home.js";
 import { login } from "./login.js";
 import { signup } from "./signup.js";
@@ -14,6 +15,7 @@ switch(url) {
         home();
         break;
     case "/chat":
+        chat();
         break;
 
 }

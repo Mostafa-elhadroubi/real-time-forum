@@ -11,5 +11,4 @@ export const home = () => {
                             ${header}
                             <h1>mostafa</h1>
     `
-    // document.body.innerHTML = ``
 }
