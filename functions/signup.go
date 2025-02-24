@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"regexp"
 	"strings"
+	"time"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -69,8 +70,8 @@ func SignupAuth(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	query = `INSERT INTO users VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, 'profile.jpg', NULL, NULL, 0)`
-	_, err = DB.Exec(query, username, firstName, lastName, age, gender, email, string(pswd))
+	query = `INSERT INTO users VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, 'profile.jpg', NULL, NULL, 0, ?)`
+	_, err = DB.Exec(query, username, firstName, lastName, age, gender, email, string(pswd), time.Now().Unix())
 	if err != nil {
 		fmt.Println("insert into???")
 		log.Fatalf("Error executing query: %v", err)

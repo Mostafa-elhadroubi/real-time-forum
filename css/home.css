@@ -1,0 +1,43 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+header {
+    width: 100vw;
+    height: 100px;
+    background: rgb(51, 50, 49);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: whitesmoke;
+    /* position: fixed; */
+}
+header .logo {
+    font-size: 18px;
+    font-weight: 600;
+    margin-left: 20px;
+}
+nav{
+    background: red;
+    width: 50%;
+    padding: 10px 0;
+}
+nav ul {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    list-style-type: none;
+    font-size: 22px;
+}
+nav ul li{
+    cursor: pointer;
+}
+
+nav ul li a{
+    text-decoration: none;
+    color: white;
+}
+nav ul li a i{
+    margin-right: 5px;
+}

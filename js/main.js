@@ -13,6 +13,8 @@ switch(url) {
     case "/home":
         home();
         break;
+    case "/chat":
+        break;
 
 }
 

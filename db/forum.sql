@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS `users` (
     `image` TEXT  NOT NULL,
     `token` TEXT UNIQUE,
     `token_exp` INTEGER,
+    `isConnected` BOOLEAN NOT NULL,
     `created_at` INTEGER
 );
 

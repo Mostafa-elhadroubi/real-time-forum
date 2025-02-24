@@ -11,6 +11,7 @@ func Routers() {
 	http.HandleFunc("/login", Home)
 	http.HandleFunc("/api/login/", Login)
 	http.HandleFunc("/home", Home)
+	http.HandleFunc("/chat", Home)
 	http.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("js"))))
 	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("css"))))
 	fmt.Println("Server is running on www.localhost:8084/signup")

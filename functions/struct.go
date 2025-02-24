@@ -1,6 +1,9 @@
 package functions
 
-import "database/sql"
+import (
+	"database/sql"
+	"time"
+)
 
 type User struct {
 	Id         int
@@ -20,7 +23,8 @@ type PageErrors struct {
 }
 
 var (
-	DB *sql.DB
+	DB   *sql.DB
 	user User
-	// error PageErrors
 )
+
+const tokenAge = 24 * time.Hour

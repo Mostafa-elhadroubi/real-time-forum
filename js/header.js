@@ -1,11 +1,11 @@
 export const header = `
     <header>
-        <div><img src="../images/forum.png" alt="forum picture"/></div>
+        <div class="logo">FORUM</div>
         <nav>
             <ul>
-                <li>Add Post</li>
-                <li>Chat</li>
-                <li>Logout</li>
+                <li><a href="/post"><i class="fa-solid fa-circle-plus"></i>Add Post</a></li>
+                <li><a href="/chat"><i class="fa-brands fa-rocketchat"></i>Chat</a></li>
+                <li><a href="/login"><i class="fa-solid fa-right-from-bracket"></i>Logout</a></li>
             </ul>
         </nav>
     </header>
