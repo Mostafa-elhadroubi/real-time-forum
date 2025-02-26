@@ -17,6 +17,9 @@ type User struct {
 	ErrorEmail string
 }
 
+// type AllUsers struct {
+// 	User User
+// }
 type PageErrors struct {
 	Code    int
 	Message string
@@ -25,6 +28,7 @@ type PageErrors struct {
 var (
 	DB   *sql.DB
 	user User
+	allUser []User
 )
 
 const tokenAge = 24 * time.Hour
