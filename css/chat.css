@@ -14,7 +14,7 @@
 .chatBox {
     width: 350px;
     max-height: 600px;
-    background: rgba(82, 79, 79, 0.829);
+    background: rgb(46, 44, 44);
     overflow-y: scroll;
     overflow-x: hidden;
     border-radius: 10px;
@@ -26,7 +26,7 @@
 .userBox{
     width: 100%;
     /* margin: 4px; */
-    background: rgba(121, 118, 118, 0.829); 
+    background: rgba(82, 79, 79, 0.829); 
     padding: 10px 0;
     border-radius: 10px;
     display: flex;
@@ -65,13 +65,13 @@
 .time-msgNumber .time{
     font-size: 18px;
     margin-bottom: 7px;
-    color: red;
+    color: orange;
     font-weight: 600;
 }
 .time-msgNumber span{
     display: block;
     text-align: center;
-    background: green;
+    background: yellowgreen;
     width: 30px;
     height: 30px;
     padding-top: 5px;
