@@ -30,9 +30,7 @@ func FetchUsers(w http.ResponseWriter, r *http.Request) {
 		rows.Scan(&user.Id, &user.Username, &user.Image, &user.Log)
 		allUser = append(allUser, user)
 	}
-	fmt.Println(allUser)
 	jsonData, err := json.Marshal(allUser)
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(jsonData)
-	// http.Redirect(w, r, "/chat", http.StatusFound)
 }
