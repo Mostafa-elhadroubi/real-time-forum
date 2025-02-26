@@ -24,6 +24,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	query := `SELECT user_id, username, email, password FROM users WHERE username = ? OR email = ?`
 	row := DB.QueryRow(query, username, username)
 	err := row.Scan(&user.Id, &user.Username, &user.Email, &user.Password)
+	fmt.Println(user.Id, "before hash")
 	if err != nil || bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))  != nil {
 		setErrorCookie(w, "Invalid credentials!", "/login", 5)
 		http.Redirect(w, r, "/login", http.StatusFound)

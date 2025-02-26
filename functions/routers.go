@@ -10,6 +10,7 @@ func Routers() {
 	http.HandleFunc("/api/signup/", SignupAuth)
 	http.HandleFunc("/login", Home)
 	http.HandleFunc("/api/login/", Login)
+	http.HandleFunc("/logout", Logout)
 	http.HandleFunc("/home", Home)
 	http.HandleFunc("/chat", Home)
 	http.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("js"))))

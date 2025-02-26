@@ -11,12 +11,15 @@ switch(url) {
     case "/login":
         login();
         break;
+    case "/logout":
+        logout();
     case "/home":
         home();
         break;
     case "/chat":
         chat();
         break;
+    
 
 }
 

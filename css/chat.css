@@ -6,42 +6,40 @@
 .chatContainer{
     width: 100vw;
     height: 100vh;
-    background: rgb(46, 44, 44);
+    background: rgb(92, 90, 90);
     display: flex;
-    justify-content: center;
+    justify-content: space-evenly;
     align-items: center;
 }
 .chatBox {
     width: 350px;
     max-height: 600px;
-    background: whitesmoke;
+    background: rgba(82, 79, 79, 0.829);
     overflow-y: scroll;
     overflow-x: hidden;
     border-radius: 10px;
 }
 .chatBox::-webkit-scrollbar{
     width: 0px; 
-    background: white;
-    border-radius: 10px;
 }
-hr{
-    width: 100%;
-    height: 4px;
-    background: rgb(148, 146, 146);
-}
+
 .userBox{
     width: 100%;
-    margin: 4px;
+    /* margin: 4px; */
+    background: rgba(121, 118, 118, 0.829); 
     padding: 10px 0;
     border-radius: 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 5px;
 }
 .img-username{
     display: flex;
     align-items: center;
     position: relative;
+    color: whitesmoke;
+    padding: 0 4px;
 
 }
 .img-username img{
@@ -81,4 +79,93 @@ hr{
     margin: auto;
     font-size: 18px;
     font-weight: 700;
+}
+.messageBox{
+    background: rgb(46, 44, 44);
+    width: calc(100% - 700px);
+    height: 600px;
+    border-radius: 10px;
+    border: 2px solid whitesmoke;
+}
+.messageBox .username-arrowLeft{
+    display:flex;
+    background: rgba(82, 79, 79, 0.829);
+    height: 60px;
+    align-items: center;
+    border-radius: 10px 10px 0 0;
+}
+.messageBox .username-arrowLeft i {
+    align-items: center;
+    font-size: 30px;
+    padding: 10px 20px;
+    color: whitesmoke;
+}
+.messageBox .username-arrowLeft div{
+    /* flex-grow: 1fr; */
+    /* background: white; */
+    width: 100%;
+    text-align: center;
+    font-size: 26px;
+    padding: 10px 0;
+    color: whitesmoke;
+}
+.messageContainer{
+    /* background: rgb(46, 44, 44); */
+    height: 465px;
+    width: 100%;
+    max-height: 470px;
+    overflow-y: scroll;
+
+
+}
+.messageContainer::-webkit-scrollbar{
+    width: 0;
+}
+.messageContainer .sender{
+    width: 200px;
+    padding: 10px;
+    background: orange;
+    margin-top: 10px;
+    border-radius: 10px;
+    margin-left: calc(100% - 210px);
+}
+.messageContainer .receiver{
+    width: 200px;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 10px;
+    background: greenyellow;
+    margin-left: 10px;
+}
+.messageContainer .sender span, .messageContainer .receiver span{
+    display: block;
+    text-align: end;
+}
+.inputContainer{
+    background:  rgba(82, 79, 79, 0.829);
+    height: 56px;
+    border-radius: 0 0 10px 10px;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    margin-top: 10px;
+}
+.inputContainer input:nth-child(1){
+    width: 80%;
+    font-size: 18px;
+    height: 45px;
+    border: none;
+    border-radius: 10px;
+    padding: 0 10px;
+    outline: none;
+}
+
+.inputContainer input:nth-child(2){
+    font-size: 20px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    background: rgb(46, 44, 44);
+    color: whitesmoke;
+    cursor: pointer;
 }
