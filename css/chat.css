@@ -11,6 +11,8 @@
     justify-content: space-evenly;
     align-items: center;
     flex-wrap: wrap;
+    gap: 10px;
+    overflow: scroll;
 }
 .chatBox {
     width: 350px;
@@ -81,27 +83,27 @@
     font-size: 18px;
     font-weight: 700;
 }
-.messageBox{
+.messageContainer{
     background: rgb(46, 44, 44);
-    width: calc(100% - 700px);
+    width: 0px;
     height: 600px;
     border-radius: 10px;
-    border: 2px solid whitesmoke;
+    /* border: 2px solid whitesmoke; */
 }
-.messageBox .username-arrowLeft{
+.messageContainer .username-arrowLeft{
     display:flex;
     background: rgba(82, 79, 79, 0.829);
     height: 60px;
     align-items: center;
     border-radius: 10px 10px 0 0;
 }
-.messageBox .username-arrowLeft i {
+.messageContainer .username-arrowLeft i {
     align-items: center;
     font-size: 30px;
     padding: 10px 20px;
     color: whitesmoke;
 }
-.messageBox .username-arrowLeft div{
+.messageContainer .username-arrowLeft div{
     /* flex-grow: 1fr; */
     /* background: white; */
     width: 100%;
@@ -110,7 +112,7 @@
     padding: 10px 0;
     color: whitesmoke;
 }
-.messageContainer{
+.messageBox{
     /* background: rgb(46, 44, 44); */
     height: 465px;
     width: 100%;
@@ -119,10 +121,10 @@
 
 
 }
-.messageContainer::-webkit-scrollbar{
+.messageBox::-webkit-scrollbar{
     width: 0;
 }
-.messageContainer .sender{
+.messageBox .sender{
     width: 200px;
     padding: 10px;
     background: orange;
@@ -130,7 +132,7 @@
     border-radius: 10px;
     margin-left: calc(100% - 210px);
 }
-.messageContainer .receiver{
+.messageBox .receiver{
     width: 200px;
     padding: 10px;
     margin-top: 10px;
@@ -138,7 +140,7 @@
     background: greenyellow;
     margin-left: 10px;
 }
-.messageContainer .sender span, .messageContainer .receiver span{
+.messageBox .sender span, .messageBox .receiver span{
     display: block;
     text-align: end;
 }
