@@ -15,17 +15,64 @@ export const chat = () => {
     let arrUsers = []
     document.body.innerHTML = chat
     const chatBox = document.querySelector('.chatBox')
+    const messageContainer = document.querySelector('.messageContainer')
+
+    const socket = new WebSocket("ws://localhost:8083/ws")
+    // When the WebSocket connection is open
+    socket.onopen = function(event) {
+        console.log("WebSocket connection established.");
+    };
+
+    // When a message is received from the WebSocket server
+    socket.onmessage = (event) => {
+        console.log("received message: ", event.data)
+        const message = JSON.parse(event.data)
+        console.log(message)
+        if (message) {
+            // Append the message to the chat box (you can style this however you want)
+            const messageDiv = document.createElement('div');
+            messageDiv.className = message.senderId === 11 ? 'sender' : 'receiver'; // Assuming '1' is your userId
+            messageDiv.innerHTML = `
+                <p>${message.text}</p>
+                <span>${message.timestamp}</span>
+            `;
+            messageContainer.appendChild(messageDiv);
+        }
+    }
+
+    const sendMessage = () => {
+        const input = document.querySelector('.inputContainer input[type="text"]');
+        const message = input.value;
+        if (message.trim()) {
+            const data = {
+                senderId: 11, // Replace with actual sender ID
+                receiverId: 2, // Replace with the receiver's ID (you need to implement this logic)
+                text: message,
+                timestamp: new Date().toLocaleTimeString()
+            };
+            socket.send(JSON.stringify(data)); // Send the message as a JSON string
+            input.value = ''; // Clear the input field
+            console.log(message)
+            if((message.trim()).length != 0){
+                const messageDiv = document.createElement('div');
+                messageDiv.className = data.senderId === 11 ? 'sender' : 'receiver'; // Assuming '1' is your userId
+                messageDiv.innerHTML = `
+                    <p>${message.text}</p>
+                    <span>${message.timestamp}</span>
+                `;
+                messageContainer.appendChild(messageDiv);
+            }
+        }
+    }
     fetch("/api/users/", {
         method: 'POST'
     })
     .then(response => {
-        console.log(response)
         if(!response.ok) {
             console.log("Error fetching users", response.statusText)
             return
         }
         return response.json()
-        // console.log(response)
     })
     .then(data => {
         chatBox.innerHTML = ''
@@ -35,7 +82,10 @@ export const chat = () => {
                     <div class="img-username">
                         <img src="../images/${item.Image}" alt="profile picture">
                         <span class="connected"></span>
-                        <h2>${item.Username}</h2>
+                        <div class="user-message">
+                            <h2>${item.Username}</h2>
+                            <p>The last message was sent....</p>
+                        </div>
                     </div>
                     <div class="time-msgNumber">
                         <div class="time">yesterday</div>
@@ -49,14 +99,12 @@ export const chat = () => {
         console.log(data)
         const allUsers = document.querySelectorAll('.userBox')
         const messageBox = document.querySelector('.messageBox')
-        const messageContainer = document.querySelector('.messageContainer')
-        console.log(allUsers)
-        let lastIndexUser;
+        
         allUsers.forEach((user, index) => {
             user.addEventListener('click', () => {
                 console.log(`${data[index].Username}`)
                 messageContainer.innerHTML = ''
-               messageContainer.style.cssText = `width: 70%; border: 2px solid whitesmoke;`
+               messageContainer.style.cssText = `width: 70%;`
                 messageContainer.innerHTML = `
                                                 <div class="username-arrowLeft">
                                                     <i class="fa-solid fa-arrow-left"></i>
@@ -101,9 +149,11 @@ export const chat = () => {
                                                     <input type="button" value="send">
                                                  </div>
                 `
-                lastIndexUser = index
-
+                // Now, bind the sendMessage function to the "Send" button
+                const sendButton = messageContainer.querySelector('input[type="button"]');
+                sendButton.addEventListener('click', sendMessage);
             })
         })
     })
 }
+

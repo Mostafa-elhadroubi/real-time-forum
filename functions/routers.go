@@ -18,6 +18,8 @@ func Routers() {
 	http.HandleFunc("/api/users/", FetchUsers)
 	http.HandleFunc("/chat", Home)
 
+	// WebSocket endpoint
+	http.HandleFunc("/ws", HandleConnections) // The WebSocket handler
 	http.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("js"))))
 	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("css"))))
 	http.Handle("/images/", http.StripPrefix("/images/", http.FileServer(http.Dir("images"))))
