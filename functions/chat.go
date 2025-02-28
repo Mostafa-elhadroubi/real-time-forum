@@ -2,6 +2,7 @@ package functions
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 )
 
@@ -32,4 +33,41 @@ func FetchUsers(w http.ResponseWriter, r *http.Request) {
 	jsonData, err := json.Marshal(allUser)
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(jsonData)
+}
+
+func FetchMessages(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	mu.Lock() // Lock the mutex to ensure exclusive access
+    defer mu.Unlock()
+	if err := json.NewDecoder(r.Body).Decode(&receiver); err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+	fmt.Println(receiver.ReceiverId, "get it")
+	query := "SELECT * FROM messages WHERE (sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?) ORDER BY sent_at DESC LIMIT 4 OFFSET  ?"
+	rows, err := DB.Query(query, user.Id, receiver.ReceiverId, receiver.ReceiverId, user.Id, receiver.MsgNbr)
+	if err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+	defer rows.Close()
+	allMsg = []Messages{}
+	for rows.Next(){
+		if err := rows.Scan(&msg.Message_id, &msg.Sender_id, &msg.Receiver_id, &msg.Message, &msg.Sent_at); err != nil {
+            http.Error(w, "Error scanning row", http.StatusInternalServerError)
+            return
+        }
+		allMsg = append(allMsg, msg)
+	}
+	jsonData, err := json.Marshal(allMsg)
+	if err != nil {
+		http.Error(w, "Error in marshling data", http.StatusBadRequest)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(jsonData)
+
 }

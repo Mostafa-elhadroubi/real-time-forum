@@ -1,3 +1,10 @@
+const convertTime = (Time) => {
+    let date = new Date(Time * 1000)
+    let hours = date.getHours()
+    let minutes = date.getMinutes()
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`
+
+}
 export const chat = () => {
     const chat = `
                 <div class="chatContainer">
@@ -12,7 +19,6 @@ export const chat = () => {
     document.head.innerHTML = `<link rel="stylesheet" href="../css/chat.css">
                                 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     `
-    let arrUsers = []
     document.body.innerHTML = chat
     const chatBox = document.querySelector('.chatBox')
     const messageContainer = document.querySelector('.messageContainer')
@@ -31,24 +37,27 @@ export const chat = () => {
         if (message) {
             // Append the message to the chat box (you can style this however you want)
             const messageDiv = document.createElement('div');
-            messageDiv.className = message.senderId === 11 ? 'sender' : 'receiver'; // Assuming '1' is your userId
+            messageDiv.className = message.senderId === 2 ? 'sender' : 'receiver'; // Assuming '1' is your userId
             messageDiv.innerHTML = `
                 <p>${message.text}</p>
                 <span>${message.timestamp}</span>
             `;
-            messageContainer.appendChild(messageDiv);
+            document.querySelector('.messageBox').appendChild(messageDiv);
         }
     }
 
     const sendMessage = () => {
         const input = document.querySelector('.inputContainer input[type="text"]');
         const message = input.value;
+        const now = new Date()
+        const hours = now.getHours()
+        const minutes = now.getMinutes()
         if (message.trim()) {
             const data = {
                 senderId: 11, // Replace with actual sender ID
                 receiverId: 2, // Replace with the receiver's ID (you need to implement this logic)
                 text: message,
-                timestamp: new Date().toLocaleTimeString()
+                timestamp: `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`
             };
             socket.send(JSON.stringify(data)); // Send the message as a JSON string
             input.value = ''; // Clear the input field
@@ -57,10 +66,10 @@ export const chat = () => {
                 const messageDiv = document.createElement('div');
                 messageDiv.className = data.senderId === 11 ? 'sender' : 'receiver'; // Assuming '1' is your userId
                 messageDiv.innerHTML = `
-                    <p>${message.text}</p>
-                    <span>${message.timestamp}</span>
+                    <p>${data.text}</p>
+                    <span>${data.timestamp}</span>
                 `;
-                messageContainer.appendChild(messageDiv);
+               document.querySelector('.messageBox').appendChild(messageDiv);
             }
         }
     }
@@ -95,10 +104,8 @@ export const chat = () => {
             `
             chatBox.innerHTML += content
         })
-        arrUsers = data
         console.log(data)
         const allUsers = document.querySelectorAll('.userBox')
-        const messageBox = document.querySelector('.messageBox')
         
         allUsers.forEach((user, index) => {
             user.addEventListener('click', () => {
@@ -111,44 +118,46 @@ export const chat = () => {
                                                     <div class="username">${data[index].Username}</div>
                                                 </div>
                                                 <div class="messageBox">
-                                                    <div class="sender">
-                                                        <p>i send a message to a receiver.....</p>
-                                                        <span>18:20</span>
-                                                    </div>
-                                                    <div class="receiver">
-                                                        <p>i send a message to a receiver.....</p>
-                                                        <span>18:21</span>
-                                                    </div>
-                                                    <div class="sender">
-                                                        <p>i send a message to a receiver.....</p>
-                                                        <span>18:22</span>
-                                                    </div>
-                                                    <div class="receiver">
-                                                        <p>i send a message to a receiver.....</p>
-                                                        <span>18:23</span>
-                                                    </div>
-                                                    <div class="sender">
-                                                        <p>i send a message to a receiver.....</p>
-                                                        <span>18:20</span>
-                                                    </div>
-                                                    <div class="receiver">
-                                                        <p>i send a message to a receiver.....</p>
-                                                        <span>18:21</span>
-                                                    </div>
-                                                    <div class="sender">
-                                                        <p>i send a message to a receiver.....</p>
-                                                        <span>18:22</span>
-                                                    </div>
-                                                    <div class="receiver">
-                                                        <p>i send a message to a receiver.....</p>
-                                                        <span>18:23</span>
-                                                    </div>
+                                                   
                                                 </div>
                                                 <div class="inputContainer">
                                                     <input type="text" placeholder="Type your message...">
                                                     <input type="button" value="send">
-                                                 </div>
+                                                </div>
                 `
+                // messageBox.innerHTML += `
+                                        
+                // `
+                const messageBox = document.querySelector('.messageBox')
+                let receiverId = data[index].Id
+                let msgNbr = 0
+                console.log(receiverId, "js")
+                fetch("/api/messages/", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({receiverId: receiverId, msgNbr: msgNbr})
+                })
+                .then(response => {
+                    if(!response.ok) {
+                        alert("Error in fetchin messages!")
+                    }
+                    return response.json()
+                })
+                .then(data => {
+                    console.log(data)
+                    data.forEach(item => {
+                        let div = document.createElement('div')
+                        let parag = document.createElement('p')
+                        let span = document.createElement('span')
+                        div.className = item.Sender_id == 11 ? 'sender' : 'receiver'
+                        parag.textContent = `${item.Message}`
+                        span.textContent = convertTime(item.Sent_at)
+                        div.append(parag, span)
+                        messageBox.appendChild(div)
+                    })
+                })
                 // Now, bind the sendMessage function to the "Send" button
                 const sendButton = messageContainer.querySelector('input[type="button"]');
                 sendButton.addEventListener('click', sendMessage);
@@ -156,4 +165,6 @@ export const chat = () => {
         })
     })
 }
+
+
 

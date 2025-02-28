@@ -115,30 +115,34 @@
 .messageBox{
     /* background: rgb(46, 44, 44); */
     height: 465px;
-    width: 100%;
+    /* width: 100%; */
     max-height: 470px;
     overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
 
 
 }
 .messageBox::-webkit-scrollbar{
     width: 0;
 }
-.messageBox .sender{
-    width: 200px;
+.messageBox .sender, .messageBox .receiver{
+    max-width: 340px;
     padding: 10px;
-    background: orange;
     margin-top: 10px;
     border-radius: 10px;
-    margin-left: calc(100% - 210px);
+    word-wrap: break-word;
+}
+.messageBox .sender{
+    background: orange;
+    align-self: flex-end;
+    margin-right: 10px;
+
 }
 .messageBox .receiver{
-    width: 200px;
-    padding: 10px;
-    margin-top: 10px;
-    border-radius: 10px;
     background: greenyellow;
     margin-left: 10px;
+    align-self: flex-start;
 }
 .messageBox .sender span, .messageBox .receiver span{
     display: block;
