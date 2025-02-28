@@ -33,6 +33,13 @@ type Receiver struct {
 	ReceiverId int `json:"receiverId"`
 	MsgNbr     int `json:"msgNbr"`
 }
+
+type WsMessages struct {
+	Sender_id   int    `json:"senderId"`
+	Receiver_id int    `json:"receiverId"`
+	Text        string `json:"text"`
+	Timestamp   string `json:"timestamp"`
+}
 type PageErrors struct {
 	Code    int
 	Message string
@@ -45,6 +52,7 @@ var (
 	allUser  []User
 	allMsg   []Messages
 	receiver Receiver
+	wsMsg    WsMessages
 	upgrader = websocket.Upgrader{
 		CheckOrigin: func(r *http.Request) bool {
 			return true

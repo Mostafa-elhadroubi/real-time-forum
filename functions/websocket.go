@@ -18,21 +18,18 @@ func HandleConnections(w http.ResponseWriter, r *http.Request) {
 	mu.Unlock()
 
 	for {
-		msgType, msg, err := conn.ReadMessage()
-		if err != nil {
-			http.Error(w, "Error upgrading connection:", http.StatusBadRequest)
-			mu.Lock()
+		if err := conn.ReadJSON(&wsMsg); err != nil {
+			http.Error(w, "Error reading message", http.StatusBadRequest)
 			delete(clients, user.Id)
-			mu.Unlock()
 			break
 		}
-		fmt.Printf("Received message: %s\n", msg)
-		go storeMessage(w, user.Id, 2, string(msg))
-
-		receiverID := 2
 		mu.Lock()
-		if conn, exists := clients[receiverID]; exists {
-			if err := conn.WriteMessage(msgType, msg); err != nil {
+		fmt.Printf("Received message: %s\n", msg)
+		go storeMessage(w, wsMsg.Sender_id, wsMsg.Receiver_id, wsMsg.Text)
+		mu.Unlock()
+		mu.Lock()
+		if conn, exists := clients[wsMsg.Receiver_id]; exists {
+			if err := conn.WriteJSON(wsMsg); err != nil {
 				http.Error(w, "Error upgrading connection:", http.StatusBadRequest)
 				return
 			}

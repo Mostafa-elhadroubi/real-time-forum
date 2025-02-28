@@ -1,9 +1,28 @@
 const convertTime = (Time) => {
     let date = new Date(Time * 1000)
-    let hours = date.getHours()
-    let minutes = date.getMinutes()
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`
+    let dateObj = {
+        minutes: date.getMinutes(),
+        hours: date.getHours(),
+        day: date.getDate(),
+        month: date.getMonth(),
+        year: date.getFullYear(),
+    }
+    return dateObj
 
+}
+const updateLastMessage = (receiverId, message, timestamp) => {
+    const userBoxes = document.querySelectorAll('.userBox')
+    userBoxes.forEach(userBox => {
+        const userId = userBox.getAttribute("data-user-id")
+        if(userId == receiverId) {
+            const lastMessage = userBox.querySelector('.user-message p');
+            const lastMessageTime = userBox.querySelector('.time')
+            if(lastMessage && lastMessageTime) {
+                lastMessage.textContent = message;
+                lastMessageTime.textContent = timestamp;
+            }
+        }
+    })
 }
 export const chat = () => {
     const chat = `
@@ -37,12 +56,13 @@ export const chat = () => {
         if (message) {
             // Append the message to the chat box (you can style this however you want)
             const messageDiv = document.createElement('div');
-            messageDiv.className = message.senderId === 2 ? 'sender' : 'receiver'; // Assuming '1' is your userId
+            messageDiv.className = message.senderId === 11 ? 'sender' : 'receiver'; // Assuming '1' is your userId
             messageDiv.innerHTML = `
                 <p>${message.text}</p>
                 <span>${message.timestamp}</span>
             `;
             document.querySelector('.messageBox').appendChild(messageDiv);
+            updateLastMessage(message.receiverId, message.text, message.timestamp);
         }
     }
 
@@ -60,7 +80,6 @@ export const chat = () => {
                 timestamp: `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`
             };
             socket.send(JSON.stringify(data)); // Send the message as a JSON string
-            input.value = ''; // Clear the input field
             console.log(message)
             if((message.trim()).length != 0){
                 const messageDiv = document.createElement('div');
@@ -70,6 +89,8 @@ export const chat = () => {
                     <span>${data.timestamp}</span>
                 `;
                document.querySelector('.messageBox').appendChild(messageDiv);
+               updateLastMessage(data.receiverId, data.message, data.timestamp)
+               input.value = ''; // Clear the input field
             }
         }
     }
@@ -87,7 +108,7 @@ export const chat = () => {
         chatBox.innerHTML = ''
         data.forEach(item => {
             let content = `
-                <div class="userBox">
+                <div class="userBox" dat-user-id=${item.Id}>
                     <div class="img-username">
                         <img src="../images/${item.Image}" alt="profile picture">
                         <span class="connected"></span>
@@ -153,7 +174,8 @@ export const chat = () => {
                         let span = document.createElement('span')
                         div.className = item.Sender_id == 11 ? 'sender' : 'receiver'
                         parag.textContent = `${item.Message}`
-                        span.textContent = convertTime(item.Sent_at)
+                        let date = convertTime(item.Sent_at)
+                        span.textContent = `${date.hours.toString().padStart(2, '0')}:${date.minutes.toString().padStart(2, '0')}`
                         div.append(parag, span)
                         messageBox.appendChild(div)
                     })
