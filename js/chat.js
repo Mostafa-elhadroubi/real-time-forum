@@ -26,13 +26,15 @@ const updateLastMessage = (receiverId, message, timestamp) => {
 }
 const updateUserStatus = (userId, isOnline) => {
     const userBoxes = document.querySelectorAll('.userBox')
+    console.log(userBoxes, "boxes")
     userBoxes.forEach(userBox => {
         const boxUserId = userBox.getAttribute('data-user-id')
+        console.log(userId, boxUserId, "update user")
         if(userId == boxUserId) {
             const status = userBox.querySelector('.connected')
             if(status) {
                 // status.textContent = isOnline ? 'Online' : 'Offline'
-                status.style.color = isOnline ? 'green' : 'red'
+                status.style.backgroundColor = isOnline ? 'green' : 'blue'
             }
         }
     })
@@ -63,13 +65,15 @@ export const chat = () => {
 
     socket.onclose = (event) => {
         console.log("Websocket connection is closed!")
-        updateUserStatus(2, false)
+        updateUserStatus(11, false)
     }
     // When a message is received from the WebSocket server
     socket.onmessage = (event) => {
         console.log("received message: ", event.data)
         const data = JSON.parse(event.data)
+        console.log(data)
         if(data.userId !== undefined && data.isOnline !== undefined) {
+            console.log("undefined")
             updateUserStatus(data.userId, data.isOnline)
         } else {
             console.log(data)
@@ -84,7 +88,8 @@ export const chat = () => {
             updateLastMessage(data.receiverId, data.text, data.timestamp);
         }
     }
-
+    let receiverId;
+    let senderId;
     const sendMessage = () => {
         const input = document.querySelector('.inputContainer input[type="text"]');
         const message = input.value;
@@ -93,8 +98,8 @@ export const chat = () => {
         const minutes = now.getMinutes()
         if (message.trim()) {
             const data = {
-                senderId: 2, // Replace with actual sender ID
-                receiverId: 11, // Replace with the receiver's ID (you need to implement this logic)
+                senderId: senderId, // Replace with actual sender ID
+                receiverId: receiverId, // Replace with the receiver's ID (you need to implement this logic)
                 text: message,
                 timestamp: `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`
             };
@@ -125,7 +130,8 @@ export const chat = () => {
     })
     .then(data => {
         chatBox.innerHTML = ''
-        data.forEach(item => {
+        data = data.filter(item => item.ConnectedUserId != item.Id)
+        data.forEach((item) => {
             let content = `
                 <div class="userBox" dat-user-id=${item.Id}>
                     <div class="img-username">
@@ -142,10 +148,12 @@ export const chat = () => {
                     </div>
                 </div>
             `
-            chatBox.innerHTML += content
+                chatBox.innerHTML += content 
+            senderId = item.ConnectedUserId
         })
         console.log(data)
         const allUsers = document.querySelectorAll('.userBox')
+        console.log([...allUsers])
         
         allUsers.forEach((user, index) => {
             user.addEventListener('click', () => {
@@ -165,11 +173,8 @@ export const chat = () => {
                                                     <input type="button" value="send">
                                                 </div>
                 `
-                // messageBox.innerHTML += `
-                                        
-                // `
                 const messageBox = document.querySelector('.messageBox')
-                let receiverId = data[index].Id
+                receiverId = data[index].Id
                 let msgNbr = 0
                 console.log(receiverId, "js")
                 fetch("/api/messages/", {

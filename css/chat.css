@@ -56,7 +56,7 @@
     display: block;
     width: 15px;
     height: 15px;
-    background: red;
+    /* background: red; */
     border-radius: 50%;
     position: absolute;
     left: 50px;

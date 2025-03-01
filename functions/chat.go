@@ -19,6 +19,7 @@ func FetchUsers(w http.ResponseWriter, r *http.Request) {
 	// if !verifyToken(token.Value) {
 	// 	http.Redirect(w, r, "/login", http.StatusFound)
 	// }
+
 	query := `SELECT user_id, username, image, isConnected FROM users`
 	rows, err := DB.Query(query)
 	if err != nil {
@@ -27,12 +28,14 @@ func FetchUsers(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Println(user.Id, "fetch user")
 	allUser = []User{}
-	tempId := user.Id
+	// tempId := user.Id
+	user.ConnectedUserId = user.Id
 	for rows.Next() {
 		rows.Scan(&user.Id, &user.Username, &user.Image, &user.Log)
 		allUser = append(allUser, user)
 	}
-	user.Id = tempId
+	// user.Id = tempId
+	user.Id = user.ConnectedUserId
 	jsonData, err := json.Marshal(allUser)
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(jsonData)

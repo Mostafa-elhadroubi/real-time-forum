@@ -33,7 +33,7 @@ func HandleConnections(w http.ResponseWriter, r *http.Request) {
 	clients[user.Id] = conn
 	mu.Unlock()
 
-	userStatus(user.Id, true)
+	userStatus(11, true)
 	for {
 		if err := conn.ReadJSON(&wsMsg); err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway) {
@@ -44,7 +44,7 @@ func HandleConnections(w http.ResponseWriter, r *http.Request) {
 			mu.Lock()
 			delete(clients, user.Id)
 			mu.Unlock()
-			userStatus(user.Id, false)
+			userStatus(11, false)
 			break
 		}
 		fmt.Printf("Received message: %s\n", msg)

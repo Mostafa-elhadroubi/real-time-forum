@@ -10,15 +10,16 @@ import (
 )
 
 type User struct {
-	Id         int
-	Username   string
-	Email      string
-	Password   string
-	Token      any
-	Token_Exp  int
-	Image      string
-	Log        int
-	ErrorEmail string
+	Id              int
+	Username        string
+	Email           string
+	Password        string
+	Token           any
+	Token_Exp       int
+	Image           string
+	Log             int
+	ConnectedUserId int
+	ErrorEmail      string
 }
 
 type Messages struct {
@@ -51,15 +52,15 @@ type PageErrors struct {
 }
 
 var (
-	DB       *sql.DB
-	user     User
-	msg      Messages
-	allUser  []User
-	allMsg   []Messages
-	receiver Receiver
-	wsMsg    WsMessages
+	DB        *sql.DB
+	user      User
+	msg       Messages
+	allUser   []User
+	allMsg    []Messages
+	receiver  Receiver
+	wsMsg     WsMessages
 	userState UserStatus
-	upgrader = websocket.Upgrader{
+	upgrader  = websocket.Upgrader{
 		CheckOrigin: func(r *http.Request) bool {
 			return true
 		},
