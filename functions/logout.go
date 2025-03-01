@@ -10,7 +10,7 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	fmt.Println(user.Id)
+	fmt.Println(user.Id, "log out")
 	query := `UPDATE users SET token = ?, token_exp = ?, isConnected = ? WHERE user_id = ?`
 	DB.Exec(query, "NULL", 0, 0, user.Id)
 	http.SetCookie(w, &http.Cookie{

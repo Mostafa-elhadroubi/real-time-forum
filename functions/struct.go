@@ -40,6 +40,11 @@ type WsMessages struct {
 	Text        string `json:"text"`
 	Timestamp   string `json:"timestamp"`
 }
+
+type UserStatus struct {
+	UserID   int  `json:"userId"`
+	IsOnline bool `json:"isOnline"`
+}
 type PageErrors struct {
 	Code    int
 	Message string
@@ -53,6 +58,7 @@ var (
 	allMsg   []Messages
 	receiver Receiver
 	wsMsg    WsMessages
+	userState UserStatus
 	upgrader = websocket.Upgrader{
 		CheckOrigin: func(r *http.Request) bool {
 			return true

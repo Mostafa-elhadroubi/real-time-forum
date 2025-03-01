@@ -24,6 +24,19 @@ const updateLastMessage = (receiverId, message, timestamp) => {
         }
     })
 }
+const updateUserStatus = (userId, isOnline) => {
+    const userBoxes = document.querySelectorAll('.userBox')
+    userBoxes.forEach(userBox => {
+        const boxUserId = userBox.getAttribute('data-user-id')
+        if(userId == boxUserId) {
+            const status = userBox.querySelector('.connected')
+            if(status) {
+                // status.textContent = isOnline ? 'Online' : 'Offline'
+                status.style.color = isOnline ? 'green' : 'red'
+            }
+        }
+    })
+}
 export const chat = () => {
     const chat = `
                 <div class="chatContainer">
@@ -48,21 +61,27 @@ export const chat = () => {
         console.log("WebSocket connection established.");
     };
 
+    socket.onclose = (event) => {
+        console.log("Websocket connection is closed!")
+        updateUserStatus(2, false)
+    }
     // When a message is received from the WebSocket server
     socket.onmessage = (event) => {
         console.log("received message: ", event.data)
-        const message = JSON.parse(event.data)
-        console.log(message)
-        if (message) {
+        const data = JSON.parse(event.data)
+        if(data.userId !== undefined && data.isOnline !== undefined) {
+            updateUserStatus(data.userId, data.isOnline)
+        } else {
+            console.log(data)
             // Append the message to the chat box (you can style this however you want)
             const messageDiv = document.createElement('div');
-            messageDiv.className = message.senderId === 11 ? 'sender' : 'receiver'; // Assuming '1' is your userId
+            messageDiv.className = 'receiver'; // Assuming '1' is your userId
             messageDiv.innerHTML = `
-                <p>${message.text}</p>
-                <span>${message.timestamp}</span>
+                <p>${data.text}</p>
+                <span>${data.timestamp}</span>
             `;
             document.querySelector('.messageBox').appendChild(messageDiv);
-            updateLastMessage(message.receiverId, message.text, message.timestamp);
+            updateLastMessage(data.receiverId, data.text, data.timestamp);
         }
     }
 
@@ -74,8 +93,8 @@ export const chat = () => {
         const minutes = now.getMinutes()
         if (message.trim()) {
             const data = {
-                senderId: 11, // Replace with actual sender ID
-                receiverId: 2, // Replace with the receiver's ID (you need to implement this logic)
+                senderId: 2, // Replace with actual sender ID
+                receiverId: 11, // Replace with the receiver's ID (you need to implement this logic)
                 text: message,
                 timestamp: `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`
             };
@@ -83,7 +102,7 @@ export const chat = () => {
             console.log(message)
             if((message.trim()).length != 0){
                 const messageDiv = document.createElement('div');
-                messageDiv.className = data.senderId === 11 ? 'sender' : 'receiver'; // Assuming '1' is your userId
+                messageDiv.className = 'sender'// Assuming '1' is your userId
                 messageDiv.innerHTML = `
                     <p>${data.text}</p>
                     <span>${data.timestamp}</span>
@@ -162,7 +181,7 @@ export const chat = () => {
                 })
                 .then(response => {
                     if(!response.ok) {
-                        alert("Error in fetchin messages!")
+                        alert("Error in fetching messages!")
                     }
                     return response.json()
                 })
@@ -172,12 +191,12 @@ export const chat = () => {
                         let div = document.createElement('div')
                         let parag = document.createElement('p')
                         let span = document.createElement('span')
-                        div.className = item.Sender_id == 11 ? 'sender' : 'receiver'
+                        div.className = item.Sender_id == 2 ? 'sender' : 'receiver'
                         parag.textContent = `${item.Message}`
                         let date = convertTime(item.Sent_at)
                         span.textContent = `${date.hours.toString().padStart(2, '0')}:${date.minutes.toString().padStart(2, '0')}`
                         div.append(parag, span)
-                        messageBox.appendChild(div)
+                        messageBox.insertAdjacentElement("afterbegin", div)
                     })
                 })
                 // Now, bind the sendMessage function to the "Send" button

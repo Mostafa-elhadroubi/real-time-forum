@@ -25,11 +25,14 @@ func FetchUsers(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Bad Request", http.StatusBadRequest)
 		return
 	}
+	fmt.Println(user.Id, "fetch user")
 	allUser = []User{}
+	tempId := user.Id
 	for rows.Next() {
 		rows.Scan(&user.Id, &user.Username, &user.Image, &user.Log)
 		allUser = append(allUser, user)
 	}
+	user.Id = tempId
 	jsonData, err := json.Marshal(allUser)
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(jsonData)
@@ -47,8 +50,10 @@ func FetchMessages(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Println(receiver.ReceiverId, "get it")
+	fmt.Println(user.Id, "after hash")
 	query := "SELECT * FROM messages WHERE (sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?) ORDER BY sent_at DESC LIMIT 4 OFFSET  ?"
 	rows, err := DB.Query(query, user.Id, receiver.ReceiverId, receiver.ReceiverId, user.Id, receiver.MsgNbr)
+	fmt.Println(rows, "rows")
 	if err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
@@ -62,6 +67,7 @@ func FetchMessages(w http.ResponseWriter, r *http.Request) {
         }
 		allMsg = append(allMsg, msg)
 	}
+	fmt.Println(rows, "allmsg")
 	jsonData, err := json.Marshal(allMsg)
 	if err != nil {
 		http.Error(w, "Error in marshling data", http.StatusBadRequest)
