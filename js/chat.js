@@ -24,21 +24,7 @@ const updateLastMessage = (receiverId, message, timestamp) => {
         }
     })
 }
-const updateUserStatus = (userId, isOnline) => {
-    const userBoxes = document.querySelectorAll('.userBox')
-    console.log(userBoxes, "boxes")
-    userBoxes.forEach(userBox => {
-        const boxUserId = userBox.getAttribute('data-user-id')
-        console.log(userId, boxUserId, "update user")
-        if(userId == boxUserId) {
-            const status = userBox.querySelector('.connected')
-            if(status) {
-                // status.textContent = isOnline ? 'Online' : 'Offline'
-                status.style.backgroundColor = isOnline ? 'green' : 'blue'
-            }
-        }
-    })
-}
+
 export const chat = () => {
     const chat = `
                 <div class="chatContainer">
@@ -54,6 +40,8 @@ export const chat = () => {
                                 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     `
     document.body.innerHTML = chat
+    let receiverId;
+    let senderId;
     const chatBox = document.querySelector('.chatBox')
     const messageContainer = document.querySelector('.messageContainer')
 
@@ -65,7 +53,7 @@ export const chat = () => {
 
     socket.onclose = (event) => {
         console.log("Websocket connection is closed!")
-        updateUserStatus(11, false)
+        updateUserStatus(senderId, false)
     }
     // When a message is received from the WebSocket server
     socket.onmessage = (event) => {
@@ -88,8 +76,7 @@ export const chat = () => {
             updateLastMessage(data.receiverId, data.text, data.timestamp);
         }
     }
-    let receiverId;
-    let senderId;
+    
     const sendMessage = () => {
         const input = document.querySelector('.inputContainer input[type="text"]');
         const message = input.value;
@@ -133,7 +120,7 @@ export const chat = () => {
         data = data.filter(item => item.ConnectedUserId != item.Id)
         data.forEach((item) => {
             let content = `
-                <div class="userBox" dat-user-id=${item.Id}>
+                <div class="userBox" data-user-id=${item.Id}>
                     <div class="img-username">
                         <img src="../images/${item.Image}" alt="profile picture">
                         <span class="connected"></span>
@@ -196,7 +183,7 @@ export const chat = () => {
                         let div = document.createElement('div')
                         let parag = document.createElement('p')
                         let span = document.createElement('span')
-                        div.className = item.Sender_id == 2 ? 'sender' : 'receiver'
+                        div.className = item.Sender_id == senderId ? 'sender' : 'receiver'
                         parag.textContent = `${item.Message}`
                         let date = convertTime(item.Sent_at)
                         span.textContent = `${date.hours.toString().padStart(2, '0')}:${date.minutes.toString().padStart(2, '0')}`
@@ -213,4 +200,18 @@ export const chat = () => {
 }
 
 
-
+const updateUserStatus = (userId, isOnline) => {
+    const userBoxes = document.querySelectorAll('.userBox')
+    console.log(userBoxes, "boxes")
+    userBoxes.forEach(userBox => {
+        const boxUserId = userBox.getAttribute('data-user-id')
+        console.log(userId, boxUserId, "update user")
+        if(userId == boxUserId) {
+            const status = userBox.querySelector('.connected')
+            if(status) {
+                // status.textContent = isOnline ? 'Online' : 'Offline'
+                status.style.backgroundColor = isOnline ? 'green' : 'blue'
+            }
+        }
+    })
+}

@@ -11,6 +11,7 @@ import (
 
 func userStatus(userId int, isOnline bool) {
 	mu.Lock()
+	fmt.Println(userId, "userstate")
 	userState.UserID = userId
 	userState.IsOnline = isOnline
 	for id, conn := range clients {
@@ -32,8 +33,8 @@ func HandleConnections(w http.ResponseWriter, r *http.Request) {
 	mu.Lock()
 	clients[user.Id] = conn
 	mu.Unlock()
-
-	userStatus(11, true)
+	
+	userStatus(user.Id, true)
 	for {
 		if err := conn.ReadJSON(&wsMsg); err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway) {
@@ -44,7 +45,7 @@ func HandleConnections(w http.ResponseWriter, r *http.Request) {
 			mu.Lock()
 			delete(clients, user.Id)
 			mu.Unlock()
-			userStatus(11, false)
+			userStatus(user.Id, false)
 			break
 		}
 		fmt.Printf("Received message: %s\n", msg)

@@ -27,6 +27,7 @@ type Messages struct {
 	Sender_id   int
 	Receiver_id int
 	Message     string
+	IsRead      bool
 	Sent_at     int
 }
 

@@ -65,6 +65,7 @@ CREATE TABLE IF NOT EXISTS `messages` (
     `sender_id` INTEGER,
     `receiver_id` INTEGER,
     `message` TEXT,
+    `isRead` BOOLEAN,
     `sent_at` INTEGER NOT NULL,
     FOREIGN KEY (`sender_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE,
     FOREIGN KEY (`receiver_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE

@@ -20,7 +20,7 @@ func FetchUsers(w http.ResponseWriter, r *http.Request) {
 	// 	http.Redirect(w, r, "/login", http.StatusFound)
 	// }
 
-	query := `SELECT user_id, username, image, isConnected FROM users`
+	query := `SELECT user_id, username, image, isConnected FROM users after join messages on `
 	rows, err := DB.Query(query)
 	if err != nil {
 		http.Error(w, "Bad Request", http.StatusBadRequest)
@@ -64,7 +64,7 @@ func FetchMessages(w http.ResponseWriter, r *http.Request) {
 	defer rows.Close()
 	allMsg = []Messages{}
 	for rows.Next(){
-		if err := rows.Scan(&msg.Message_id, &msg.Sender_id, &msg.Receiver_id, &msg.Message, &msg.Sent_at); err != nil {
+		if err := rows.Scan(&msg.Message_id, &msg.Sender_id, &msg.Receiver_id, &msg.Message, &msg.IsRead, &msg.Sent_at); err != nil {
             http.Error(w, "Error scanning row", http.StatusInternalServerError)
             return
         }
