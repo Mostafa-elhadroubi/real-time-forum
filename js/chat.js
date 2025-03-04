@@ -53,4 +53,5 @@ export const chat = () => {
         }
     }
     fetchUsers(chatBox, messageContainer)
+    
 }

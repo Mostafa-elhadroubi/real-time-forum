@@ -1,6 +1,8 @@
 // import { convertTime } from "./chat.js";
+import { debounce, fn } from "./debounce.js";
 import { sendMessage } from "./sendMessages.js";
-
+let isScrolled = false
+export let msgNmb  = 0
 export const fetchMessages = async(receiverId, msgNbr, senderId, messageBox, messageContainer) => {
     try {
         const response = await fetch("/api/messages/", {
@@ -8,9 +10,10 @@ export const fetchMessages = async(receiverId, msgNbr, senderId, messageBox, mes
             headers: {
                 'Content-Type': 'application/json'
             },
+            
             body: JSON.stringify({ receiverId: receiverId, msgNbr: msgNbr })
         });
-
+        console.log("fetch", msgNbr)
         if (!response.ok) {
             alert("Error in fetching messages!");
             return;
@@ -29,25 +32,23 @@ export const fetchMessages = async(receiverId, msgNbr, senderId, messageBox, mes
             parag.textContent = `${item.Message}`;
             let date = convertTime(item.Sent_at);
             span.textContent = `${date.hours.toString().padStart(2, '0')}:${date.minutes.toString().padStart(2, '0')}`;
-
+            msgNmb++
             div.append(parag, span);
             messageBox.insertAdjacentElement("afterbegin", div);
         });
         // Scroll to the bottom of the message box
+        if(!isScrolled) {
         messageBox.scrollTop = messageBox.scrollHeight;
-        
+        isScrolled = true
+        }
         // Now, bind the sendMessage function to the "Send" button
         console.log("nowwww")
         const sendButton = messageContainer.querySelector('input[type="button"]');
         sendButton.addEventListener('click', sendMessage);
 
-        // Optional: Detect when the user scrolls to the top (near the start of the message box)
-        messageBox.addEventListener("scroll", () => {
-            if (messageBox.scrollTop <= 5) {
-                console.log(messageBox.scrollTop, "yes");
-            }
-        });
-
+        // messageBox.addEventListener("scroll", debounce(() => {
+        //     fetchMessages(receiverId, msgNbr, senderId, messageBox, messageContainer)
+        // }, 1000))
     } catch (error) {
         console.error("Error:", error);
         alert("Something went wrong while fetching messages!");

@@ -1,8 +1,10 @@
 // import { senderId } from "./chat.js";
-import { fetchMessages } from "./fetchMessages.js";
+import { debounce } from "./debounce.js";
+import { msgNmb, fetchMessages } from "./fetchMessages.js";
 let receiverId;
-
+export let messageBox
 export let senderId;
+
 export const fetchUsers = async(chatBox, messageContainer) =>  {
     try {
         const response = await fetch("/api/users/", { method: 'POST' });
@@ -57,11 +59,25 @@ export const fetchUsers = async(chatBox, messageContainer) =>  {
                         <input type="button" value="send">
                     </div>
                 `;
-                const messageBox = document.querySelector('.messageBox');
+                messageBox = document.querySelector('.messageBox');
                 receiverId = filteredData[index].Id;
                 let msgNbr = 0;
                 console.log(receiverId, "jsnnnnn");
                 await fetchMessages(2, msgNbr, senderId, messageBox, messageContainer);
+                console.log(messageBox, "msg box");
+    
+                // if(messageBox){
+                    console.log(messageBox, "msg boxtrr");
+                    // Define the debounced scroll handler
+                    const handleScroll = debounce(() => {
+                        if (messageBox.scrollTop <= 5) {
+                    console.log("Fetching more messages...");
+                    fetchMessages(receiverId, msgNmb, senderId, messageBox, messageContainer);
+                }
+                }, 1000);
+                messageBox.removeEventListener("scroll", handleScroll)
+                    messageBox.addEventListener("scroll", handleScroll)
+                // }
             });
         });
     } catch (error) {

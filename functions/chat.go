@@ -66,9 +66,9 @@ func FetchMessages(w http.ResponseWriter, r *http.Request) {
 	GetUserFromSession(w, r)
 	fmt.Println(receiver.ReceiverId, "get it")
 	fmt.Println(user.Id, "after hash")
-	query := "SELECT * FROM messages WHERE (sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?) ORDER BY sent_at DESC"
-	rows, err := DB.Query(query, user.Id, receiver.ReceiverId, receiver.ReceiverId, user.Id)
-	// fmt.Println(rows, "rows")
+	query := "SELECT * FROM messages WHERE (sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?) ORDER BY sent_at DESC LIMIT 10 OFFSET ?"
+	rows, err := DB.Query(query, user.Id, receiver.ReceiverId, receiver.ReceiverId, user.Id, receiver.MsgNbr)
+	fmt.Println(receiver.MsgNbr, "msgnmb")
 	if err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
