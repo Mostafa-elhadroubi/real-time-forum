@@ -14,7 +14,7 @@ func Routers() {
 
 	http.HandleFunc("/logout", Logout)
 
-	http.HandleFunc("/home", Home)
+	http.HandleFunc("/", Home)
 	http.HandleFunc("/api/users/", FetchUsers)
 	http.HandleFunc("/chat", Home)
 
@@ -26,8 +26,8 @@ func Routers() {
 	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("css"))))
 	http.Handle("/images/", http.StripPrefix("/images/", http.FileServer(http.Dir("images"))))
 	
-	fmt.Println("Server is running on www.localhost:8083/signup")
-	if err := http.ListenAndServe(":8083", nil); err != nil {
+	fmt.Println("Server is running on www.localhost:8081/signup")
+	if err := http.ListenAndServe(":8081", nil); err != nil {
 		fmt.Println("error in listen and serve!!")
 	}
 }

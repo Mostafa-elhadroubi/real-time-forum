@@ -39,8 +39,9 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		Name: "token",
 		Value: token.String(),
 		Expires: time.Now().Add(tokenAge),
-		Path: "/home",
+		Path: "/",
 	})
+	
 	query = `UPDATE users SET token = ?, token_exp = ?, isConnected = ? WHERE user_id = ?`
 	_, err = DB.Exec(query, token, time.Now().Add(24*time.Hour).Unix(), 1, user.Id)
 	if err != nil {

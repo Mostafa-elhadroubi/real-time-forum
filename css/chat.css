@@ -113,10 +113,10 @@
     color: whitesmoke;
 }
 .messageBox{
-    /* background: rgb(46, 44, 44); */
+    /* background: red; */
     height: 465px;
     /* width: 100%; */
-    max-height: 470px;
+    /* max-height: 470px; */
     overflow-y: scroll;
     display: flex;
     flex-direction: column;
@@ -124,7 +124,7 @@
 
 }
 .messageBox::-webkit-scrollbar{
-    width: 0;
+    width: 10px;
 }
 .messageBox .sender, .messageBox .receiver{
     max-width: 340px;
