@@ -1,11 +1,10 @@
-// import { senderId } from "./chat.js";
 import { debounce } from "./debounce.js";
-import { msgNmb, fetchMessages } from "./fetchMessages.js";
+import { msgNmb, fetchMessages, convertTime } from "./fetchMessages.js";
 let receiverId;
 export let messageBox
 export let senderId;
 
-export const fetchUsers = async(chatBox, messageContainer) =>  {
+export const fetchUsers = async(chatBox, messageContainer, socket) =>  {
     try {
         const response = await fetch("/api/users/", { method: 'POST' });
 
@@ -17,9 +16,11 @@ export const fetchUsers = async(chatBox, messageContainer) =>  {
         const data = await response.json();
 
         chatBox.innerHTML = '';
+        console.log(data)
         const filteredData = data.filter(item => item.ConnectedUserId !== item.Id);
         console.log(filteredData, "data")
-        filteredData.forEach((item) => {
+        filteredData.forEach((item, index) => {
+
             const content = `
                 <div class="userBox" data-user-id=${item.Id}>
                     <div class="img-username">
@@ -27,17 +28,23 @@ export const fetchUsers = async(chatBox, messageContainer) =>  {
                         <span class="connected"></span>
                         <div class="user-message">
                             <h2>${item.Username}</h2>
-                            <p>The last message was sent....</p>
+                            <p>${item.LastMessage.String}</p>
                         </div>
                     </div>
                     <div class="time-msgNumber">
-                        <div class="time">yesterday</div>
-                        <span>3</span>
+                        <div class="time">${getRightTime(parseInt(item.Time.String))}</div>
+                        <span class="msgNmb">${item.UnreadMessages}</span>
                     </div>
                 </div>
             `;
             chatBox.innerHTML += content;
             senderId = item.ConnectedUserId;
+            const unreadMessage = document.querySelectorAll(".msgNmb")
+            if(unreadMessage[index].textContent == "0") {
+                unreadMessage[index].textContent = ""
+            } else{
+                unreadMessage[index].classList.add('unreadMessage')
+            }
         });
         const allUsers = document.querySelectorAll('.userBox');
         console.log([...allUsers]);
@@ -63,7 +70,8 @@ export const fetchUsers = async(chatBox, messageContainer) =>  {
                 receiverId = filteredData[index].Id;
                 let msgNbr = 0;
                 console.log(receiverId, "jsnnnnn");
-                await fetchMessages(2, msgNbr, senderId, messageBox, messageContainer);
+                await updateMessageState(receiverId)
+                await fetchMessages(2, msgNbr, senderId, messageBox, messageContainer, socket);
                 console.log(messageBox, "msg box");
     
                 // if(messageBox){
@@ -86,5 +94,34 @@ export const fetchUsers = async(chatBox, messageContainer) =>  {
 }
 
 
+const updateMessageState = async(id) => {
+    try{
+        const response = await fetch('/api/messageState', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({userId: id})
+        })
+        console.log(response)
+    }catch(error) {
+        console.log("statemeesage", error)
+    }
+}
 
 
+
+
+const getRightTime = (time) => {
+    const dateNow = new Date()
+    const timeNow = Math.floor(dateNow.getTime()/1000)
+    const date = convertTime(timeNow - time)
+    if (isNaN(time)) {
+        return ""
+    }else if (timeNow - time >= 48*3600) {
+        return `${date.day.toString().padStart(2, "0")}/${date.month.toString().padStart(2, "0")}/${date.year}`
+    } else if(timeNow - time >= 24*3600) {
+        return "yesterday"
+    }
+    return `${date.hours.toString().padStart(2, "0")}:${date.minutes.toString().padStart(2, "0")}`
+}

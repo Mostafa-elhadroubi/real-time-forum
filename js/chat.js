@@ -52,6 +52,6 @@ export const chat = () => {
             updateLastMessage(data.receiverId, data.text, data.timestamp);
         }
     }
-    fetchUsers(chatBox, messageContainer)
+    fetchUsers(chatBox, messageContainer, socket)
     
 }

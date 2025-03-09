@@ -1,6 +1,7 @@
 import { updateLastMessage } from "./fetchMessages.js";
+// import { senderId } from "./fetchUsers.js";
 
-export const sendMessage = () => {
+export const sendMessage = (senderId, receiverId, socket) => {
     const input = document.querySelector('.inputContainer input[type="text"]');
     const message = input.value;
     const now = new Date()

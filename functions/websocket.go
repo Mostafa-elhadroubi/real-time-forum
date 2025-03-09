@@ -12,6 +12,7 @@ import (
 func userStatus(userId int, isOnline bool) {
 	mu.Lock()
 	fmt.Println(userId, "userstate")
+	userState := UserStatus{}
 	userState.UserID = userId
 	userState.IsOnline = isOnline
 	for id, conn := range clients {
@@ -66,7 +67,7 @@ func HandleConnections(w http.ResponseWriter, r *http.Request) {
 }
 
 func storeMessage(senderID, receiverID int, msg string) bool {
-	query := "INSERT INTO messages VALUES(NULL, ?, ?, ?,?)"
+	query := "INSERT INTO messages VALUES(NULL, ?, ?, ?, 0,?)"
 	_, err := DB.Exec(query, senderID, receiverID, msg, time.Now().Unix())
 	return err == nil
 }

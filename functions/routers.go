@@ -17,6 +17,7 @@ func Routers() {
 	http.HandleFunc("/", Home)
 	http.HandleFunc("/api/users/", FetchUsers)
 	http.HandleFunc("/chat", Home)
+	http.HandleFunc("/api/messageState", UpdateMessageState)
 
 	// WebSocket endpoint
 	http.HandleFunc("/ws", HandleConnections) // The WebSocket handler

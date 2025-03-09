@@ -3,7 +3,7 @@ import { debounce, fn } from "./debounce.js";
 import { sendMessage } from "./sendMessages.js";
 let isScrolled = false
 export let msgNmb  = 0
-export const fetchMessages = async(receiverId, msgNbr, senderId, messageBox, messageContainer) => {
+export const fetchMessages = async(receiverId, msgNbr, senderId, messageBox, messageContainer, socket) => {
     try {
         const response = await fetch("/api/messages/", {
             method: 'POST',
@@ -43,8 +43,11 @@ export const fetchMessages = async(receiverId, msgNbr, senderId, messageBox, mes
         }
         // Now, bind the sendMessage function to the "Send" button
         console.log("nowwww")
+        console.log(senderId, receiverId,"msgsender")
         const sendButton = messageContainer.querySelector('input[type="button"]');
-        sendButton.addEventListener('click', sendMessage);
+        sendButton.addEventListener('click', () => {
+            sendMessage(senderId, receiverId, socket)
+        });
 
         // messageBox.addEventListener("scroll", debounce(() => {
         //     fetchMessages(receiverId, msgNbr, senderId, messageBox, messageContainer)
