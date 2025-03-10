@@ -28,7 +28,7 @@ func Home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// fmt.Println(GetUserFromSession(r))
-	fmt.Println("home")
+	// fmt.Println("home")
 	tmp, err := template.ParseFiles("./html/main.html")
 	if err != nil {
 		http.Error(w, "Can not parse the main file", http.StatusNotFound)

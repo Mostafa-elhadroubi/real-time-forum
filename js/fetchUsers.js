@@ -7,7 +7,10 @@ export let senderId;
 export const fetchUsers = async(chatBox, messageContainer, socket) =>  {
     try {
         const response = await fetch("/api/users/", { method: 'POST' });
-
+        if (response.redirected) {
+            window.location.href = response.url; // Redirect to the login page
+            return;
+        }
         if (!response.ok) {
             console.log("Error fetching users", response.statusText);
             return;
@@ -71,7 +74,7 @@ export const fetchUsers = async(chatBox, messageContainer, socket) =>  {
                 let msgNbr = 0;
                 console.log(receiverId, "jsnnnnn");
                 await updateMessageState(receiverId)
-                await fetchMessages(2, msgNbr, senderId, messageBox, messageContainer, socket);
+                await fetchMessages(receiverId, msgNbr, senderId, messageBox, messageContainer, socket);
                 console.log(messageBox, "msg box");
     
                 // if(messageBox){

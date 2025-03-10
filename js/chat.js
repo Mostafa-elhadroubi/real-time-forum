@@ -37,7 +37,7 @@ export const chat = () => {
         const data = JSON.parse(event.data)
         console.log(data)
         if(data.userId !== undefined && data.isOnline !== undefined) {
-            console.log("undefined")
+            console.log('User status update:', data.userId, data.isOnline);
             updateUserStatus(data.userId, data.isOnline)
         } else {
             console.log(data)

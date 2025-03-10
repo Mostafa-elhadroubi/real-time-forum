@@ -10,10 +10,14 @@ import (
 
 func FetchUsers(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
+		fmt.Println("request")
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 		return
 	}
 	GetUserFromSession(w, r)
+	if(user.Id == 0) {
+		return
+	}
 	conversations := []Conversation{}
 	query := `SELECT u.user_id, u.username, u.image, u.isConnected, m.message AS last_message, m.sent_at AS last_message_time, 
     COALESCE(unread_messages.unread_count, 0) AS unread_count FROM users u LEFT JOIN messages m ON m.message_id = (
@@ -42,7 +46,7 @@ func FetchUsers(w http.ResponseWriter, r *http.Request) {
 			conversations = append(conversations, con)
 		}
 	}
-	fmt.Println(conversations)
+	// fmt.Println(conversations)
 	jsonData, err := json.Marshal(conversations)
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(jsonData)
@@ -50,13 +54,18 @@ func FetchUsers(w http.ResponseWriter, r *http.Request) {
 
 func GetUserFromSession(w http.ResponseWriter, r *http.Request) {
 	token, err := r.Cookie("token")
-	if err != nil {
+	if err != nil || token.Value == ""{
 		fmt.Println("error in gettting token")
 		http.Redirect(w, r, "/login", http.StatusFound)
+		return
 	}
 	query := "SELECT user_id FROM users WHERE token = ?"
 	row := DB.QueryRow(query, token.Value)
-	row.Scan(&user.Id)
+	if err = row.Scan(&user.Id); err != nil {
+		fmt.Println("Error scanning user ID", err)
+		http.Redirect(w, r, "/login", http.StatusFound)
+		return
+	}
 }
 
 func FetchMessages(w http.ResponseWriter, r *http.Request) {
@@ -67,6 +76,7 @@ func FetchMessages(w http.ResponseWriter, r *http.Request) {
 	mu.Lock() // Lock the mutex to ensure exclusive access
 	defer mu.Unlock()
 	if err := json.NewDecoder(r.Body).Decode(&receiver); err != nil {
+		
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}

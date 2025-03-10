@@ -1,5 +1,3 @@
-// import { convertTime } from "./chat.js";
-import { debounce, fn } from "./debounce.js";
 import { sendMessage } from "./sendMessages.js";
 let isScrolled = false
 export let msgNmb  = 0
@@ -13,7 +11,7 @@ export const fetchMessages = async(receiverId, msgNbr, senderId, messageBox, mes
             
             body: JSON.stringify({ receiverId: receiverId, msgNbr: msgNbr })
         });
-        console.log("fetch", msgNbr)
+        console.log("fetch", msgNbr, receiverId)
         if (!response.ok) {
             alert("Error in fetching messages!");
             return;
