@@ -70,6 +70,12 @@ export const fetchUsers = async(chatBox, messageContainer, socket) =>  {
                     </div>
                 `;
                 messageBox = document.querySelector('.messageBox');
+                messageBox.addEventListener('scroll', () => {
+
+                    const scrolled = messageBox.scrollTop
+                    const scrollHeight = messageBox.scrollHeight
+                    console.log(scrolled, scrollHeight, "scrolled");
+                })
                 receiverId = filteredData[index].Id;
                 let msgNbr = 0;
                 console.log(receiverId, "jsnnnnn");

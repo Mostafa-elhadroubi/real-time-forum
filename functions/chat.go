@@ -14,8 +14,13 @@ func FetchUsers(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	GetUserFromSession(w, r)
-	if(user.Id == 0) {
+	userId, err := GetUserFromSession(w, r)
+	if err != nil {
+		fmt.Println("Error in getting user id")
+		http.Error(w, "Error in getting user id", http.StatusInternalServerError)
+		return
+	}
+	if(userId == 0) {
 		return
 	}
 	conversations := []Conversation{}
@@ -29,7 +34,7 @@ func FetchUsers(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Bad Request", http.StatusBadRequest)
 		return
 	}
-	fmt.Println(user.Id, "fetch user")
+	fmt.Println(userId, "fetch user")
 	for rows.Next() {
 		con := Conversation{}
 		var lastMessage sql.NullString
@@ -41,8 +46,8 @@ func FetchUsers(w http.ResponseWriter, r *http.Request) {
 		}
 		con.LastMessage = lastMessage
 		con.Time = last_message_time
-		if user.Id != con.Id {
-			con.ConnectedUserId = user.Id
+		if userId != con.Id {
+			con.ConnectedUserId = userId
 			conversations = append(conversations, con)
 		}
 	}
@@ -52,20 +57,23 @@ func FetchUsers(w http.ResponseWriter, r *http.Request) {
 	w.Write(jsonData)
 }
 
-func GetUserFromSession(w http.ResponseWriter, r *http.Request) {
+func GetUserFromSession(w http.ResponseWriter, r *http.Request) (int, error) {
 	token, err := r.Cookie("token")
 	if err != nil || token.Value == ""{
 		fmt.Println("error in gettting token")
 		http.Redirect(w, r, "/login", http.StatusFound)
-		return
+		return 0, fmt.Errorf("token not exists!")
 	}
+	var userId int
 	query := "SELECT user_id FROM users WHERE token = ?"
 	row := DB.QueryRow(query, token.Value)
-	if err = row.Scan(&user.Id); err != nil {
+	if err = row.Scan(&userId); err != nil {
 		fmt.Println("Error scanning user ID", err)
 		http.Redirect(w, r, "/login", http.StatusFound)
-		return
+		return 0, fmt.Errorf("invalid token")
 	}
+	fmt.Println("user id from session: ", userId)
+	return userId, nil
 }
 
 func FetchMessages(w http.ResponseWriter, r *http.Request) {
@@ -80,18 +88,23 @@ func FetchMessages(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
-	GetUserFromSession(w, r)
+	userId, err := GetUserFromSession(w, r)
+	if err != nil {
+		fmt.Println("Error in getting user id")
+		http.Error(w, "Error in getting user id", http.StatusInternalServerError)
+		return
+	}
 	fmt.Println(receiver.ReceiverId, "get it")
-	fmt.Println(user.Id, "after hash")
+	fmt.Println(userId, "after hash")
 	query := "SELECT * FROM messages WHERE (sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?) ORDER BY sent_at DESC LIMIT 10 OFFSET ?"
-	rows, err := DB.Query(query, user.Id, receiver.ReceiverId, receiver.ReceiverId, user.Id, receiver.MsgNbr)
+	rows, err := DB.Query(query, userId, receiver.ReceiverId, receiver.ReceiverId, userId, receiver.MsgNbr)
 	fmt.Println(receiver.MsgNbr, "msgnmb")
 	if err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
 	defer rows.Close()
-	allMsg = []Messages{}
+	allMsg := []Messages{}
 	for rows.Next() {
 		if err := rows.Scan(&msg.Message_id, &msg.Sender_id, &msg.Receiver_id, &msg.Message, &msg.IsRead, &msg.Sent_at); err != nil {
 			http.Error(w, "Error scanning row", http.StatusInternalServerError)

@@ -25,6 +25,7 @@ export const chat = () => {
     // When the WebSocket connection is open
     socket.onopen = function(event) {
         console.log("WebSocket connection established.");
+        fetchOnlineUsers()
     };
 
     socket.onclose = (event) => {
@@ -55,3 +56,20 @@ export const chat = () => {
     fetchUsers(chatBox, messageContainer, socket)
     
 }
+
+const fetchOnlineUsers = async() => {
+    try{
+        const response = await fetch('/getOnlineUsers')
+        console.log(response)
+        const onlineUsers = await response.json()
+        console.log("online users",onlineUsers)
+        onlineUsers.forEach(userId => {
+            updateUserStatus(userId, true)
+        })
+    }catch(error) {
+        console.log("error", error)
+    }
+    
+
+}
+fetchOnlineUsers()

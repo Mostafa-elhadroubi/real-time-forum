@@ -18,6 +18,7 @@ func Routers() {
 	http.HandleFunc("/api/users/", FetchUsers)
 	http.HandleFunc("/chat", Home)
 	http.HandleFunc("/api/messageState", UpdateMessageState)
+	http.HandleFunc("/getOnlineUsers", GetOnlineUsers)
 
 	// WebSocket endpoint
 	http.HandleFunc("/ws", HandleConnections) // The WebSocket handler
@@ -27,7 +28,7 @@ func Routers() {
 	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("css"))))
 	http.Handle("/images/", http.StripPrefix("/images/", http.FileServer(http.Dir("images"))))
 	
-	fmt.Println("Server is running on www.localhost:8081/signup")
+	fmt.Println("Server is running on http://localhost:8081/signup")
 	if err := http.ListenAndServe(":8081", nil); err != nil {
 		fmt.Println("error in listen and serve!!")
 	}

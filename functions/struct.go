@@ -68,9 +68,9 @@ var (
 	user      User
 	msg       Messages
 	allUser   []User
-	allMsg    []Messages
+	// allMsg    []Messages
 	receiver  Receiver
-	wsMsg     WsMessages
+	
 	// userState UserStatus
 	upgrader  = websocket.Upgrader{
 		CheckOrigin: func(r *http.Request) bool {

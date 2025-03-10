@@ -1,6 +1,7 @@
 package functions
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -9,8 +10,24 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+func GetOnlineUsers(w http.ResponseWriter, r *http.Request) {
+	mu.Lock()
+	defer mu.Unlock()
+	onlineUsers := []int{}
+	for id, _ := range clients {
+		onlineUsers= append(onlineUsers, id)
+	}
+	jsonData, err := json.Marshal(onlineUsers)
+	if err != nil {
+		http.Error(w, "Error encoding json", http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(jsonData)
+}
 func userStatus(userId int, isOnline bool) {
 	mu.Lock()
+	defer mu.Unlock()
 	fmt.Println(userId, "userstate")
 	userState := UserStatus{}
 	userState.UserID = userId
@@ -22,9 +39,14 @@ func userStatus(userId int, isOnline bool) {
 			}
 		}
 	}
-	mu.Unlock()
+	
 }
 func HandleConnections(w http.ResponseWriter, r *http.Request) {
+	userId, err := GetUserFromSession(w, r)
+	if err!= nil {
+		fmt.Println("Error in getting user id")
+		return
+	}
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println("Error upgrading connection:", err)
@@ -32,11 +54,12 @@ func HandleConnections(w http.ResponseWriter, r *http.Request) {
 	}
 	defer conn.Close()
 	mu.Lock()
-	clients[user.Id] = conn
+	clients[userId] = conn
 	mu.Unlock()
 	
-	userStatus(user.Id, true)
+	userStatus(userId, true)
 	for {
+		var wsMsg WsMessages
 		if err := conn.ReadJSON(&wsMsg); err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway) {
 				log.Println("WebSocket connection closed:", err)
@@ -44,9 +67,9 @@ func HandleConnections(w http.ResponseWriter, r *http.Request) {
 				log.Println("Error reading message:", err)
 			}
 			mu.Lock()
-			delete(clients, user.Id)
+			delete(clients, userId)
 			mu.Unlock()
-			userStatus(user.Id, false)
+			userStatus(userId, false)
 			break
 		}
 		fmt.Printf("Received message: %s\n", msg)

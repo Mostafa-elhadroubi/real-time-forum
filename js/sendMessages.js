@@ -24,6 +24,8 @@ export const sendMessage = (senderId, receiverId, socket) => {
                 <span>${data.timestamp}</span>
             `;
            document.querySelector('.messageBox').appendChild(messageDiv);
+          
+           
            updateLastMessage(data.receiverId, data.message, data.timestamp)
            input.value = ''; // Clear the input field
         }
