@@ -1,5 +1,5 @@
 import { debounce } from "./debounce.js";
-import { msgNmb, fetchMessages, convertTime } from "./fetchMessages.js";
+import { msgNmb, fetchMessages, convertTime, isScrolled } from "./fetchMessages.js";
 let receiverId;
 export let messageBox
 export let senderId;
@@ -70,26 +70,23 @@ export const fetchUsers = async(chatBox, messageContainer, socket) =>  {
                     </div>
                 `;
                 messageBox = document.querySelector('.messageBox');
-                messageBox.addEventListener('scroll', () => {
-
-                    const scrolled = messageBox.scrollTop
-                    const scrollHeight = messageBox.scrollHeight
-                    console.log(scrolled, scrollHeight, "scrolled");
-                })
                 receiverId = filteredData[index].Id;
                 let msgNbr = 0;
                 console.log(receiverId, "jsnnnnn");
                 await updateMessageState(receiverId)
                 await fetchMessages(receiverId, msgNbr, senderId, messageBox, messageContainer, socket);
+                
                 console.log(messageBox, "msg box");
     
                 // if(messageBox){
                     console.log(messageBox, "msg boxtrr");
                     // Define the debounced scroll handler
                     const handleScroll = debounce(() => {
+                        
                         if (messageBox.scrollTop <= 5) {
-                    console.log("Fetching more messages...");
-                    fetchMessages(receiverId, msgNmb, senderId, messageBox, messageContainer);
+                            console.log("Fetching more messages...");
+                            fetchMessages(receiverId, msgNmb, senderId, messageBox, messageContainer);
+
                 }
                 }, 1000);
                 messageBox.removeEventListener("scroll", handleScroll)

@@ -124,12 +124,17 @@
     overflow-y: scroll;
     display: flex;
     flex-direction: column;
+    padding-bottom: 10px;
 
 
 }
-.messageBox::-webkit-scrollbar{
-    width: 10px;
+/* .messageBox::-webkit-scrollbar{
+    width: 20px;
+} */
+.messageBox::-webkit-scrollbar {
+    width: 0px;
 }
+
 .messageBox .sender, .messageBox .receiver{
     max-width: 340px;
     padding: 10px;

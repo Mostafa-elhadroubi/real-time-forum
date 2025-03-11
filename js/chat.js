@@ -1,5 +1,5 @@
 import { updateUserStatus } from "./sendMessages.js"
-import { fetchUsers, senderId } from "./fetchUsers.js"
+import { fetchUsers, messageBox, senderId } from "./fetchUsers.js"
 import { updateLastMessage } from "./fetchMessages.js"
 
 export const chat = () => {
@@ -49,8 +49,9 @@ export const chat = () => {
                 <p>${data.text}</p>
                 <span>${data.timestamp}</span>
             `;
-            document.querySelector('.messageBox').appendChild(messageDiv);
-            updateLastMessage(data.receiverId, data.text, data.timestamp);
+            messageBox.appendChild(messageDiv);
+            messageBox.scrollTop = messageBox.scrollHeight
+            updateLastMessage(data.senderId, data.text, data.timestamp);
         }
     }
     fetchUsers(chatBox, messageContainer, socket)

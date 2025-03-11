@@ -1,7 +1,7 @@
 import { updateLastMessage } from "./fetchMessages.js";
 // import { senderId } from "./fetchUsers.js";
 
-export const sendMessage = (senderId, receiverId, socket) => {
+export const sendMessage = (senderId, receiverId, socket, messageBox) => {
     const input = document.querySelector('.inputContainer input[type="text"]');
     const message = input.value;
     const now = new Date()
@@ -23,9 +23,9 @@ export const sendMessage = (senderId, receiverId, socket) => {
                 <p>${data.text}</p>
                 <span>${data.timestamp}</span>
             `;
-           document.querySelector('.messageBox').appendChild(messageDiv);
+           messageBox.appendChild(messageDiv);
           
-           
+           messageBox.scrollTop = messageBox.scrollHeight
            updateLastMessage(data.receiverId, data.message, data.timestamp)
            input.value = ''; // Clear the input field
         }

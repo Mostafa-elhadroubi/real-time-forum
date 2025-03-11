@@ -1,8 +1,9 @@
 import { sendMessage } from "./sendMessages.js";
-let isScrolled = false
 export let msgNmb  = 0
+export let isScrolled = false
 export const fetchMessages = async(receiverId, msgNbr, senderId, messageBox, messageContainer, socket) => {
     try {
+        const previousScrollHeight = messageBox.scrollHeight
         const response = await fetch("/api/messages/", {
             method: 'POST',
             headers: {
@@ -33,39 +34,41 @@ export const fetchMessages = async(receiverId, msgNbr, senderId, messageBox, mes
             msgNmb++
             div.append(parag, span);
             messageBox.insertAdjacentElement("afterbegin", div);
+            const newScrollHeight = messageBox.scrollHeight
+            messageBox.scrollTop = newScrollHeight - previousScrollHeight - 10
         });
-        // Scroll to the bottom of the message box
-        if(!isScrolled) {
-        messageBox.scrollTop = messageBox.scrollHeight;
-        isScrolled = true
-        }
-        // Now, bind the sendMessage function to the "Send" button
-        console.log("nowwww")
+        
+        // }
         console.log(senderId, receiverId,"msgsender")
         const sendButton = messageContainer.querySelector('input[type="button"]');
+        const messageInput = messageContainer.querySelector('input[type="text"]');
+        messageInput.addEventListener('keyup', (e) => {
+            console.log('input is  clicked', messageInput.value.trim(),messageInput.value.trim().length)
+            if(e.key == 'Enter' && messageInput.value.trim() != ''){
+            sendMessage(senderId, receiverId, socket, messageBox)
+            }
+        })
         sendButton.addEventListener('click', () => {
-            sendMessage(senderId, receiverId, socket)
+            sendMessage(senderId, receiverId, socket, messageBox)
         });
 
-        // messageBox.addEventListener("scroll", debounce(() => {
-        //     fetchMessages(receiverId, msgNbr, senderId, messageBox, messageContainer)
-        // }, 1000))
     } catch (error) {
         console.error("Error:", error);
         alert("Something went wrong while fetching messages!");
     }
 }
 
-export const updateLastMessage = (receiverId, message, timestamp) => {
+export const updateLastMessage = (senderId, message, timestamp) => {
     const userBoxes = document.querySelectorAll('.userBox')
     userBoxes.forEach(userBox => {
         const userId = userBox.getAttribute("data-user-id")
-        if(userId == receiverId) {
+        if(userId == senderId) {
             const lastMessage = userBox.querySelector('.user-message p');
             const lastMessageTime = userBox.querySelector('.time')
             if(lastMessage && lastMessageTime) {
                 lastMessage.textContent = message;
                 lastMessageTime.textContent = timestamp;
+                console.log("try")
             }
         }
     })
