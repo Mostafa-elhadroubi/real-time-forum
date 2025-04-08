@@ -9,6 +9,5 @@ export const home = () => {
     `
     document.body.innerHTML = `
                             ${header}
-                            <h1>mostafa</h1>
     `
 }

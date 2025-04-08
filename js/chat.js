@@ -4,7 +4,9 @@ import { updateLastMessage } from "./fetchMessages.js"
 
 export const chat = () => {
     const chat = `
-                <div class="chatContainer">
+    
+    <div class="goBack"><i class="fa-solid fa-arrow-left"></i><a href="/home">Go Back</a></div>
+    <div class="chatContainer">
                     <div class="chatBox">
                         
                     </div>

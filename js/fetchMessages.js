@@ -43,7 +43,7 @@ export const fetchMessages = async(receiverId, msgNbr, senderId, messageBox, mes
         const sendButton = messageContainer.querySelector('input[type="button"]');
         const messageInput = messageContainer.querySelector('input[type="text"]');
         messageInput.addEventListener('keyup', (e) => {
-            console.log('input is  clicked', messageInput.value.trim(),messageInput.value.trim().length)
+            // console.log('input is  clicked', messageInput.value.trim(),messageInput.value.trim().length)
             if(e.key == 'Enter' && messageInput.value.trim() != ''){
             sendMessage(senderId, receiverId, socket, messageBox)
             }

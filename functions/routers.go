@@ -12,6 +12,8 @@ func Routers() {
 	http.HandleFunc("/login", Home)
 	http.HandleFunc("/api/login/", Login)
 
+	http.HandleFunc("/api/addPost", AddPost)
+
 	http.HandleFunc("/logout", Logout)
 
 	http.HandleFunc("/", Home)

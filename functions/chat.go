@@ -112,7 +112,7 @@ func FetchMessages(w http.ResponseWriter, r *http.Request) {
 		}
 		allMsg = append(allMsg, msg)
 	}
-	// fmt.Println(allMsg, "allmsg")
+	fmt.Println(allMsg, "allmsg")
 	jsonData, err := json.Marshal(allMsg)
 	if err != nil {
 		http.Error(w, "Error in marshling data", http.StatusBadRequest)

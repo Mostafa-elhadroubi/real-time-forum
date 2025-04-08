@@ -62,6 +62,10 @@ type PageErrors struct {
 	Code    int
 	Message string
 }
+type Category struct {
+	Id      int
+	Name string
+}
 
 var (
 	DB        *sql.DB
