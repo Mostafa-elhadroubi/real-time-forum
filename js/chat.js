@@ -21,7 +21,7 @@ export const chat = () => {
     const chatBox = document.querySelector('.chatBox')
     const messageContainer = document.querySelector('.messageContainer')
 
-    const socket = new WebSocket("ws://localhost:8081/ws")
+    const socket = new WebSocket("ws://localhost:8082/ws")
     // When the WebSocket connection is open
     socket.onopen = function(event) {
         console.log("WebSocket connection established.");

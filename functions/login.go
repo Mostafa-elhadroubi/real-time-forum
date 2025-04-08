@@ -26,6 +26,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	err := row.Scan(&user.Id, &user.Username, &user.Email, &user.Password)
 	fmt.Println(user.Id, "before hash")
 	if err != nil || bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))  != nil {
+		fmt.Println("there is an error!!!", err, user.Password, password)
 		setErrorCookie(w, "Invalid credentials!", "/login", 5)
 		http.Redirect(w, r, "/login", http.StatusFound)
 		return

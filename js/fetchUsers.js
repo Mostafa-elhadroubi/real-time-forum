@@ -40,6 +40,7 @@ export const fetchUsers = async(chatBox, messageContainer, socket) =>  {
                     </div>
                 </div>
             `;
+            console.log(item)
             chatBox.innerHTML += content;
             senderId = item.ConnectedUserId;
             const unreadMessage = document.querySelectorAll(".msgNmb")
@@ -121,7 +122,7 @@ const updateMessageState = async(id) => {
 const getRightTime = (time) => {
     const dateNow = new Date()
     const timeNow = Math.floor(dateNow.getTime()/1000)
-    const date = convertTime(timeNow - time)
+    const date = convertTime(time)
     if (isNaN(time)) {
         return ""
     }else if (timeNow - time >= 48*3600) {

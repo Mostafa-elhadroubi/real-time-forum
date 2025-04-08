@@ -40,6 +40,7 @@ const submitLoginForm = () => {
         body: formData
     })
     .then(res => {
+        console.log(res)
         if(res.redirected) {
             window.location.href = res.url
         }
