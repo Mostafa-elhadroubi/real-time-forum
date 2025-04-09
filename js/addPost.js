@@ -48,8 +48,11 @@ export const add_post = () => {
             body: data,
             
         })
-        const res = await response.json();
-        console.log(res);
+        console.log(response);
+        if (response.redirected) {
+            window.location.href = response.url
+        }
+        
         
 
         

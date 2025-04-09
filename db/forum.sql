@@ -21,7 +21,6 @@ CREATE TABLE IF NOT EXISTS `posts` (
     `user_id` INTEGER NOT NULL,
     `title` TEXT NOT NULL,
     `body` TEXT NOT NULL,
-    `image` TEXT,
     `created_at` INTEGER NOT NULL, 
     FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE
 );
@@ -44,10 +43,11 @@ CREATE TABLE IF NOT EXISTS `categories` (
 CREATE TABLE IF NOT EXISTS `posts_categories` (
     `post_category_id` INTEGER PRIMARY KEY AUTOINCREMENT,
     `post_id` INTEGER NOT NULL,
-    `category_id` INTEGER NOT NULL,
-    FOREIGN KEY (`category_id`) REFERENCES `categories` (`category_id`) ON DELETE CASCADE,
+    `category_name` TEXT NOT NULL,
+    FOREIGN KEY (`category_name`) REFERENCES `categories` (`category_name`) ON DELETE CASCADE,
     FOREIGN KEY (`post_id`) REFERENCES `posts` (`post_id`) ON DELETE CASCADE
 );
+
 
 CREATE TABLE IF NOT EXISTS `likes` (
     `like_id` INTEGER PRIMARY KEY AUTOINCREMENT,

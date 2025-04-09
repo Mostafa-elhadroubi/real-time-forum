@@ -36,6 +36,9 @@ type Receiver struct {
 	MsgNbr     int `json:"msgNbr"`
 }
 
+type PostNum struct {
+	PostNum int `json:"postNum"`
+}
 type WsMessages struct {
 	Sender_id   int    `json:"senderId"`
 	Receiver_id int    `json:"receiverId"`
@@ -66,7 +69,12 @@ type Category struct {
 	Id      int
 	Name string
 }
-
+type Posts struct {
+	post_id int
+	title string
+	body string
+	created_at time.Time
+}
 var (
 	DB        *sql.DB
 	user      User

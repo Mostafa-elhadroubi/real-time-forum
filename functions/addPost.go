@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 )
 
 func AddPost(w http.ResponseWriter, r *http.Request) {
@@ -23,10 +24,10 @@ func AddPost(w http.ResponseWriter, r *http.Request) {
 	body := r.FormValue("body")
 	categoriesForm := r.Form["categories"]
 	
-	for _, v := range categoriesForm{
+	for _, v1 := range categoriesForm{
 		exists := false
 		for _, v2 := range FetchCategories(){
-			if v == v2.Name{
+			if v1 == v2.Name{
 				exists = true
 				break
 			}
@@ -37,17 +38,43 @@ func AddPost(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-
-	
+	user_id, err  := GetUserFromSession(w, r)
+	fmt.Println(user_id)
+	if err != nil {
+		fmt.Println("Error in getting user id")
+		http.Error(w, "Error in getting user id", http.StatusInternalServerError)
+		return
+	}
+	query:= "INSERT INTO posts VALUES (NULL, ?, ?, ?, ?)"
+	res, err := DB.Exec(query, user_id, title, body, time.Now().Unix())
+	if err != nil {
+		http.Error(w, "error in inserting in the DB!", http.StatusInternalServerError)
+		return
+	}
+	post_id, err:= res.LastInsertId()
+	if err != nil {
+		fmt.Println("error in the last index!!")
+		http.Error(w, "error in the last index!!", http.StatusInternalServerError)
+		return
+	}
+	for _, category := range categoriesForm {
+		query := "INSERT INTO posts_categories VALUES (NULL, ?, ?)"
+		_, err = DB.Exec(query, post_id, category)
+		if err != nil {
+			http.Error(w, "error in inserting in the DB!", http.StatusInternalServerError)
+			return
+		}
+	}
 	// Printing the received data
 	fmt.Printf("Title: %s\n", title)
 	fmt.Printf("Body: %s\n", body)
 	fmt.Printf("Categories: %v\n", categoriesForm)
+	http.Redirect(w, r, "/home", http.StatusFound)
 
 	// Respond with a JSON object (for success)
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(`{"message": "Post successfully received"}`))
+	// w.Header().Set("Content-Type", "application/json")
+	// w.WriteHeader(http.StatusOK)
+	// w.Write([]byte(`{"message": "Post successfully received"}`))
 }
 
 func FetchCategories() []Category {
