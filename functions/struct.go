@@ -77,6 +77,8 @@ type Posts struct {
 	Categories string `json:"categories"`
 	Username   string `json:"username"`
 	Image      string `json:"image"`
+	Liked int `json:"liked"`
+	Disliked int `json:"disliked"`
 }
 type ResponseLike struct {
 	Post_id   int `json:"post_id"`

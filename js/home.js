@@ -34,7 +34,7 @@ const fetchPosts = async() => {
                
                <div class="body">${item.body}</div>
                <div class="btns">
-                    <p class="like">12<i class="fa-regular fa-thumbs-up"></i></p>
+                    <p class="like">${item.like}<i class="fa-regular fa-thumbs-up"></i></p>
                     <p class="dislike">12<i class="fa-regular fa-thumbs-down"></i></p>
                     <p>12<i class="fa-regular fa-comment"></i></p>
                </div>
@@ -64,6 +64,7 @@ const fetchPosts = async() => {
                </div>
             </div>
         `
+        
     })
     const likes = document.querySelectorAll('.like i')
     const dislikes = document.querySelectorAll('.dislike i')

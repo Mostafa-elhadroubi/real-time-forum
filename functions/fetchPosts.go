@@ -21,7 +21,7 @@ func FetchPosts(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("yes it is")
 	postNum := PostNum{}
 	json.NewDecoder(r.Body).Decode(&postNum)
-	query := "SELECT p.post_id, p.title, p.body, p.created_at, group_concat(c.category_name, ', ') AS categories, u.username, u.image FROM `posts` p INNER JOIN `posts_categories` pc ON p.post_id = pc.post_id INNER JOIN `categories` c ON c.category_id = pc.category_id INNER JOIN users u ON u.user_id = p.user_id GROUP BY p.post_id, p.title, p.body, p.created_at ORDER BY p.created_at DESC LIMIT ? OFFSET ?"
+	query := "SELECT p.post_id, p.title, p.body, p.created_at, group_concat(c.category_name, ', ') AS categories, u.username, u.image, count(distinct case when l.like = 1 then l.user_id end) as liked , count(distinct case when l.like = 0 then l.user_id end) as disliked FROM `posts` p INNER JOIN `posts_categories` pc ON p.post_id = pc.post_id INNER JOIN `categories` c ON c.category_id = pc.category_id INNER JOIN users u ON u.user_id = p.user_id LEFT JOIN `likes` l ON p.post_id = l.post_id GROUP BY p.post_id, p.title, p.body, p.created_at ORDER BY p.created_at DESC LIMIT ? OFFSET ?"
 	rows,err := DB.Query(query, 10, postNum.PostNum)
 	fmt.Println(postNum, "sdfsdfsd")
 	// fmt.Println(rows)
@@ -33,10 +33,10 @@ func FetchPosts(w http.ResponseWriter, r *http.Request) {
 	posts := []Posts{}
 	for rows.Next() {
 		post := Posts{}
-		rows.Scan(&post.Post_id, &post.Title, &post.Body, &post.Created_at, &post.Categories, &post.Username, &post.Image)
+		rows.Scan(&post.Post_id, &post.Title, &post.Body, &post.Created_at, &post.Categories, &post.Username, &post.Image, &post.Liked, &post.Disliked)
 		posts = append(posts, post)
 	}
-	// fmt.Println(posts)
+	fmt.Println(posts)
 	jsonData, err := json.Marshal(posts)
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(jsonData)
