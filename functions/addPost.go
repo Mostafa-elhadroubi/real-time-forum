@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -22,42 +24,50 @@ func AddPost(w http.ResponseWriter, r *http.Request) {
 	}
 	title := r.FormValue("title")
 	body := r.FormValue("body")
-	categoriesForm := r.Form["categories"]
-	
-	for _, v1 := range categoriesForm{
-		exists := false
-		for _, v2 := range FetchCategories(){
-			if v1 == v2.Name{
-				exists = true
-				break
+	categories := r.Form["categories"]
+
+	title, body = strings.TrimSpace(title), strings.TrimSpace(body)
+	if title == "" || len(title) > 400 || body == "" || len(body) > 5000 {
+		http.Error(w, "Failed to parse form data", http.StatusBadRequest)
+		return
+	}
+	if len(categories) == 0 {
+		categories = []string{"5"}
+	} else {
+		for _, categoryStr := range categories {
+			categoryNum, err := strconv.Atoi(categoryStr)
+			if err != nil {
+				http.Error(w, "can not be converted to intger", http.StatusInternalServerError)
+				return
 			}
-		}
-		if !exists {
-			fmt.Println("category does not exist!")
-			http.Error(w, "category does not exist!", http.StatusBadRequest)
-			return
+			if categoryNum < 1 || categoryNum > 5 {
+				http.Error(w, "category does not exist!!", http.StatusInternalServerError)
+				return
+			}
+
 		}
 	}
-	user_id, err  := GetUserFromSession(w, r)
+
+	user_id, err := GetUserFromSession(w, r)
 	fmt.Println(user_id)
 	if err != nil {
 		fmt.Println("Error in getting user id")
 		http.Error(w, "Error in getting user id", http.StatusInternalServerError)
 		return
 	}
-	query:= "INSERT INTO posts VALUES (NULL, ?, ?, ?, ?)"
+	query := "INSERT INTO posts VALUES (NULL, ?, ?, ?, ?)"
 	res, err := DB.Exec(query, user_id, title, body, time.Now().Unix())
 	if err != nil {
 		http.Error(w, "error in inserting in the DB!", http.StatusInternalServerError)
 		return
 	}
-	post_id, err:= res.LastInsertId()
+	post_id, err := res.LastInsertId()
 	if err != nil {
 		fmt.Println("error in the last index!!")
 		http.Error(w, "error in the last index!!", http.StatusInternalServerError)
 		return
 	}
-	for _, category := range categoriesForm {
+	for _, category := range categories {
 		query := "INSERT INTO posts_categories VALUES (NULL, ?, ?)"
 		_, err = DB.Exec(query, post_id, category)
 		if err != nil {
@@ -68,7 +78,7 @@ func AddPost(w http.ResponseWriter, r *http.Request) {
 	// Printing the received data
 	fmt.Printf("Title: %s\n", title)
 	fmt.Printf("Body: %s\n", body)
-	fmt.Printf("Categories: %v\n", categoriesForm)
+	fmt.Printf("Categories: %v\n", categories)
 	http.Redirect(w, r, "/home", http.StatusFound)
 
 	// Respond with a JSON object (for success)

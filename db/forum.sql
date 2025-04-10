@@ -43,8 +43,8 @@ CREATE TABLE IF NOT EXISTS `categories` (
 CREATE TABLE IF NOT EXISTS `posts_categories` (
     `post_category_id` INTEGER PRIMARY KEY AUTOINCREMENT,
     `post_id` INTEGER NOT NULL,
-    `category_name` TEXT NOT NULL,
-    FOREIGN KEY (`category_name`) REFERENCES `categories` (`category_name`) ON DELETE CASCADE,
+    `category_id` INTEGER NOT NULL,
+    FOREIGN KEY (`category_id`) REFERENCES `categories` (`category_id`) ON DELETE CASCADE,
     FOREIGN KEY (`post_id`) REFERENCES `posts` (`post_id`) ON DELETE CASCADE
 );
 

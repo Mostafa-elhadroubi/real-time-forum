@@ -119,7 +119,7 @@ const updateMessageState = async(id) => {
 
 
 
-const getRightTime = (time) => {
+export const getRightTime = (time) => {
     const dateNow = new Date()
     const timeNow = Math.floor(dateNow.getTime()/1000)
     const date = convertTime(time)

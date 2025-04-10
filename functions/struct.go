@@ -66,25 +66,33 @@ type PageErrors struct {
 	Message string
 }
 type Category struct {
-	Id      int
+	Id   int
 	Name string
 }
 type Posts struct {
-	post_id int
-	title string
-	body string
-	created_at time.Time
+	Post_id    int    `json:"post_id"`
+	Title      string `json:"title"`
+	Body       string `json:"body"`
+	Created_at string `json:"created_at"`
+	Categories string `json:"categories"`
+	Username   string `json:"username"`
+	Image      string `json:"image"`
 }
+type ResponseLike struct {
+	Post_id   int `json:"post_id"`
+	LikeValue int `json:"like"`
+}
+
 var (
-	DB        *sql.DB
-	user      User
-	msg       Messages
-	allUser   []User
+	DB      *sql.DB
+	user    User
+	msg     Messages
+	allUser []User
 	// allMsg    []Messages
-	receiver  Receiver
-	
+	receiver Receiver
+
 	// userState UserStatus
-	upgrader  = websocket.Upgrader{
+	upgrader = websocket.Upgrader{
 		CheckOrigin: func(r *http.Request) bool {
 			return true
 		},

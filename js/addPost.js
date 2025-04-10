@@ -3,23 +3,23 @@ export const add_post = () => {
       <div class="addPostContainer">
         <form>
             <div class="add_category">
-                <input type="checkbox" name="categories" id="art" value="Art">
+                <input type="checkbox" name="categories" id="art" value="1">
                 <label for="art">Art</label>
             </div>
             <div class="category">
-                <input type="checkbox" name="categories" id="events" value="Events">
+                <input type="checkbox" name="categories" id="events" value="2">
                 <label for="events">Events</label>
             </div>
             <div class="category">
-                <input type="checkbox" name="categories" id="buisness" value="Buisness">
+                <input type="checkbox" name="categories" id="buisness" value="3">
                 <label for="buisness">Buisness</label>
             </div>
             <div class="category">
-                <input type="checkbox" name="categories" id="articles" value="Articles">
+                <input type="checkbox" name="categories" id="articles" value="4">
                 <label for="articles">Articles</label>
             </div>
             <div class="category">
-                <input type="checkbox" name="categories" id="others" value="Others">
+                <input type="checkbox" name="categories" id="others" value="5">
                 <label for="others">Others</label>
             </div>
             <div class="content">

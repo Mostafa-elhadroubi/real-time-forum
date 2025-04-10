@@ -18,19 +18,27 @@ func FetchPosts(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error in getting user id", http.StatusInternalServerError)
 		return
 	}
+	fmt.Println("yes it is")
 	postNum := PostNum{}
 	json.NewDecoder(r.Body).Decode(&postNum)
-	query := "SELECT post_id, title, body, created_at FROM `posts` INNER JOIN `categories` ON posts.post_id = categories.post_id ORDER bY created_at DESC LIMIT ? OFFSET ?"
-	rows,err := DB.Query(query, 10, postNum)
+	query := "SELECT p.post_id, p.title, p.body, p.created_at, group_concat(c.category_name, ', ') AS categories, u.username, u.image FROM `posts` p INNER JOIN `posts_categories` pc ON p.post_id = pc.post_id INNER JOIN `categories` c ON c.category_id = pc.category_id INNER JOIN users u ON u.user_id = p.user_id GROUP BY p.post_id, p.title, p.body, p.created_at ORDER BY p.created_at DESC LIMIT ? OFFSET ?"
+	rows,err := DB.Query(query, 10, postNum.PostNum)
+	fmt.Println(postNum, "sdfsdfsd")
+	// fmt.Println(rows)
 	if err != nil {
-		http.Error(w, "error in inserting in the DB!", http.StatusInternalServerError)
+		http.Error(w, "error in selecting in the DB!", http.StatusInternalServerError)
 		return
 	}
+	fmt.Println("nesar")
 	posts := []Posts{}
 	for rows.Next() {
 		post := Posts{}
-		rows.Scan(&post.post_id, &post.title, &post.body, &post.created_at)
+		rows.Scan(&post.Post_id, &post.Title, &post.Body, &post.Created_at, &post.Categories, &post.Username, &post.Image)
 		posts = append(posts, post)
 	}
-	fmt.Println(posts)
+	// fmt.Println(posts)
+	jsonData, err := json.Marshal(posts)
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(jsonData)
+	// json.NewEncoder(w).Encode(posts)
 } 

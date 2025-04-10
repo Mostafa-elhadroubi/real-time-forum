@@ -65,7 +65,7 @@ const fetchOnlineUsers = async() => {
         const response = await fetch('/getOnlineUsers')
         console.log(response)
         const onlineUsers = await response.json()
-        console.log("online users",onlineUsers)
+        // console.log("online users",onlineUsers)
         onlineUsers.forEach(userId => {
             updateUserStatus(userId, true)
         })
