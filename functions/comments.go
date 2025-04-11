@@ -1,0 +1,44 @@
+package functions
+
+import (
+	"encoding/json"
+	"fmt"
+	"net/http"
+)
+
+func Comments(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	_, err := GetUserFromSession(w, r)
+	if err != nil {
+		fmt.Println("Error in getting user id")
+		http.Error(w, "Error in getting user id", http.StatusInternalServerError)
+		return
+	}
+	fmt.Println("comment")
+	comment := ResponseComment{}
+	err = json.NewDecoder(r.Body).Decode(&comment)
+	if err != nil {
+		fmt.Println("JSON decode error:", err)
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+	fmt.Println(comment)
+	query := "select c.body, c.created_at, u.username, u.image from `comments` c inner join `users` u on c.user_id = u.user_id where c.post_id = ? LIMIT ? OFFSET ?"
+	rows, err := DB.Query(query, comment.Post_id, 10, comment.CommentNum)
+	if err != nil {
+		http.Error(w, "error in selecting comment", http.StatusBadRequest)
+		return
+	}
+	dataComment := []CommentData{}
+	for rows.Next() {
+		comment := CommentData{}
+		rows.Scan(&comment.Body, &comment.Created_at, &comment.Username, &comment.Image)
+		dataComment = append(dataComment, comment)
+	}
+	json.NewEncoder(w).Encode(dataComment)
+	w.Header().Set("Content-Type","application/json")
+	fmt.Println(dataComment)
+}

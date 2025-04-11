@@ -37,26 +37,12 @@ const fetchPosts = async() => {
                <div class="btns">
                     <p class="like"><span>${item.liked}</span><i class="fa-regular fa-thumbs-up"></i></p>
                     <p class="dislike"><span>${item.disliked}</span><i class="fa-regular fa-thumbs-down"></i></p>
-                    <p>12<i class="fa-regular fa-comment"></i></p>
+                    <p class="commentPost">12<i class="fa-regular fa-comment"></i></p>
                </div>
                <div class="comments-writeComment">
                 <div class="comments">
-                    <div class="comment">
-                        <img src="" alt="profile image">
-                        <div class="username-time">
-                            <p>@username</p>
-                            <p>25 min ago</p>
-                        </div>
-                        <div class="commentBody">my first comment</div>
-                    </div>
-                    <div class="comment">
-                        <img src="" alt="profile image">
-                        <div class="username-time">
-                            <p>@username</p>
-                            <p> 1h ago</p>
-                        </div>
-                        <div class="commentBody">my second comment</div>
-                    </div>
+                    
+                   
                 </div>
                 <div class="comment-btn">
                     <textarea name="comment" id=""></textarea>
@@ -71,6 +57,40 @@ const fetchPosts = async() => {
     console.log(likes, dislikes);
     likedOrDislikedPost(likes, dislikes, "1", 1)
     likedOrDislikedPost(dislikes, likes, "0", 0)
+    const commentPost = document.querySelector('.commentPost')
+    commentPost.addEventListener('click', async() => {
+        fetchComment(commentPost)
+    })
+    
+
+}
+const fetchComment = async(commentPost) => {
+    let post_id = parseInt(commentPost.parentElement.parentElement.getAttribute('id'))
+    console.log(commentPost.parentElement.parentElement.getAttribute('id'));
+    const commentResponse = await fetch("/api/comment", {
+        method: 'POST',
+        headers: {
+            'Content-Type' : 'application/json'
+        },
+        body: JSON.stringify({post_id: post_id})
+    })
+    console.log(commentResponse);
+    let data = await commentResponse.json()
+    console.log(data);
+    const comments = document.querySelector('.comments')
+    comments.innerHTML = ''
+    data.forEach(item => {
+        comments.innerHTML += `
+            <div class="comment">
+                    <img src="../images/${item.image}" style="width:40px" alt="profile image">
+                    <div class="username-time">
+                        <p>@${item.username}</p>
+                        <p>${getRightTime(item.created_at)}</p>
+                    </div>
+                    <div class="commentBody">${item.body}</div>
+                </div>
+        `
+    })
 }
 export const home = () => {
     const home = `

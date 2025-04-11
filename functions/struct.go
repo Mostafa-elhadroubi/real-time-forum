@@ -39,6 +39,11 @@ type Receiver struct {
 type PostNum struct {
 	PostNum int `json:"postNum"`
 }
+type ResponseComment struct {
+	CommentNum int `json:"commentNum"`
+	Post_id    int `json:"post_id"`
+}
+
 type WsMessages struct {
 	Sender_id   int    `json:"senderId"`
 	Receiver_id int    `json:"receiverId"`
@@ -70,16 +75,22 @@ type Category struct {
 	Name string
 }
 type Posts struct {
-	Post_id    int    `json:"post_id"`
-	Title      string `json:"title"`
-	Body       string `json:"body"`
-	Created_at string `json:"created_at"`
-	Categories string `json:"categories"`
+	Post_id       int    `json:"post_id"`
+	Title         string `json:"title"`
+	Body          string `json:"body"`
+	Created_at    string `json:"created_at"`
+	Categories    string `json:"categories"`
+	Username      string `json:"username"`
+	Image         string `json:"image"`
+	Liked         int    `json:"liked"`
+	Disliked      int    `json:"disliked"`
+	User_reaction string `json:"user_reaction"`
+}
+type CommentData struct {
 	Username   string `json:"username"`
 	Image      string `json:"image"`
-	Liked int `json:"liked"`
-	Disliked int `json:"disliked"`
-	User_reaction string `json:"user_reaction"`
+	Body       string `json:"body"`
+	Created_at string `json:"created_at"`
 }
 type ResponseLike struct {
 	Post_id   int `json:"post_id"`
