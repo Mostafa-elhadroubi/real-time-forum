@@ -11,7 +11,7 @@ func Likes(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	
+	fmt.Println("this like")
 	resLike := ResponseLike{}
 	err := json.NewDecoder(r.Body).Decode(&resLike)
 	if err != nil {
@@ -26,7 +26,7 @@ func Likes(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	user_id, err := GetUserFromSession(w, r)
-	fmt.Println(user_id)
+	fmt.Println(user_id, "likes")
 	query := "SELECT like FROM likes WHERE user_id = ? AND comment_id ISNULL AND post_id = ?"
 	row := DB.QueryRow(query, user_id, resLike.Post_id)
 	liked := false

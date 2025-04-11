@@ -79,6 +79,7 @@ type Posts struct {
 	Image      string `json:"image"`
 	Liked int `json:"liked"`
 	Disliked int `json:"disliked"`
+	User_reaction string `json:"user_reaction"`
 }
 type ResponseLike struct {
 	Post_id   int `json:"post_id"`
