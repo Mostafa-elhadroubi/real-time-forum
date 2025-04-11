@@ -69,91 +69,8 @@ const fetchPosts = async() => {
     const likes = document.querySelectorAll('.like')
     const dislikes = document.querySelectorAll('.dislike')
     console.log(likes, dislikes);
-    likes.forEach((like, index) => {
-
-        
-        
-        if (dataResponse[index].user_reaction == '1') {
-            like.childNodes[1].classList.remove("fa-regular")
-            like.childNodes[1].classList.add("fa-solid")
-        }
-        like.addEventListener('click', async() => {
-            console.log(like.parentElement.parentElement);
-            
-            let post_id = parseInt(like.parentElement.parentElement.getAttribute('id'))
-            console.log(post_id);
-            
-            const likeValue = 1
-            const likeResponse = await fetch("/api/likes", {
-                method: 'POST',
-                headers: {'Content-Type' : 'application/json'},
-                body: JSON.stringify({post_id: post_id, like : likeValue})
-            }) 
-            console.log(likeResponse);
-            if(like.childNodes[1].classList.contains("fa-solid")){
-                if (parseInt(like.childNodes[0].textContent) != 0) {
-                    like.childNodes[0].innerHTML = parseInt(like.childNodes[0].textContent) - 1
-                    like.childNodes[1].classList.remove("fa-solid")
-                    like.childNodes[1].classList.add("fa-regular")
-                }
-            } else {
-                like.childNodes[0].innerHTML = parseInt(like.childNodes[0].textContent) + 1
-                like.childNodes[1].classList.remove("fa-regular")
-                like.childNodes[1].classList.add("fa-solid")
-            }
-            console.log(dislikes[index].childNodes[1]);
-            if (dislikes[index].childNodes[1].classList.contains("fa-solid")) {
-                console.log(dislikes[index].childNodes[0]);
-                
-                dislikes[index].childNodes[0].innerHTML = parseInt(dislikes[index].childNodes[0].textContent) -1
-                dislikes[index].childNodes[1].classList.remove("fa-solid")
-                dislikes[index].childNodes[1].classList.add("fa-regular")  
-            }
-            
-                              
-        })
-    })
-    dislikes.forEach((dislike, index) => {
-        if (dataResponse[index].user_reaction == '0') {
-            dislike.childNodes[1].classList.remove("fa-regular")
-            dislike.childNodes[1].classList.add("fa-solid")
-        }
-        
-        
-        // console.log(likes[index].childNodes[1]);
-        dislike.addEventListener('click', async() => {
-            let post_id = parseInt(dislike.parentElement.parentElement.getAttribute('id'))
-            const dislikeValue = 0
-            const likeResponse = await fetch("/api/likes", {
-                method: 'POST',
-                headers: {'Content-Type' : 'application/json'},
-                body: JSON.stringify({post_id: post_id, like : dislikeValue})
-            }) 
-            console.log(likeResponse);
-            console.log(dislike);
-            
-            if(dislike.childNodes[1].classList.contains("fa-solid")){
-                if (parseInt(dislike.childNodes[0].textContent) != 0) {
-                    dislike.childNodes[0].innerHTML = parseInt(dislike.childNodes[0].textContent) - 1
-                    dislike.childNodes[1].classList.remove("fa-solid")
-                    dislike.childNodes[1].classList.add("fa-regular")
-                }
-            } else {
-                dislike.childNodes[0].innerHTML = parseInt(dislike.childNodes[0].textContent) + 1
-                dislike.childNodes[1].classList.remove("fa-regular")
-                dislike.childNodes[1].classList.add("fa-solid")
-            }
-
-            if (likes[index].childNodes[1].classList.contains("fa-solid")) {
-                likes[index].childNodes[0].innerHTML = parseInt(likes[index].childNodes[0].textContent) -1
-                likes[index].childNodes[1].classList.remove("fa-solid")
-                likes[index].childNodes[1].classList.add("fa-regular")
-            }
-            
-        })
-    })
-    
-    
+    likedOrDislikedPost(likes, dislikes, "1", 1)
+    likedOrDislikedPost(dislikes, likes, "0", 0)
 }
 export const home = () => {
     const home = `
@@ -175,13 +92,41 @@ export const home = () => {
     ${postBody}
     `
     fetchPosts()
-    // likeOrDislike()
 }
 
-// const likeOrDislike = () => {
-//     const likes = document.querySelectorAll('.like')
-//     const dislikes = document.querySelectorAll('.dislike')
-//     console.log(likes, dislikes);
-    
-// }
+const likedOrDislikedPost = (likes, dislikes, user_reaction, reactionValue) => {
+    likes.forEach((item, index) => {
+        if (dataResponse[index].user_reaction == user_reaction) {
+            item.childNodes[1].classList.remove("fa-regular")
+            item.childNodes[1].classList.add("fa-solid")
+        }
+        item.addEventListener('click', async() => {            
+            let post_id = parseInt(item.parentElement.parentElement.getAttribute('id'))
+            const likeResponse = await fetch("/api/likes", {
+                method: 'POST',
+                headers: {'Content-Type' : 'application/json'},
+                body: JSON.stringify({post_id: post_id, like : reactionValue})
+            }) 
+            console.log(likeResponse);
+            if(item.childNodes[1].classList.contains("fa-solid")){
+                if (parseInt(item.childNodes[0].textContent) != 0) {
+                    item.childNodes[0].innerHTML = parseInt(item.childNodes[0].textContent) - 1
+                    item.childNodes[1].classList.remove("fa-solid")
+                    item.childNodes[1].classList.add("fa-regular")
+                }
+            } else {
+                item.childNodes[0].innerHTML = parseInt(item.childNodes[0].textContent) + 1
+                item.childNodes[1].classList.remove("fa-regular")
+                item.childNodes[1].classList.add("fa-solid")
+            }
+            if (dislikes[index].childNodes[1].classList.contains("fa-solid")) {
+                console.log(dislikes[index].childNodes[0]);
+                
+                dislikes[index].childNodes[0].innerHTML = parseInt(dislikes[index].childNodes[0].textContent) -1
+                dislikes[index].childNodes[1].classList.remove("fa-solid")
+                dislikes[index].childNodes[1].classList.add("fa-regular")  
+            }                               
+        })
+    })
+}
 
