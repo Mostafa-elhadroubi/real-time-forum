@@ -21,7 +21,7 @@ func FetchPosts(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("yes it is")
 	postNum := PostNum{}
 	json.NewDecoder(r.Body).Decode(&postNum)
-	query := "SELECT p.post_id, p.title, p.body, p.created_at, group_concat(c.category_name, ', ') AS categories, u.username, u.image, count(distinct case when l.like = 1 then l.user_id end) as liked , count(distinct case when l.like = 0 then l.user_id end) as disliked, MAX(CASE WHEN l.user_id = ? THEN l.like END) AS user_reaction FROM `posts` p INNER JOIN `posts_categories` pc ON p.post_id = pc.post_id INNER JOIN `categories` c ON c.category_id = pc.category_id INNER JOIN users u ON u.user_id = p.user_id LEFT JOIN `likes` l ON p.post_id = l.post_id GROUP BY p.post_id, p.title, p.body, p.created_at ORDER BY p.created_at DESC LIMIT ? OFFSET ?"
+	query := "SELECT p.post_id, p.title, p.body, p.created_at, (SELECT GROUP_CONCAT(c.category_name, ', ') FROM posts_categories pc JOIN categories c ON pc.category_id = c.category_id WHERE pc.post_id = p.post_id) AS categories, u.username, u.image, COUNT(DISTINCT CASE WHEN l.like = 1 THEN l.user_id END) AS liked,COUNT(DISTINCT CASE WHEN l.like = 0 THEN l.user_id END) AS disliked,MAX(CASE WHEN l.user_id = ? THEN l.like END) AS user_reaction, COUNT(DISTINCT cm.comment_id) AS totalcomments FROM `posts` p INNER JOIN users u ON u.user_id = p.user_id LEFT JOIN `likes` l ON p.post_id = l.post_id LEFT JOIN `comments` cm ON cm.post_id = p.post_id GROUP BY p.post_id, p.title, p.body, p.created_at, u.username, u.image ORDER BY p.created_at DESC LIMIT ? OFFSET ?"
 	rows,err := DB.Query(query, user_id, 10, postNum.PostNum)
 	fmt.Println(postNum, "sdfsdfsd")
 	// fmt.Println(rows)
@@ -33,7 +33,7 @@ func FetchPosts(w http.ResponseWriter, r *http.Request) {
 	posts := []Posts{}
 	for rows.Next() {
 		post := Posts{}
-		rows.Scan(&post.Post_id, &post.Title, &post.Body, &post.Created_at, &post.Categories, &post.Username, &post.Image, &post.Liked, &post.Disliked, &post.User_reaction)
+		rows.Scan(&post.Post_id, &post.Title, &post.Body, &post.Created_at, &post.Categories, &post.Username, &post.Image, &post.Liked, &post.Disliked, &post.User_reaction, &post.Totalcomments)
 		posts = append(posts, post)
 	}
 	fmt.Println(posts)

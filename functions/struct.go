@@ -85,16 +85,21 @@ type Posts struct {
 	Liked         int    `json:"liked"`
 	Disliked      int    `json:"disliked"`
 	User_reaction string `json:"user_reaction"`
+	Totalcomments int    `json:"totalcomments"`
 }
 type CommentData struct {
-	Username   string `json:"username"`
-	Image      string `json:"image"`
-	Body       string `json:"body"`
-	Created_at string `json:"created_at"`
+	Comment_id      int    `json:"comment_id"`
+	Username        string `json:"username"`
+	Image           string `json:"image"`
+	Body            string `json:"body"`
+	Created_at      string `json:"created_at"`
+	LikedComment    int    `json:"likedComment"`
+	DislikedComment int    `json:"dislikedComment"`
 }
 type ResponseLike struct {
-	Post_id   int `json:"post_id"`
-	LikeValue int `json:"like"`
+	Post_id    int `json:"post_id"`
+	LikeValue  int `json:"like"`
+	Comment_id int `json:"comment_id"`
 }
 
 var (

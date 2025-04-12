@@ -2,6 +2,7 @@ import { getRightTime } from "./fetchUsers.js";
 import { header } from "./header.js"
 let postNum = 0
 let dataResponse = []
+let commentData = []
 const fetchPosts = async() => {
     const postResponse = await fetch("/api/posts", {
         method: 'POST',
@@ -37,7 +38,7 @@ const fetchPosts = async() => {
                <div class="btns">
                     <p class="like"><span>${item.liked}</span><i class="fa-regular fa-thumbs-up"></i></p>
                     <p class="dislike"><span>${item.disliked}</span><i class="fa-regular fa-thumbs-down"></i></p>
-                    <p class="commentPost">12<i class="fa-regular fa-comment"></i></p>
+                    <p class="commentPost"><span></span><i class="fa-regular fa-comment"></i></p>
                </div>
                <div class="comments-writeComment">
                 <div class="comments">
@@ -48,6 +49,7 @@ const fetchPosts = async() => {
                     <textarea name="comment" id=""></textarea>
                     <button>send</button>
                 </div>
+                
                </div>
             </div>
         `
@@ -77,19 +79,97 @@ const fetchComment = async(commentPost) => {
     console.log(commentResponse);
     let data = await commentResponse.json()
     console.log(data);
+    commentData = data
     const comments = document.querySelector('.comments')
     comments.innerHTML = ''
     data.forEach(item => {
         comments.innerHTML += `
-            <div class="comment">
-                    <img src="../images/${item.image}" style="width:40px" alt="profile image">
-                    <div class="username-time">
-                        <p>@${item.username}</p>
-                        <p>${getRightTime(item.created_at)}</p>
-                    </div>
-                    <div class="commentBody">${item.body}</div>
+            <div class="comment" id="${item.comment_id}">
+                <img src="../images/${item.image}" style="width:40px" alt="profile image">
+                <div class="username-time">
+                    <p>@${item.username}</p>
+                    <p>${getRightTime(item.created_at)}</p>
                 </div>
+                <div class="commentBody">${item.body}</div>
+                <div class="btnsComment">
+                    <p class="likeComment"><span>${item.likedComment}</span><i class="fa-regular fa-thumbs-up"></i></p>
+                    <p class="dislikeComment"><span>${item.dislikedComment}</span><i class="fa-regular fa-thumbs-down"></i></p>
+                </div>
+            </div>
         `
+    })
+    const likedComment = document.querySelectorAll('.likeComment')
+    const dislikedComment = document.querySelectorAll('.dislikeComment')
+    console.log(post_id, "dfgdfg");
+    likedOrDislikedComment(likedComment, dislikedComment, "1", 1)
+    likedOrDislikedComment(dislikedComment, likedComment, "0", 0)
+    // likedComment.forEach((item, index) => {
+    //     item.addEventListener('click', async() => {
+    //         let comment_id = parseInt(item.parentElement.parentElement.getAttribute('id'))
+    //         console.log(comment_id, "true");
+    //         const reactionValue = 1
+    //         const likeResponse = await fetch("/api/likesComments", {
+    //             method: 'POST',
+    //             headers: {'Content-Type' : 'application/json'},
+    //             body: JSON.stringify({comment_id: comment_id, like : reactionValue})
+    //         }) 
+    //         console.log(likeResponse);
+    //         if(item.childNodes[1].classList.contains("fa-solid")){
+    //             if (parseInt(item.childNodes[0].textContent) != 0) {
+    //                 item.childNodes[0].innerHTML = parseInt(item.childNodes[0].textContent) - 1
+    //                 item.childNodes[1].classList.remove("fa-solid")
+    //                 item.childNodes[1].classList.add("fa-regular")
+    //             }
+    //         } else {
+    //             item.childNodes[0].innerHTML = parseInt(item.childNodes[0].textContent) + 1
+    //             item.childNodes[1].classList.remove("fa-regular")
+    //             item.childNodes[1].classList.add("fa-solid")
+    //         }
+    //         if (dislikes[index].childNodes[1].classList.contains("fa-solid")) {
+    //             console.log(dislikes[index].childNodes[0]);
+                
+    //             dislikes[index].childNodes[0].innerHTML = parseInt(dislikes[index].childNodes[0].textContent) -1
+    //             dislikes[index].childNodes[1].classList.remove("fa-solid")
+    //             dislikes[index].childNodes[1].classList.add("fa-regular")  
+    //         } 
+    //     })
+    // })
+}
+const likedOrDislikedComment = async(likes, dislikes, user_reaction, reactionValue) => {
+    likes.forEach((item, index) => {
+        if (commentData[index].user_reaction == user_reaction) {
+            item.childNodes[1].classList.remove("fa-regular")
+            item.childNodes[1].classList.add("fa-solid")
+        }
+        item.addEventListener('click', async() => {            
+            let comment_id = parseInt(item.parentElement.parentElement.getAttribute('id'))
+            console.log(comment_id);
+            
+            const likeResponse = await fetch("/api/likesComments", {
+                method: 'POST',
+                headers: {'Content-Type' : 'application/json'},
+                body: JSON.stringify({comment_id: comment_id, like : reactionValue})
+            }) 
+            console.log(likeResponse);
+            if(item.childNodes[1].classList.contains("fa-solid")){
+                if (parseInt(item.childNodes[0].textContent) != 0) {
+                    item.childNodes[0].innerHTML = parseInt(item.childNodes[0].textContent) - 1
+                    item.childNodes[1].classList.remove("fa-solid")
+                    item.childNodes[1].classList.add("fa-regular")
+                }
+            } else {
+                item.childNodes[0].innerHTML = parseInt(item.childNodes[0].textContent) + 1
+                item.childNodes[1].classList.remove("fa-regular")
+                item.childNodes[1].classList.add("fa-solid")
+            }
+            if (dislikes[index].childNodes[1].classList.contains("fa-solid")) {
+                console.log(dislikes[index].childNodes[0]);
+                
+                dislikes[index].childNodes[0].innerHTML = parseInt(dislikes[index].childNodes[0].textContent) -1
+                dislikes[index].childNodes[1].classList.remove("fa-solid")
+                dislikes[index].childNodes[1].classList.add("fa-regular")  
+            }                               
+        })
     })
 }
 export const home = () => {

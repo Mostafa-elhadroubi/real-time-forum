@@ -26,7 +26,7 @@ func Comments(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Println(comment)
-	query := "select c.body, c.created_at, u.username, u.image from `comments` c inner join `users` u on c.user_id = u.user_id where c.post_id = ? LIMIT ? OFFSET ?"
+	query := "select c.comment_id, c.body, c.created_at, u.username, u.image, count(distinct case when l.like = 1 then l.user_id end) as likedComment, count(distinct case when l.like = 0 then l.user_id end) as dislikedComment from `comments` c inner join `users` u on c.user_id = u.user_id left join `likes` l on l.comment_id = c.comment_id where c.post_id = ? group by c.comment_id LIMIT ? OFFSET ?"
 	rows, err := DB.Query(query, comment.Post_id, 10, comment.CommentNum)
 	if err != nil {
 		http.Error(w, "error in selecting comment", http.StatusBadRequest)
@@ -35,7 +35,7 @@ func Comments(w http.ResponseWriter, r *http.Request) {
 	dataComment := []CommentData{}
 	for rows.Next() {
 		comment := CommentData{}
-		rows.Scan(&comment.Body, &comment.Created_at, &comment.Username, &comment.Image)
+		rows.Scan(&comment.Comment_id, &comment.Body, &comment.Created_at, &comment.Username, &comment.Image, &comment.LikedComment, &comment.DislikedComment)
 		dataComment = append(dataComment, comment)
 	}
 	json.NewEncoder(w).Encode(dataComment)
