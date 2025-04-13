@@ -42,7 +42,7 @@ export const updateUserStatus = (userId, isOnline) => {
             const status = userBox.querySelector('.connected')
             if(status) {
                 // status.textContent = isOnline ? 'Online' : 'Offline'
-                status.style.backgroundColor = isOnline ? 'green' : 'blue'
+                status.style.backgroundColor = isOnline ? 'green' : 'green'
             }
         }
     })

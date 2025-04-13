@@ -38,7 +38,7 @@ const fetchPosts = async() => {
                <div class="btns">
                     <p class="like"><span>${item.liked}</span><i class="fa-regular fa-thumbs-up"></i></p>
                     <p class="dislike"><span>${item.disliked}</span><i class="fa-regular fa-thumbs-down"></i></p>
-                    <p class="commentPost"><span></span><i class="fa-regular fa-comment"></i></p>
+                    <p class="commentPost"><span>${item.totalComments}</span><i class="fa-regular fa-comment"></i></p>
                </div>
                <div class="comments-writeComment">
                 <div class="comments">

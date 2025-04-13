@@ -75,17 +75,17 @@ type Category struct {
 	Name string
 }
 type Posts struct {
-	Post_id       int    `json:"post_id"`
-	Title         string `json:"title"`
-	Body          string `json:"body"`
-	Created_at    string `json:"created_at"`
-	Categories    string `json:"categories"`
-	Username      string `json:"username"`
-	Image         string `json:"image"`
-	Liked         int    `json:"liked"`
-	Disliked      int    `json:"disliked"`
+	Post_id       int            `json:"post_id"`
+	Title         string         `json:"title"`
+	Body          string         `json:"body"`
+	Created_at    string         `json:"created_at"`
+	Categories    string         `json:"categories"`
+	Username      string         `json:"username"`
+	Image         string         `json:"image"`
+	Liked         int            `json:"liked"`
+	Disliked      int            `json:"disliked"`
 	User_reaction string `json:"user_reaction"`
-	Totalcomments int    `json:"totalcomments"`
+	TotalComments int            `json:"totalComments"`
 }
 type CommentData struct {
 	Comment_id      int    `json:"comment_id"`
