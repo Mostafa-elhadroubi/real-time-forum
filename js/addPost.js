@@ -49,6 +49,11 @@ export const add_post = () => {
             
         })
         console.log(response);
+        if(!response.ok) {
+            const errorHTML = await response.text();
+            document.body.innerHTML = errorHTML;
+            return;
+        }
         if (response.redirected) {
             window.location.href = response.url
         }

@@ -12,7 +12,8 @@ export const fetchUsers = async(chatBox, messageContainer, socket) =>  {
             return;
         }
         if (!response.ok) {
-            console.log("Error fetching users", response.statusText);
+            const errorHTML = await response.text();
+            document.body.innerHTML = errorHTML;
             return;
         }
 
@@ -111,6 +112,11 @@ const updateMessageState = async(id) => {
             body: JSON.stringify({userId: id})
         })
         console.log(response)
+        if(!response.ok) {
+            const errorHTML = await response.text();
+            document.body.innerHTML = errorHTML;
+            return;
+        }
     }catch(error) {
         console.log("statemeesage", error)
     }

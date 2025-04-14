@@ -61,6 +61,11 @@ const submitsignupForm = (emailError, passwordError) => {
         })
         .then(response => {
             console.log(response)
+            if(!response.ok) {
+                const errorHTML =  response.text();
+                document.body.innerHTML = errorHTML;
+                return;
+            }
             if(response.redirected) {
                 window.location.href = response.url
             }

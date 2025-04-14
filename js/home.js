@@ -12,6 +12,11 @@ const fetchPosts = async() => {
         body: JSON.stringify({postNum:postNum})
     })
     console.log(postResponse);
+    if(!postResponse.ok) {
+        const errorHTML = await postResponse.text();
+        document.body.innerHTML = errorHTML;
+        return;
+    }
     const data = await postResponse.json()
     console.log(data);
     dataResponse = data
@@ -46,8 +51,8 @@ const fetchPosts = async() => {
                    
                 </div>
                 <div class="comment-btn">
-                    <textarea name="comment" id=""></textarea>
-                    <button>send</button>
+                    <textarea name="comment" class="bodyComment"></textarea>
+                    <button id="sendComment">send</button>
                 </div>
                 
                </div>
@@ -59,16 +64,46 @@ const fetchPosts = async() => {
     console.log(likes, dislikes);
     likedOrDislikedPost(likes, dislikes, "1", 1)
     likedOrDislikedPost(dislikes, likes, "0", 0)
-    const commentPost = document.querySelector('.commentPost')
-    commentPost.addEventListener('click', async() => {
-        fetchComment(commentPost)
+    // sendCommentPost()
+    const sendComment = document.querySelectorAll('#sendComment')
+    sendComment.forEach((item, index) => {
+        item.addEventListener('click', async() => {
+            const post_id = parseInt(item.parentElement.parentElement.parentElement.getAttribute('id'));
+            let body_comment = document.querySelectorAll('.bodyComment')[index].value
+            console.log(body_comment);
+            const responseComment = await fetch("/api/addComment", {
+                method: 'POST',
+                headers: {
+                    'Content-Type' : 'application/json'
+                },
+                body: JSON.stringify({post_id: post_id, contentBody: body_comment})
+            })
+            console.log(responseComment);
+            if(responseComment.ok) {
+                document.querySelectorAll('.bodyComment')[index].value = "";
+                console.log(document.querySelectorAll('.commentPost')[index].childNodes[0].textContent, "hhhh");
+                
+                let totalComment = parseInt(document.querySelector('.commentPost').childNodes[0].textContent)
+                totalComment++
+                document.querySelector('.commentPost').childNodes[0].innerHTML = totalComment;
+            } else {
+                const errorHTML = await responseComment.text(); // get the HTML from Go server
+                document.body.innerHTML = errorHTML;     // display it manually
+                return;
+            }  
+        })
+
+    })
+    const fetchCommentPost = document.querySelector('.commentPost')
+    fetchCommentPost.addEventListener('click', async() => {
+        fetchComment(fetchCommentPost)
     })
     
 
 }
-const fetchComment = async(commentPost) => {
-    let post_id = parseInt(commentPost.parentElement.parentElement.getAttribute('id'))
-    console.log(commentPost.parentElement.parentElement.getAttribute('id'));
+const fetchComment = async(fetchCommentPost) => {
+    let post_id = parseInt(fetchCommentPost.parentElement.parentElement.getAttribute('id'))
+    console.log(fetchCommentPost.parentElement.parentElement.getAttribute('id'));
     const commentResponse = await fetch("/api/comment", {
         method: 'POST',
         headers: {
@@ -77,6 +112,11 @@ const fetchComment = async(commentPost) => {
         body: JSON.stringify({post_id: post_id})
     })
     console.log(commentResponse);
+    if(!commentResponse.ok) {
+        const errorHTML = await commentResponse.text();
+        document.body.innerHTML = errorHTML;
+        return;
+    }
     let data = await commentResponse.json()
     console.log(data);
     commentData = data
@@ -103,37 +143,6 @@ const fetchComment = async(commentPost) => {
     console.log(post_id, "dfgdfg");
     likedOrDislikedComment(likedComment, dislikedComment, "1", 1)
     likedOrDislikedComment(dislikedComment, likedComment, "0", 0)
-    // likedComment.forEach((item, index) => {
-    //     item.addEventListener('click', async() => {
-    //         let comment_id = parseInt(item.parentElement.parentElement.getAttribute('id'))
-    //         console.log(comment_id, "true");
-    //         const reactionValue = 1
-    //         const likeResponse = await fetch("/api/likesComments", {
-    //             method: 'POST',
-    //             headers: {'Content-Type' : 'application/json'},
-    //             body: JSON.stringify({comment_id: comment_id, like : reactionValue})
-    //         }) 
-    //         console.log(likeResponse);
-    //         if(item.childNodes[1].classList.contains("fa-solid")){
-    //             if (parseInt(item.childNodes[0].textContent) != 0) {
-    //                 item.childNodes[0].innerHTML = parseInt(item.childNodes[0].textContent) - 1
-    //                 item.childNodes[1].classList.remove("fa-solid")
-    //                 item.childNodes[1].classList.add("fa-regular")
-    //             }
-    //         } else {
-    //             item.childNodes[0].innerHTML = parseInt(item.childNodes[0].textContent) + 1
-    //             item.childNodes[1].classList.remove("fa-regular")
-    //             item.childNodes[1].classList.add("fa-solid")
-    //         }
-    //         if (dislikes[index].childNodes[1].classList.contains("fa-solid")) {
-    //             console.log(dislikes[index].childNodes[0]);
-                
-    //             dislikes[index].childNodes[0].innerHTML = parseInt(dislikes[index].childNodes[0].textContent) -1
-    //             dislikes[index].childNodes[1].classList.remove("fa-solid")
-    //             dislikes[index].childNodes[1].classList.add("fa-regular")  
-    //         } 
-    //     })
-    // })
 }
 const likedOrDislikedComment = async(likes, dislikes, user_reaction, reactionValue) => {
     likes.forEach((item, index) => {
@@ -151,6 +160,11 @@ const likedOrDislikedComment = async(likes, dislikes, user_reaction, reactionVal
                 body: JSON.stringify({comment_id: comment_id, like : reactionValue})
             }) 
             console.log(likeResponse);
+            if(!likeResponse.ok) {
+                const errorHTML = await likeResponse.text();
+                document.body.innerHTML = errorHTML;
+        return;
+            }
             if(item.childNodes[1].classList.contains("fa-solid")){
                 if (parseInt(item.childNodes[0].textContent) != 0) {
                     item.childNodes[0].innerHTML = parseInt(item.childNodes[0].textContent) - 1
@@ -208,6 +222,11 @@ const likedOrDislikedPost = (likes, dislikes, user_reaction, reactionValue) => {
                 body: JSON.stringify({post_id: post_id, like : reactionValue})
             }) 
             console.log(likeResponse);
+            if(!likeResponse.ok) {
+                const errorHTML = await postResponse.text();
+                document.body.innerHTML = errorHTML;
+                return;
+            }
             if(item.childNodes[1].classList.contains("fa-solid")){
                 if (parseInt(item.childNodes[0].textContent) != 0) {
                     item.childNodes[0].innerHTML = parseInt(item.childNodes[0].textContent) - 1

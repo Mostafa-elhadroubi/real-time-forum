@@ -100,6 +100,7 @@ type ResponseLike struct {
 	Post_id    int `json:"post_id"`
 	LikeValue  int `json:"like"`
 	Comment_id int `json:"comment_id"`
+	CommentBody string `json:"contentBody"`
 }
 
 var (

@@ -14,7 +14,8 @@ export const fetchMessages = async(receiverId, msgNbr, senderId, messageBox, mes
         });
         console.log("fetch", msgNbr, receiverId)
         if (!response.ok) {
-            alert("Error in fetching messages!");
+            const errorHTML = await response.text();
+            document.body.innerHTML = errorHTML;
             return;
         }
 

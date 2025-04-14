@@ -41,6 +41,11 @@ const submitLoginForm = () => {
     })
     .then(res => {
         console.log(res)
+        if(!res.ok) {
+            const errorHTML = res.text();
+            document.body.innerHTML = errorHTML;
+            return;
+        }
         if(res.redirected) {
             window.location.href = res.url
         }
