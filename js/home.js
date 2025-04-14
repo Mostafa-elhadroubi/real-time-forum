@@ -37,9 +37,11 @@ const fetchPosts = async() => {
                     <p>${item.categories}</p>
 
                </div>
+               <h3 class="h3">Title:</h3>
                <div class="title">${item.title}</div>
                
-               <div class="body">${item.body}</div>
+               <h3 class="h3">Body:</h3>
+               <div class="postBody">${item.body}</div>
                <div class="btns">
                     <p class="like"><span>${item.liked}</span><i class="fa-regular fa-thumbs-up"></i></p>
                     <p class="dislike"><span>${item.disliked}</span><i class="fa-regular fa-thumbs-down"></i></p>
@@ -57,6 +59,7 @@ const fetchPosts = async() => {
                 
                </div>
             </div>
+            <hr>
         `
     })
     const likes = document.querySelectorAll('.like')
@@ -125,17 +128,17 @@ const fetchComment = async(fetchCommentPost) => {
     data.forEach(item => {
         comments.innerHTML += `
             <div class="comment" id="${item.comment_id}">
-                <img src="../images/${item.image}" style="width:40px" alt="profile image">
+                <img src="../images/${item.image}"  alt="profile image">
                 <div class="username-time">
                     <p>@${item.username}</p>
                     <p>${getRightTime(item.created_at)}</p>
                 </div>
-                <div class="commentBody">${item.body}</div>
+            </div>
+            <div class="commentBody">${item.body}</div>
                 <div class="btnsComment">
                     <p class="likeComment"><span>${item.likedComment}</span><i class="fa-regular fa-thumbs-up"></i></p>
                     <p class="dislikeComment"><span>${item.dislikedComment}</span><i class="fa-regular fa-thumbs-down"></i></p>
                 </div>
-            </div>
         `
     })
     const likedComment = document.querySelectorAll('.likeComment')

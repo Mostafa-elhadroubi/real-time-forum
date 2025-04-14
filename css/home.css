@@ -42,3 +42,106 @@ nav ul li a{
 nav ul li a i{
     margin-right: 5px;
 }
+.post-chat-container{
+    background: white;
+}
+.posts {
+    /* background: green; */
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+.post {
+    background: red;
+    width: 50%;
+
+}
+.profile-info{
+    display: flex;
+    padding: 10px;
+    align-items: center;
+}
+.profile-info img{
+    border-radius: 50%;
+}
+.username-time{
+    margin-left: 10px;
+}
+.categories{
+    background: green;
+    padding: 10px;
+
+}
+.categories p {
+    padding: 5px;
+    font-size: 18px;
+}
+.h3{
+    padding: 5px;
+}
+.title, .postBody{
+    background: blue;
+    padding: 10px;
+    font-size: 18px;
+}
+.btns{
+    background: orange;
+    display: flex;
+}
+.btns p {
+    margin-left: 10px;
+    padding: 10px;
+    font-size: 20px;
+}
+.btns p span{
+    margin-right: 5px;
+}
+.comments-writeComment {
+    background-color: aqua;
+
+}
+.comment-btn {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+}
+.comment-btn textarea{
+    border-radius: 10px;
+    border: none;
+}
+.comment-btn  button{
+    margin-left: 10px;
+    padding: 6px 10px;
+    font-size: 18px;
+    background: whitesmoke;
+    border: none;
+    border-radius: 10px;
+}
+hr{
+    height: 3px;
+}
+.comment{
+    display: flex;
+    padding: 10x;
+}
+.comment img{
+    width: 40px;
+    border-radius: 50%;
+}
+.commentBody{
+    background: yellow;
+    padding: 5px;
+}
+.btnsComment {
+    display: flex;
+    background: orangered;
+}
+.btnsComment p{
+    padding: 10px;
+}
+.btnsComment p span {
+    margin-right: 5px;
+}
