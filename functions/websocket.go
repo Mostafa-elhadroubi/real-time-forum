@@ -52,6 +52,7 @@ func HandleConnections(w http.ResponseWriter, r *http.Request) {
 		log.Println("Error upgrading connection:", err)
 		return
 	}
+	fmt.Println("connected")
 	defer conn.Close()
 	mu.Lock()
 	clients[userId] = conn

@@ -1,29 +1,57 @@
 import { updateUserStatus } from "./sendMessages.js"
-import { fetchUsers, messageBox, senderId } from "./fetchUsers.js"
+import { displayUsers, messageBox, senderId } from "./fetchUsers.js"
 import { updateLastMessage } from "./fetchMessages.js"
+import { header } from "./header.js"
+import { headerEvents } from "./home.js"
 
-export const chat = () => {
-    const chat = `
+// export const aaaaa = () => {
+//      const chat = `
     
-    <div class="goBack"><i class="fa-solid fa-arrow-left"></i><a href="/home">Go Back</a></div>
+//     <div class="goBack"><i class="fa-solid fa-arrow-left"></i><a href="/home">Go Back</a></div>
+//     <div class="chatContainer">
+//                     <div class="chatBox">
+                        
+//                     </div>
+//                     <div class="messageContainer">
+                        
+//                     </div>
+//                 </div>           
+//     `
+//     const chatBox = document.querySelector('.chatBox')
+//     const messageContainer = document.querySelector('.messageContainer')
+//     const chatContainer = document.querySelector('.chatContainer')
+
+//     const socket = new WebSocket("ws://localhost:8082/ws")
+//     fetchUsers(chatBox, messageContainer, socket)
+//     return chatContainer
+// }
+export const chat = (app) => {
+    document.head.innerHTML = `<link rel="stylesheet" href="../css/chat.css">
+    <link rel="stylesheet" href="../css/home.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    `
+    const chat = `
     <div class="chatContainer">
                     <div class="chatBox">
                         
                     </div>
-                    <div class="messageContainer">
-                        
-                    </div>
+                    
                 </div>           
     `
-    document.head.innerHTML = `<link rel="stylesheet" href="../css/chat.css">
-                                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    app.innerHTML = `
+    ${header}
+    ${chat}
     `
-    document.body.innerHTML = chat
-
+    headerEvents()
     const chatBox = document.querySelector('.chatBox')
     const messageContainer = document.querySelector('.messageContainer')
+    const chatContainer = document.querySelector('.chatContainer')
 
+    // const chatBox = document.querySelector('.chatBox')
+    // const messageContainer = document.querySelector('.messageContainer')
+    
     const socket = new WebSocket("ws://localhost:8082/ws")
+    // aaaaa()
     // When the WebSocket connection is open
     socket.onopen = function(event) {
         console.log("WebSocket connection established.");
@@ -56,16 +84,16 @@ export const chat = () => {
             updateLastMessage(data.senderId, data.text, data.timestamp);
         }
     }
-    fetchUsers(chatBox, messageContainer, socket)
+    displayUsers(chatBox, messageContainer, socket)
     
 }
 
-const fetchOnlineUsers = async() => {
+export const fetchOnlineUsers = async() => {
     try{
         const response = await fetch('/getOnlineUsers')
         console.log(response)
         const onlineUsers = await response.json()
-        // console.log("online users",onlineUsers)
+        console.log("online users",onlineUsers)
         onlineUsers.forEach(userId => {
             updateUserStatus(userId, true)
         })

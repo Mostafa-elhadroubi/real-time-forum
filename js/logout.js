@@ -1,4 +1,6 @@
-export const logout = () => {
+import { navigateTo } from "./main.js";
+
+export const logout = (app) => {
     fetch("/logout")
     .then(res => {
         if(!res.ok){
@@ -6,9 +8,7 @@ export const logout = () => {
             document.body.innerHTML = errorHTML;
             return;
         }
-        if (res.redirected) {
-            location.href = res.url
-        }
+       navigateTo("/login")
     })
     .catch(error => {
         console.log('Error: ', error)

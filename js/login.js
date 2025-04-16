@@ -1,6 +1,9 @@
 import { getCookie } from "./getcookie.js"
+import { navigateTo } from "./main.js"
 
-export const login = () => {
+export let socket = null
+
+export const login = (app) => {
     const login = `
                 <div class="containerBody">
                     <div class="loginContainer">
@@ -17,7 +20,10 @@ export const login = () => {
                     </div>
                 </div>
     `
-    document.body.innerHTML = login
+    document.head.innerHTML = `<link rel="stylesheet" href="../css/signup.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+`
+    app.innerHTML = login
     const emailError = document.querySelector('.emailError')
     const passwordError = document.querySelector('.passwordError')
     const loginForm = document.querySelector('#loginForm')
@@ -42,16 +48,36 @@ const submitLoginForm = () => {
     .then(res => {
         console.log(res)
         if(!res.ok) {
+
             const errorHTML = res.text();
             document.body.innerHTML = errorHTML;
             return;
-        }
-        if(res.redirected) {
-            window.location.href = res.url
-        }
+        } 
+        navigateTo("/home")
+        // socket  = new WebSocket("ws://localhost:8082/ws")
+        // alert("")
+        
+        // ccc(socket)
+        // history.pushState({}, '', '/');
+        // socket.onopen = function(event) {
+        //     console.log("connectedgfgfgfg");
+         
+        //     console.log(socket);
+        // }
+        // if(res.redirected) {
+            
+        //     window.location.href = res.url
+        // }
     })
     .catch(error => {
         console.log('Error: ', error)
     })
 }
 
+const ccc = (socket) => {
+    socket.addEventListener('open', () =>{
+        console.log("connectedgfgfgfg");
+     
+        console.log(socket);
+    })
+}

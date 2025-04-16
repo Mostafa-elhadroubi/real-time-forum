@@ -45,7 +45,7 @@ func SignupAuth(w http.ResponseWriter, r *http.Request) {
 	if !usernameRg.MatchString(username) || !emailRg.MatchString(email) || len(email) > 100 ||
 		len(username) > 50 || len(password) < 8 || len(password) > 100 {
 		setErrorCookie(w, "Invalid Data!", "/signup", 2)
-		http.Redirect(w, r, "/signup", http.StatusFound)
+		// http.Redirect(w, r, "/signup", http.StatusFound)
 		return
 	}
 
@@ -53,7 +53,7 @@ func SignupAuth(w http.ResponseWriter, r *http.Request) {
 	pswd, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	if err != nil {
 		setErrorCookie(w, "Unexpected error, try again", "/signup", 2)
-		http.Redirect(w, r, "/signup", http.StatusFound)
+		// http.Redirect(w, r, "/signup", http.StatusFound)
 		return
 	}
 	query := `SELECT username, email FROM users`
@@ -66,7 +66,7 @@ func SignupAuth(w http.ResponseWriter, r *http.Request) {
 		rows.Scan(&user.Username, &user.Email)
 		if user.Username == username || user.Email == email {
 			setErrorCookie(w, "Username or email already exists!", "/signup", 2)
-			http.Redirect(w, r, "/signup", http.StatusFound)
+			// http.Redirect(w, r, "/signup", http.StatusFound)
 			return
 		}
 	}
@@ -76,9 +76,9 @@ func SignupAuth(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("insert into???")
 		log.Fatalf("Error executing query: %v", err)
 		setErrorCookie(w, "Invalid Data", "/signup", 2)
-		http.Redirect(w, r, "/signup", http.StatusFound)
+		// http.Redirect(w, r, "/signup", http.StatusFound)
 		return
 	}
 	setErrorCookie(w, "", "/signup", -1)
-	http.Redirect(w, r, "/login", http.StatusFound)
+	// http.Redirect(w, r, "/login", http.StatusFound)
 }

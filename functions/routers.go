@@ -21,7 +21,7 @@ func Routers() {
 	http.HandleFunc("/api/addComment", AddComment)
 
 	http.HandleFunc("/logout", Logout)
-
+	http.HandleFunc("/checkLogin", CheckLogin)
 	http.HandleFunc("/", Home)
 	http.HandleFunc("/api/users/", FetchUsers)
 	http.HandleFunc("/chat", Home)

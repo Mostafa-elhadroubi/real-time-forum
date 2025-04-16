@@ -1,5 +1,12 @@
-import { getRightTime } from "./fetchUsers.js";
+import { chat, fetchOnlineUsers } from "./chat.js";
+import { displayMessages, fetchUsers, getRightTime } from "./fetchUsers.js";
+import { getUsers } from "./getUsers.js";
 import { header } from "./header.js"
+import { socket } from "./login.js";
+import { navigateTo } from "./main.js";
+let sockets = null
+
+let senderId = null
 let postNum = 0
 let dataResponse = []
 let commentData = []
@@ -25,7 +32,7 @@ const fetchPosts = async() => {
     data.forEach(item => {
         posts.innerHTML += `
             <div class="post" id="${item.post_id}">
-               <div class="profile-info">
+               <div class="profile-info comment-profile">
                     <img src="../images/${item.image}" style="width:40px" alt="profile image"> 
                     <div class="username-time">
                         <p>@${item.username}</p>
@@ -189,25 +196,41 @@ const likedOrDislikedComment = async(likes, dislikes, user_reaction, reactionVal
         })
     })
 }
-export const home = () => {
-    const home = `
-    <h1>Home</h1>
-    `
+export const home = async(app) => {
     document.head.innerHTML = `<link rel="stylesheet" href="../css/home.css">
+                                <link rel="stylesheet" href="../css/chat.css">
                                 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     `
     const postBody = `
     <div class="post-chat-container">
-    <div class="posts">
-    
-    <hr>
-    </div>
+        <div class="chatContainer">
+        
+        </div>
+        <div class="posts">
+        
+        <hr>
+        </div>
     </div>
     `
-    document.body.innerHTML = `
+    connectSocket() 
+    const { usersEl, usersArr } = await getUsers(sockets);
+    console.log(usersEl, "nnnn");
+    console.log(usersArr);
+    
+    app.innerHTML = `
     ${header}
+
     ${postBody}
     `
+
+    app.querySelector('.chatContainer').insertAdjacentElement("afterbegin", usersEl);
+    headerEvents()
+    
+    console.log(await fetchUsers(), "ttttttt");
+    senderId = usersArr[0].ConnectedUserId
+    console.log(usersArr);
+    
+    displayMessages(usersArr, sockets, senderId)
     fetchPosts()
 }
 
@@ -252,3 +275,38 @@ const likedOrDislikedPost = (likes, dislikes, user_reaction, reactionValue) => {
     })
 }
 
+const connectSocket = () => {
+    const socket = new WebSocket("ws://localhost:8082/ws")
+    // aaaaa()
+    // When the WebSocket connection is open
+    socket.onopen = function(event) {
+        console.log("WebSocket connection established.");
+        if(sockets == null) {
+
+            sockets = socket
+        }
+        // fetchOnlineUsers()
+    };
+}
+
+
+export const headerEvents = () => {
+    const addpost = document.querySelector("#addpost")
+    addpost.addEventListener('click', () => {
+        navigateTo("/addPost")
+    })
+    const chat = document.querySelector("#chat")
+    chat.addEventListener('click', () => {
+        navigateTo("/chat")
+    })
+    const logout = document.querySelector("#logout")
+    logout.addEventListener('click', () => {
+        navigateTo("/logout")
+    })
+    const homeBtn = document.querySelector('#image')
+    homeBtn.addEventListener('click', () => {
+        navigateTo("/home")
+    })
+    
+    
+}

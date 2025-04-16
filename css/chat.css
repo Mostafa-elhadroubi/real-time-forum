@@ -4,14 +4,15 @@
     box-sizing: border-box;
 }
 body{
-    background: rgb(92, 90, 90);
+    /* background: rgb(92, 90, 90); */
     overflow: scroll;
     /* padding-top: 40px; */
 }
 .chatContainer{
     width: 100vw;
     /* height: 100vh; */
-    /* background: rgb(92, 90, 90); */
+    /* background: red; */
+    margin-top: 20px;
     display: flex;
     /* flex-direction: column; */
     justify-content: center;
@@ -20,28 +21,12 @@ body{
     gap: 10px;
     /* overflow: scroll; */
 }
-.goBack{
-    background: rgb(46, 44, 44);
-    font-size: 20px;
-    padding: 10px 20px;
-    font-weight: 700;
-    border-radius: 10px;
-    margin: 30px;
-    width: fit-content;
 
-}
-.goBack i {
-    color: white;
-    margin: 5px;
-}
-.goBack a{
-    text-decoration: none;
-    color: white;
-}
 .chatBox {
     width: 350px;
     max-height: 600px;
     background: rgb(46, 44, 44);
+    /* background: red; */
     overflow-y: scroll;
     overflow-x: hidden;
     border-radius: 10px;

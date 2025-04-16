@@ -19,6 +19,6 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 		Path:   "/login",
 		MaxAge: -1,
 	})
-	http.Redirect(w, r, "/login", http.StatusFound)
+	// http.Redirect(w, r, "/login", http.StatusFound)
 
 }

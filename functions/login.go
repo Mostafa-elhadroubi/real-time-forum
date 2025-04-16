@@ -28,7 +28,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	if err != nil || bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))  != nil {
 		fmt.Println("there is an error!!!", err, user.Password, password)
 		setErrorCookie(w, "Invalid credentials!", "/login", 5)
-		http.Redirect(w, r, "/login", http.StatusFound)
+		// http.Redirect(w, r, "/login", http.StatusFound)
 		return
 	}
 	token, err := uuid.NewV1()
@@ -47,10 +47,10 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	_, err = DB.Exec(query, token, time.Now().Add(24*time.Hour).Unix(), 1, user.Id)
 	if err != nil {
 		setErrorCookie(w, "Unexpected error! Try Again", "/login", 5)
-		http.Redirect(w, r, "/login", http.StatusFound)
+		// http.Redirect(w, r, "/login", http.StatusFound)
 		return
 	}
 	user.Log = 1
 	setErrorCookie(w, "", "/login", -1)
-	http.Redirect(w, r, "/home", http.StatusFound)
+	// http.Redirect(w, r, "/home", http.StatusFound)
 }

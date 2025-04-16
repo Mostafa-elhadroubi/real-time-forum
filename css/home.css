@@ -43,11 +43,13 @@ nav ul li a i{
     margin-right: 5px;
 }
 .post-chat-container{
-    background: white;
+    /* background: white; */
+    display: flex;
+    flex-direction: column;
 }
 .posts {
     /* background: green; */
-    width: 100%;
+    /* width: 100%; */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -55,15 +57,19 @@ nav ul li a i{
     margin-top: 10px;
 }
 .post {
-    background: red;
+    background: rgb(51, 50, 49);;
     width: 50%;
+    border-radius: 10px;
 
 }
 .profile-info{
     display: flex;
     padding: 10px;
     align-items: center;
+    color: white;
+
 }
+
 .profile-info img{
     border-radius: 50%;
 }
@@ -71,24 +77,31 @@ nav ul li a i{
     margin-left: 10px;
 }
 .categories{
-    background: green;
-    padding: 10px;
+    color: white;
 
 }
+.categories h3{
+    padding: 10px;
+}
 .categories p {
-    padding: 5px;
+    padding: 10px;
     font-size: 18px;
+    color: rgb(226, 220, 220);
+    /* background: rgb(121, 118, 116);; */
 }
 .h3{
     padding: 5px;
+    color: white;
 }
 .title, .postBody{
-    background: blue;
+    /* background:  rgb(121, 118, 116); */
     padding: 10px;
     font-size: 18px;
+    color: white;
 }
 .btns{
-    background: orange;
+    margin-top: 20px;
+    background: rgb(218, 215, 213);
     display: flex;
 }
 .btns p {
@@ -100,7 +113,7 @@ nav ul li a i{
     margin-right: 5px;
 }
 .comments-writeComment {
-    background-color: aqua;
+    /* margin-top: 10px; */
 
 }
 .comment-btn {
@@ -111,6 +124,7 @@ nav ul li a i{
 .comment-btn textarea{
     border-radius: 10px;
     border: none;
+    width: 350px;
 }
 .comment-btn  button{
     margin-left: 10px;
@@ -126,22 +140,78 @@ hr{
 .comment{
     display: flex;
     padding: 10x;
+    margin: 10px 0px;
+    color: white;
+   
 }
+
 .comment img{
     width: 40px;
     border-radius: 50%;
 }
 .commentBody{
-    background: yellow;
-    padding: 5px;
+    /* background:  rgb(121, 118, 116); */
+    padding: 10px;
+    margin: 5px 0px;
+    color: white;
 }
 .btnsComment {
     display: flex;
-    background: orangered;
+    background: rgb(218, 215, 213)
 }
 .btnsComment p{
     padding: 10px;
+    font-size: 20px;
 }
 .btnsComment p span {
     margin-right: 5px;
+}
+/* .comment-profile{
+    margin-top: 10px;
+    color: white;
+} */
+.addPostContainer{
+    /* background: red; */
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+}.addPostContainer form {
+    background: rgb(51, 50, 49);
+    padding: 10px;
+    border-radius: 10px;
+}
+.addPostContainer form .categories{
+    display: flex;
+    flex-wrap: wrap;
+}
+.categories .category{
+    background: rgba(102, 100, 99, 0.637);
+    padding: 10px 20px;
+    margin-right: 10px;
+    border-radius: 10px;
+    font-size: 18px;
+    color: rgb(255, 255, 255);
+}
+.content {
+    /* background: blue; */
+    padding: 10px;
+}
+.content h3{
+    margin-bottom: 5px;
+    color: whitesmoke;
+}
+.content textarea {
+    display: block;
+    border-radius: 10px;
+    border: none;
+    width: 600px;
+}
+#addPost{
+    background: whitesmoke;
+    color: black;
+    border-radius: 10px;
+    padding: 10px 20px;
+    margin: 10px;
+    border: none;
+    font-size: 20px;
 }

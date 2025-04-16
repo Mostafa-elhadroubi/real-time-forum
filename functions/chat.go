@@ -61,7 +61,7 @@ func GetUserFromSession(w http.ResponseWriter, r *http.Request) (int, error) {
 	token, err := r.Cookie("token")
 	if err != nil || token.Value == ""{
 		fmt.Println("error in gettting token")
-		http.Redirect(w, r, "/login", http.StatusFound)
+		// http.Redirect(w, r, "/login", http.StatusFound)
 		return 0, fmt.Errorf("token not exists!")
 	}
 	var userId int
@@ -69,7 +69,7 @@ func GetUserFromSession(w http.ResponseWriter, r *http.Request) (int, error) {
 	row := DB.QueryRow(query, token.Value)
 	if err = row.Scan(&userId); err != nil {
 		fmt.Println("Error scanning user ID", err)
-		http.Redirect(w, r, "/login", http.StatusFound)
+		// http.Redirect(w, r, "/login", http.StatusFound)
 		return 0, fmt.Errorf("invalid token")
 	}
 	fmt.Println("user id from session: ", userId)
