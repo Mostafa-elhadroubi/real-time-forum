@@ -112,9 +112,20 @@ nav ul li a i{
 .btns p span{
     margin-right: 5px;
 }
-.comments-writeComment {
-    /* margin-top: 10px; */
+.comments{
+    background: white;
+}
+.commentContainer {
+    margin: 5px 0;
+    background: rgb(51, 50, 49);;
+    border-radius: 10px;
 
+}
+.comments{
+    /* background: red; */
+    /* width: 400px; */
+    max-height: 400px;
+    overflow-y: auto;
 }
 .comment-btn {
     display: flex;
@@ -125,6 +136,8 @@ nav ul li a i{
     border-radius: 10px;
     border: none;
     width: 350px;
+    outline: none;
+    font-size: 20px;
 }
 .comment-btn  button{
     margin-left: 10px;

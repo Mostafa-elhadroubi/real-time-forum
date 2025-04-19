@@ -26,8 +26,8 @@ func Comments(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Println(comment)
-	query := "select c.comment_id, c.body, c.created_at, u.username, u.image, count(distinct case when l.like = 1 then l.user_id end) as likedComment, count(distinct case when l.like = 0 then l.user_id end) as dislikedComment from `comments` c inner join `users` u on c.user_id = u.user_id left join `likes` l on l.comment_id = c.comment_id where c.post_id = ? group by c.comment_id LIMIT ? OFFSET ?"
-	rows, err := DB.Query(query, comment.Post_id, 10, comment.CommentNum)
+	query := "select c.comment_id, c.body, c.created_at, u.username, u.image, count(distinct case when l.like = 1 then l.user_id end) as likedComment, count(distinct case when l.like = 0 then l.user_id end) as dislikedComment from `comments` c inner join `users` u on c.user_id = u.user_id left join `likes` l on l.comment_id = c.comment_id where c.post_id = ? group by c.comment_id ORDER BY c.created_at DESC LIMIT ? OFFSET ?"
+	rows, err := DB.Query(query, comment.Post_id, 4, comment.CommentNum)
 	if err != nil {
 		http.Error(w, "error in selecting comment", http.StatusBadRequest)
 		return

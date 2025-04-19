@@ -1,12 +1,12 @@
 import { chat, fetchOnlineUsers, onMessage } from "./chat.js";
-import { displayMessages, fetchUsers, getRightTime } from "./fetchUsers.js";
+import { chatState, displayMessages, fetchUsers, getRightTime } from "./fetchUsers.js";
 import { getUsers } from "./getUsers.js";
 import { header } from "./header.js"
 import { socket } from "./login.js";
 import { navigateTo } from "./main.js";
 let sockets = null
 
-let senderId = null
+let commentNum = 0
 let postNum = 0
 let dataResponse = []
 let commentData = []
@@ -45,19 +45,16 @@ const fetchPosts = async() => {
 
                </div>
                <h3 class="h3">Title:</h3>
-               <div class="title">${item.title}</div>
                
                <h3 class="h3">Body:</h3>
-               <div class="postBody">${item.body}</div>
+
                <div class="btns">
                     <p class="like"><span>${item.liked}</span><i class="fa-regular fa-thumbs-up"></i></p>
                     <p class="dislike"><span>${item.disliked}</span><i class="fa-regular fa-thumbs-down"></i></p>
                     <p class="commentPost"><span>${item.totalComments}</span><i class="fa-regular fa-comment"></i></p>
                </div>
                <div class="comments-writeComment">
-                <div class="comments">
-                    
-                   
+                <div class="comments">                   
                 </div>
                 <div class="comment-btn">
                     <textarea name="comment" class="bodyComment"></textarea>
@@ -68,6 +65,28 @@ const fetchPosts = async() => {
             </div>
             <hr>
         `
+
+        // After the HTML is injected, find the last .post just added
+    const lastPost = posts.querySelector('.post:last-of-type');
+
+    // Create .title div
+    const titleDiv = document.createElement('div');
+    titleDiv.classList.add('title');
+    titleDiv.textContent = item.title;
+
+    // Create .postBody div
+    const postBodyDiv = document.createElement('div');
+    postBodyDiv.classList.add('postBody');
+    postBodyDiv.textContent = item.body;
+
+    // Find the right <h3> labels
+    const h3s = lastPost.querySelectorAll('h3.h3');
+    const titleH3 = h3s[0];
+    const bodyH3 = h3s[1];
+
+    // Insert title/body right after their labels
+    titleH3.insertAdjacentElement('afterend', titleDiv);
+    bodyH3.insertAdjacentElement('afterend', postBodyDiv);
     })
     const likes = document.querySelectorAll('.like')
     const dislikes = document.querySelectorAll('.dislike')
@@ -106,7 +125,17 @@ const fetchPosts = async() => {
     })
     const fetchCommentPost = document.querySelector('.commentPost')
     fetchCommentPost.addEventListener('click', async() => {
+        const comments= document.querySelector('.comments')
         fetchComment(fetchCommentPost)
+         comments.addEventListener('scroll', () => {
+            // console.log("scrolled", comments.scrollTop);
+            if(comments.scrollTop < 5) {
+                console.log(commentNum);
+                
+                fetchComment(fetchCommentPost)
+            }
+            
+         })
     })
     
 
@@ -114,14 +143,16 @@ const fetchPosts = async() => {
 const fetchComment = async(fetchCommentPost) => {
     let post_id = parseInt(fetchCommentPost.parentElement.parentElement.getAttribute('id'))
     console.log(fetchCommentPost.parentElement.parentElement.getAttribute('id'));
+    const comments= document.querySelector('.comments')
+    const previousScrollHeight = comments.scrollHeight
     const commentResponse = await fetch("/api/comment", {
         method: 'POST',
         headers: {
             'Content-Type' : 'application/json'
         },
-        body: JSON.stringify({post_id: post_id})
+        body: JSON.stringify({post_id: post_id, commentNum: commentNum})
     })
-    console.log(commentResponse);
+    console.log(commentResponse, commentNum);
     if(!commentResponse.ok) {
         const errorHTML = await commentResponse.text();
         document.body.innerHTML = errorHTML;
@@ -129,25 +160,43 @@ const fetchComment = async(fetchCommentPost) => {
     }
     let data = await commentResponse.json()
     console.log(data);
-    commentData = data
-    const comments = document.querySelector('.comments')
-    comments.innerHTML = ''
-    data.forEach(item => {
-        comments.innerHTML += `
-            <div class="comment" id="${item.comment_id}">
-                <img src="../images/${item.image}"  alt="profile image">
-                <div class="username-time">
-                    <p>@${item.username}</p>
-                    <p>${getRightTime(item.created_at)}</p>
-                </div>
+    commentData = commentData = [...commentData, ...data];
+    commentNum += data.length;
+    // const comments = document.querySelector('.comments')
+    // comments.innerHTML = ''
+
+    data.forEach((item )=> {
+    // Create full comment container
+    const commentContainer = document.createElement('div');
+    commentContainer.classList.add("commentContainer")
+    // Build innerHTML for the comment block
+    commentContainer.innerHTML = `
+        <div class="comment" id="${item.comment_id}">
+            <img src="../images/${item.image}" alt="profile image">
+            <div class="username-time">
+                <p>@${item.username}</p>
+                <p>${getRightTime(item.created_at)}</p>
             </div>
-            <div class="commentBody">${item.body}</div>
-                <div class="btnsComment">
-                    <p class="likeComment"><span>${item.likedComment}</span><i class="fa-regular fa-thumbs-up"></i></p>
-                    <p class="dislikeComment"><span>${item.dislikedComment}</span><i class="fa-regular fa-thumbs-down"></i></p>
-                </div>
-        `
+        </div>
+        <div class="commentBody">${item.body}</div>
+        <div class="btnsComment">
+            <p class="likeComment"><span>${item.likedComment}</span><i class="fa-regular fa-thumbs-up"></i></p>
+            <p class="dislikeComment"><span>${item.dislikedComment}</span><i class="fa-regular fa-thumbs-down"></i></p>
+        </div>
+    `;
+
+    // Prepend to the top of comments container
+    comments.insertBefore(commentContainer, comments.firstChild);
+    const newScrollHeight = comments.scrollHeight
+    comments.scrollTop = newScrollHeight - previousScrollHeight - 10
+    // commentNum++;
+
     })
+    console.log(commentNum);
+    
+    // const newScrollHeight = comments.scrollHeight;
+    // comments.scrollTop += newScrollHeight - previousScrollHeight;
+
     const likedComment = document.querySelectorAll('.likeComment')
     const dislikedComment = document.querySelectorAll('.dislikeComment')
     console.log(post_id, "dfgdfg");
@@ -227,7 +276,7 @@ export const home = async(app) => {
     headerEvents()
     
     console.log(await fetchUsers(), "ttttttt");
-    senderId = usersArr[0].ConnectedUserId
+    chatState.senderId = usersArr[0].ConnectedUserId
     console.log(usersArr);
     
     displayMessages(usersArr, sockets)
@@ -317,3 +366,5 @@ export const headerEvents = () => {
     })
     
 }
+
+

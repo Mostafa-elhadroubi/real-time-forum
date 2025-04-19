@@ -21,10 +21,18 @@ export const sendMessage = (senderId, receiverId, socket, messageBox) => {
         if((message.trim()).length != 0 ){
             const messageDiv = document.createElement('div');
             messageDiv.className = 'sender'// Assuming '1' is your userId
-            messageDiv.innerHTML = `
-                <p>${data.text}</p>
-                <span>${data.timestamp}</span>
-            `;
+            const p = document.createElement('p');
+            p.textContent = data.text; // textContent escapes HTML safely
+            messageDiv.appendChild(p);
+            const span = document.createElement('span');
+            span.textContent = `${data.timestamp}`
+            messageDiv.appendChild(span);
+            // messageDiv.innerText = `
+            //     <p>${data.text}</p>
+            //     <span>${String(data.timestamp)}</span>
+            // `;
+
+            
            chatState.messageBox.appendChild(messageDiv);
           
            chatState.messageBox.scrollTop = messageBox.scrollHeight

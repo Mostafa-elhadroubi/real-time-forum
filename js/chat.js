@@ -67,10 +67,12 @@ export const onMessage = (event) => {
                 const messageDiv = document.createElement('div');
                 messageDiv.className = 'receiver'; // Assuming '1' is your userId
                 messageDiv.setAttribute('id', data.senderId)
-                messageDiv.innerHTML = `
-                    <p>${data.text}</p>
-                    <span>${data.timestamp}</span>
-                `;
+                const p = document.createElement('p');
+                p.textContent = data.text; // textContent escapes HTML safely
+                messageDiv.appendChild(p);
+                const span = document.createElement('span');
+                span.textContent = `${data.timestamp}`
+                messageDiv.appendChild(span);
         
                 chatState.messageBox.appendChild(messageDiv);
             }
