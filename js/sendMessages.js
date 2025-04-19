@@ -1,4 +1,5 @@
 import { updateLastMessage } from "./fetchMessages.js";
+import { chatState } from "./fetchUsers.js";
 // import { senderId } from "./fetchUsers.js";
 
 export const sendMessage = (senderId, receiverId, socket, messageBox) => {
@@ -7,28 +8,29 @@ export const sendMessage = (senderId, receiverId, socket, messageBox) => {
     const now = new Date()
     const hours = now.getHours()
     const minutes = now.getMinutes()
+
     if (message.trim()) {
         const data = {
-            senderId: senderId, // Replace with actual sender ID
-            receiverId: receiverId, // Replace with the receiver's ID (you need to implement this logic)
+            senderId: chatState.senderId, // Replace with actual sender ID
+            receiverId: chatState.receiverId, // Replace with the receiver's ID (you need to implement this logic)
             text: message,
             timestamp: `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`
         };
         socket.send(JSON.stringify(data)); // Send the message as a JSON string
         console.log(message)
-        if((message.trim()).length != 0){
+        if((message.trim()).length != 0 ){
             const messageDiv = document.createElement('div');
             messageDiv.className = 'sender'// Assuming '1' is your userId
             messageDiv.innerHTML = `
                 <p>${data.text}</p>
                 <span>${data.timestamp}</span>
             `;
-           messageBox.appendChild(messageDiv);
+           chatState.messageBox.appendChild(messageDiv);
           
-           messageBox.scrollTop = messageBox.scrollHeight
+           chatState.messageBox.scrollTop = messageBox.scrollHeight
            console.log(data, "ggggg");
            
-           updateLastMessage(data.senderId, data.receiverId, data.message, data.timestamp)
+           updateLastMessage(data.senderId, data.receiverId, data.text, data.timestamp)
            input.value = ''; // Clear the input field
         }
     }

@@ -230,7 +230,7 @@ export const home = async(app) => {
     senderId = usersArr[0].ConnectedUserId
     console.log(usersArr);
     
-    displayMessages(usersArr, sockets, senderId)
+    displayMessages(usersArr, sockets)
     fetchPosts()
 }
 

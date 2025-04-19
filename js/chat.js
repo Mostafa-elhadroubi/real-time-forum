@@ -1,5 +1,5 @@
 import { updateUserStatus } from "./sendMessages.js"
-import { displayUsers, messageBox, senderId } from "./fetchUsers.js"
+import { chatState, displayUsers, senderId } from "./fetchUsers.js"
 import { updateLastMessage } from "./fetchMessages.js"
 import { header } from "./header.js"
 import { headerEvents } from "./home.js"
@@ -59,15 +59,24 @@ export const onMessage = (event) => {
         updateUserStatus(data.userId, data.isOnline)
     } else {
         console.log(data)
-        const messageDiv = document.createElement('div');
-        messageDiv.className = 'receiver'; // Assuming '1' is your userId
-        messageDiv.innerHTML = `
-            <p>${data.text}</p>
-            <span>${data.timestamp}</span>
-        `;
-        messageBox.appendChild(messageDiv);
-        messageBox.scrollTop = messageBox.scrollHeight
-        console.log(data, "my data");
+        if(chatState.messageBox) {
+            console.log(chatState.messageBox.parentElement);
+            const msgContainerId = parseInt(chatState.messageBox.parentElement.getAttribute('id'))
+            console.log(msgContainerId);
+            if(msgContainerId == data.senderId){
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'receiver'; // Assuming '1' is your userId
+                messageDiv.setAttribute('id', data.senderId)
+                messageDiv.innerHTML = `
+                    <p>${data.text}</p>
+                    <span>${data.timestamp}</span>
+                `;
+        
+                chatState.messageBox.appendChild(messageDiv);
+            }
+            chatState.messageBox.scrollTop = chatState.messageBox.scrollHeight
+            console.log(data, "my data");
+        }
         
         updateLastMessage(data.senderId, data.receiverId, data.text, data.timestamp);
     }

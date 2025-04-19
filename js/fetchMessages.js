@@ -1,9 +1,10 @@
+import { chatState } from "./fetchUsers.js";
 import { sendMessage } from "./sendMessages.js";
 export let msgNmb  = 0
 export let isScrolled = false
 export const fetchMessages = async(receiverId, msgNbr, senderId, messageBox, messageContainer, socket) => {
     try {
-        const previousScrollHeight = messageBox.scrollHeight
+        const previousScrollHeight = chatState.messageBox.scrollHeight
         const response = await fetch("/api/messages/", {
             method: 'POST',
             headers: {
@@ -45,14 +46,20 @@ export const fetchMessages = async(receiverId, msgNbr, senderId, messageBox, mes
         const messageInput = messageContainer.querySelector('input[type="text"]');
         messageInput.addEventListener('keyup', (e) => {
             // const msgRead = document.querySelectorAll('.userBox')[receiverId]
-            
+            const userBox = document.querySelector(`.userBox[data-user-id="${receiverId}"]`);
+            console.log(userBox);
+            if (userBox) {
+                
+                userBox.style.border = '';
+                userBox.style.backgroundColor = '';
+            }
             // console.log('input is  clicked', messageInput.value.trim(),messageInput.value.trim().length)
             if(e.key == 'Enter' && messageInput.value.trim() != ''){
-            sendMessage(senderId, receiverId, socket, messageBox)
+            sendMessage(chatState.senderId, chatState.receiverId, socket, chatState.messageBox)
             }
         })
         sendButton.addEventListener('click', () => {
-            sendMessage(senderId, receiverId, socket, messageBox)
+            sendMessage(chatState.senderId, chatState.receiverId, socket, chatState.messageBox)
         });
 
     } catch (error) {
@@ -63,6 +70,7 @@ export const fetchMessages = async(receiverId, msgNbr, senderId, messageBox, mes
 
 export const updateLastMessage = (senderId, receiverId, message, timestamp) => {
     const userBoxes = document.querySelectorAll('.userBox')
+    console.log(userBoxes);
     userBoxes.forEach((userBox, index) => {
         const userId = userBox.getAttribute("data-user-id")
         
@@ -78,11 +86,35 @@ export const updateLastMessage = (senderId, receiverId, message, timestamp) => {
             
             if(lastMessage[index] && lastMessageTime[index]) {
                 lastMessage[index].textContent = message;
+                
                 console.log(lastMessage[index].textContent);
                 lastMessageTime[index].textContent = timestamp;
                 console.log("try")
                 // if()
                 userBox.style.cssText = `border: 2px solid green; background-color: rgba(0, 128, 0, 0.3);`
+            }
+            
+
+        }
+        if(userId == parseInt(receiverId)) {
+            console.log("Sender",senderId, "RECEV", receiverId, userId);
+
+            console.log(userBox);
+            
+            const lastMessage = userBox.querySelectorAll('.user-message .message');
+            console.log(lastMessage);
+            const lastMessageTime = userBox.querySelectorAll('.time')
+            console.log(lastMessageTime);
+            
+            if(lastMessage[index] && lastMessageTime[index]) {
+                lastMessage[index].textContent = message;
+                console.log(lastMessage[index]);
+                console.log(message);
+                
+                lastMessageTime[index].textContent = timestamp;
+                console.log("try")
+                // if()
+                // userBox.style.cssText = `border: 2px solid green; background-color: rgba(0, 128, 0, 0.3);`
             }
             
 

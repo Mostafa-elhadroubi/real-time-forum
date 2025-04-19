@@ -93,22 +93,8 @@ body{
     font-weight: 600;
     /* background: red; */
 }
-.time-msgNumber span{
-    display: block;
-    text-align: center;
-    width: 30px;
-    height: 30px;
-    padding-top: 5px;
-    border-radius: 50%;
-    margin: auto;
-    font-size: 18px;
-    font-weight: 700;
-    color: whitesmoke;
-    
-}
-.time-msgNumber .unreadMessage{
-    background: rgba(120, 121, 119, 0.671);
-}
+
+
 .messageContainer{
     background: rgb(46, 44, 44);
     width: 0px;

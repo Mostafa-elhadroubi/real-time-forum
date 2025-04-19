@@ -26,7 +26,7 @@ func FetchUsers(w http.ResponseWriter, r *http.Request) {
 	conversations := []Conversation{}
 	query := `SELECT u.user_id, u.username, u.image, u.isConnected, m.message AS last_message, m.sent_at AS last_message_time, 
     COALESCE(unread_messages.unread_count, 0) AS unread_count FROM users u LEFT JOIN messages m ON m.message_id = (
-    SELECT message_id FROM messages WHERE (receiver_id = u.user_id) ORDER BY sent_at DESC 
+    SELECT message_id FROM messages WHERE (receiver_id = u.user_id or sender_id = u.user_id) ORDER BY sent_at DESC 
     LIMIT 1) LEFT JOIN (SELECT receiver_id AS user_id, COUNT(*) AS unread_count FROM messages WHERE isRead = 0 
      GROUP BY receiver_id) unread_messages ON u.user_id = unread_messages.user_id ORDER BY m.sent_at DESC LIMIT 100;`
 	rows, err := DB.Query(query)

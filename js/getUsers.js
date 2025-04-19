@@ -1,11 +1,12 @@
-import { displayMessages, displayUnredMsg, fetchUsers, getRightTime } from "./fetchUsers.js"
+import { fetchUsers, getRightTime } from "./fetchUsers.js"
 let senderId = null
 export const getUsers = async(sockets) =>{
     const usersArr = await fetchUsers()
     const div = document.createElement('div')
     div.classList.add('chatBox')
     const users = usersArr
-
+    console.log(users);
+    
     users.forEach((user) => {
         createChatBox(div, user)
     })
@@ -29,17 +30,16 @@ const createChatBox = (div, user) => {
         h2.classList.add('username')
         const p = document.createElement('p')
         p.classList.add('message')
-        // p.textContent = `${user.LastMessage.String}`
+        p.textContent = `${user.LastMessage.String}`
         userMessage.append(h2, p)
         imgUsername.append(img, span, userMessage)
         const timeMsgNumber = document.createElement('div')
         timeMsgNumber.classList.add('time-msgNumber')
         const time = document.createElement('div')
         time.classList.add('time')
-        // time.textContent = `${getRightTime(parseInt(user.Time.String))}`
+        time.textContent = `${getRightTime(parseInt(user.Time.String))}`
         const msgNmb = document.createElement('span')
         msgNmb.classList.add('msgNmb')
-        msgNmb.textContent = `1`
         timeMsgNumber.append(time, msgNmb)
         boxUser.setAttribute('data-user-id', user.Id)
         boxUser.append(imgUsername, timeMsgNumber)

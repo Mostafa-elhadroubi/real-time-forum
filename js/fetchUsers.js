@@ -1,8 +1,13 @@
 import { debounce } from "./debounce.js";
 import { msgNmb, fetchMessages, convertTime, isScrolled } from "./fetchMessages.js";
 let receiverId;
-export let messageBox
+// export let messageBox
 export let senderId;
+export const chatState = {
+    senderId: null,
+    receiverId: null,
+    messageBox: null,
+};
 
 export const fetchUsers = async() =>  {
     try {
@@ -54,7 +59,7 @@ export const displayUsers = async(chatBox, messageContainer, socket) => {
         `;
         console.log(item)
         chatBox.innerHTML += content;
-        senderId = item.ConnectedUserId;
+        chatState.senderId = item.ConnectedUserId;
         displayUnredMsg(index)
         // const unreadMessage = document.querySelectorAll(".msgNmb")
         // if(unreadMessage[index].textContent == "0") {
@@ -63,32 +68,42 @@ export const displayUsers = async(chatBox, messageContainer, socket) => {
         //     unreadMessage[index].classList.add('unreadMessage')
         // }
     });
-    displayMessages(filteredData, socket, senderId)
+    displayMessages(filteredData, socket)
    
 }
 
-export const displayMessages = (filteredData, socket, senderId) => {
+export const displayMessages = (filteredData, socket) => {
     const chatContainer = document.querySelector('.chatContainer')
     
     const allUsers = document.querySelectorAll('.userBox');
     console.log([...allUsers]);
     allUsers.forEach((user, index) => {
         user.addEventListener('click', async () => {
-            
-            const allMsgContainer = document.querySelector('.messageContainer')
-            if(allMsgContainer) {
-                console.log(allMsgContainer);
-                allMsgContainer.remove()
+            // const userBox = document.querySelector(`.userBox[data-user-id="${receiverId}"]`);
+            console.log(user);
+            chatState.receiverId = filteredData[index].Id
+            if (user) {
+                
+                user.style.border = '';
+                user.style.backgroundColor = '';
             }
+            const oldMsgContainer = document.querySelector('.messageContainer')
+            console.log(oldMsgContainer);
+            
+            if(oldMsgContainer) oldMsgContainer.remove()
+
             const messageContainer = document.createElement('div')
             messageContainer.classList.add('messageContainer')
+            messageContainer.setAttribute('id', chatState.receiverId)
+            console.log(chatState);
+            
             console.log(chatContainer, "rrrrr");
             chatContainer.appendChild(messageContainer)
             console.log(`${filteredData[index].Username}`);
             messageContainer.innerHTML = '';
             messageContainer.style.cssText = `width: 650px;`;
             messageContainer.innerHTML = `
-                <div class="username-arrowLeft" id="goBack">
+                <div class="username-arrowLeft goBack">
                     <i class="fa-solid fa-arrow-left"></i>
                     <div class="username">${filteredData[index].Username}</div>
                 </div>
@@ -99,36 +114,40 @@ export const displayMessages = (filteredData, socket, senderId) => {
                     <input type="button" value="send">
                 </div>
             `;
-            messageBox = document.querySelector('.messageBox');
-            receiverId = filteredData[index].Id;
+            chatState.messageBox = document.querySelector('.messageBox');
+            chatState.senderId = filteredData[index].ConnectedUserId
+            chatState.receiverId = filteredData[index].Id
+            // receiverId = filteredData[index].Id;
             let msgNbr = 0;
             console.log(receiverId, "jsnnnnn");
             await updateMessageState(receiverId)
-            await fetchMessages(receiverId, msgNbr, senderId, messageBox, messageContainer, socket);
-            
-            console.log(messageBox, "msg box");
+            await fetchMessages(chatState.receiverId, msgNbr, chatState.senderId, chatState.messageBox, messageContainer, socket);
+            // const goBack = 
+            console.log(chatState.messageBox, "msg box");
 
             // if(messageBox){
-                console.log(messageBox, "msg boxtrr");
-                if(messageBox){
+                console.log(chatContainer.messageBox, "msg boxtrr");
+                if(chatState.messageBox){
                 // Define the debounced scroll handler
                     const handleScroll = debounce(() => {
                         
-                        if (messageBox.scrollTop <= 5) {
+                        if (chatState.messageBox.scrollTop <= 5) {
                             console.log("Fetching more messages...");
-                            fetchMessages(receiverId, msgNmb, senderId, messageBox, messageContainer);
+                            fetchMessages(chatState.receiverId, msgNmb, chatState.senderId, chatState.messageBox, messageContainer);
 
                         }
                     }, 1000);
-                    messageBox.removeEventListener("scroll", handleScroll)
-                    messageBox.addEventListener("scroll", handleScroll)
+                    chatState.messageBox.removeEventListener("scroll", handleScroll)
+                    chatState.messageBox.addEventListener("scroll", handleScroll)
             }
-            const goBack = document.querySelector('#goBack')
+            const goBack = document.querySelector('.goBack')
             goBack.addEventListener('click', () => {
-                if(allMsgContainer) {
-                    allMsgContainer.remove()
-                }
+                const oldMsgContainer = document.querySelector('.messageContainer');
+                console.log(oldMsgContainer);
                 
+                if(oldMsgContainer) oldMsgContainer.remove()
+                chatState.receiverId = null;
+                chatState.messageBox = null;
             })
         });
     });
