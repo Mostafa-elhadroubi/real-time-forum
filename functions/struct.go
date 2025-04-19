@@ -102,7 +102,12 @@ type ResponseLike struct {
 	Comment_id int `json:"comment_id"`
 	CommentBody string `json:"contentBody"`
 }
-
+type GetToken struct {
+	Token string `json:"token"`
+}
+type UserImage struct {
+	Image string `json:"image"`
+}
 var (
 	DB      *sql.DB
 	user    User

@@ -26,7 +26,9 @@ export const sendMessage = (senderId, receiverId, socket, messageBox) => {
            messageBox.appendChild(messageDiv);
           
            messageBox.scrollTop = messageBox.scrollHeight
-           updateLastMessage(data.receiverId, data.message, data.timestamp)
+           console.log(data, "ggggg");
+           
+           updateLastMessage(data.senderId, data.receiverId, data.message, data.timestamp)
            input.value = ''; // Clear the input field
         }
     }

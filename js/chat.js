@@ -4,27 +4,7 @@ import { updateLastMessage } from "./fetchMessages.js"
 import { header } from "./header.js"
 import { headerEvents } from "./home.js"
 
-// export const aaaaa = () => {
-//      const chat = `
-    
-//     <div class="goBack"><i class="fa-solid fa-arrow-left"></i><a href="/home">Go Back</a></div>
-//     <div class="chatContainer">
-//                     <div class="chatBox">
-                        
-//                     </div>
-//                     <div class="messageContainer">
-                        
-//                     </div>
-//                 </div>           
-//     `
-//     const chatBox = document.querySelector('.chatBox')
-//     const messageContainer = document.querySelector('.messageContainer')
-//     const chatContainer = document.querySelector('.chatContainer')
 
-//     const socket = new WebSocket("ws://localhost:8082/ws")
-//     fetchUsers(chatBox, messageContainer, socket)
-//     return chatContainer
-// }
 export const chat = (app) => {
     document.head.innerHTML = `<link rel="stylesheet" href="../css/chat.css">
     <link rel="stylesheet" href="../css/home.css">
@@ -47,8 +27,6 @@ export const chat = (app) => {
     const messageContainer = document.querySelector('.messageContainer')
     const chatContainer = document.querySelector('.chatContainer')
 
-    // const chatBox = document.querySelector('.chatBox')
-    // const messageContainer = document.querySelector('.messageContainer')
     
     const socket = new WebSocket("ws://localhost:8082/ws")
     // aaaaa()
@@ -64,30 +42,36 @@ export const chat = (app) => {
     }
     // When a message is received from the WebSocket server
     socket.onmessage = (event) => {
-        console.log("received message: ", event.data)
-        const data = JSON.parse(event.data)
-        console.log(data)
-        if(data.userId !== undefined && data.isOnline !== undefined) {
-            console.log('User status update:', data.userId, data.isOnline);
-            updateUserStatus(data.userId, data.isOnline)
-        } else {
-            console.log(data)
-            // Append the message to the chat box (you can style this however you want)
-            const messageDiv = document.createElement('div');
-            messageDiv.className = 'receiver'; // Assuming '1' is your userId
-            messageDiv.innerHTML = `
-                <p>${data.text}</p>
-                <span>${data.timestamp}</span>
-            `;
-            messageBox.appendChild(messageDiv);
-            messageBox.scrollTop = messageBox.scrollHeight
-            updateLastMessage(data.senderId, data.text, data.timestamp);
-        }
+        onMessage(event)
     }
     displayUsers(chatBox, messageContainer, socket)
     
 }
 
+export const onMessage = (event) => {
+    console.log("ddddddddddddddd");
+    
+    console.log("received message: ", event.data)
+    const data = JSON.parse(event.data)
+    console.log(data)
+    if(data.userId !== undefined && data.isOnline !== undefined) {
+        console.log('User status update:', data.userId, data.isOnline);
+        updateUserStatus(data.userId, data.isOnline)
+    } else {
+        console.log(data)
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'receiver'; // Assuming '1' is your userId
+        messageDiv.innerHTML = `
+            <p>${data.text}</p>
+            <span>${data.timestamp}</span>
+        `;
+        messageBox.appendChild(messageDiv);
+        messageBox.scrollTop = messageBox.scrollHeight
+        console.log(data, "my data");
+        
+        updateLastMessage(data.senderId, data.receiverId, data.text, data.timestamp);
+    }
+}
 export const fetchOnlineUsers = async() => {
     try{
         const response = await fetch('/getOnlineUsers')

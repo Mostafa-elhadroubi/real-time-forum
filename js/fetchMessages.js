@@ -44,6 +44,8 @@ export const fetchMessages = async(receiverId, msgNbr, senderId, messageBox, mes
         const sendButton = messageContainer.querySelector('input[type="button"]');
         const messageInput = messageContainer.querySelector('input[type="text"]');
         messageInput.addEventListener('keyup', (e) => {
+            // const msgRead = document.querySelectorAll('.userBox')[receiverId]
+            
             // console.log('input is  clicked', messageInput.value.trim(),messageInput.value.trim().length)
             if(e.key == 'Enter' && messageInput.value.trim() != ''){
             sendMessage(senderId, receiverId, socket, messageBox)
@@ -59,18 +61,31 @@ export const fetchMessages = async(receiverId, msgNbr, senderId, messageBox, mes
     }
 }
 
-export const updateLastMessage = (senderId, message, timestamp) => {
+export const updateLastMessage = (senderId, receiverId, message, timestamp) => {
     const userBoxes = document.querySelectorAll('.userBox')
-    userBoxes.forEach(userBox => {
+    userBoxes.forEach((userBox, index) => {
         const userId = userBox.getAttribute("data-user-id")
-        if(userId == senderId) {
-            const lastMessage = userBox.querySelector('.user-message p');
-            const lastMessageTime = userBox.querySelector('.time')
-            if(lastMessage && lastMessageTime) {
-                lastMessage.textContent = message;
-                lastMessageTime.textContent = timestamp;
+        
+        if(userId == parseInt(senderId)) {
+            console.log("Sender",senderId, "RECEV", receiverId, userId);
+
+            console.log(userBox);
+            
+            const lastMessage = userBox.querySelectorAll('.user-message .message');
+            console.log(lastMessage);
+            const lastMessageTime = userBox.querySelectorAll('.time')
+            console.log(lastMessageTime);
+            
+            if(lastMessage[index] && lastMessageTime[index]) {
+                lastMessage[index].textContent = message;
+                console.log(lastMessage[index].textContent);
+                lastMessageTime[index].textContent = timestamp;
                 console.log("try")
+                // if()
+                userBox.style.cssText = `border: 2px solid green; background-color: rgba(0, 128, 0, 0.3);`
             }
+            
+
         }
     })
 }

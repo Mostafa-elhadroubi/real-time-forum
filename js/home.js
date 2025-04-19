@@ -1,4 +1,4 @@
-import { chat, fetchOnlineUsers } from "./chat.js";
+import { chat, fetchOnlineUsers, onMessage } from "./chat.js";
 import { displayMessages, fetchUsers, getRightTime } from "./fetchUsers.js";
 import { getUsers } from "./getUsers.js";
 import { header } from "./header.js"
@@ -278,14 +278,22 @@ const likedOrDislikedPost = (likes, dislikes, user_reaction, reactionValue) => {
 const connectSocket = () => {
     const socket = new WebSocket("ws://localhost:8082/ws")
     // aaaaa()
+    console.log("socket");
+    
     // When the WebSocket connection is open
     socket.onopen = function(event) {
         console.log("WebSocket connection established.");
         if(sockets == null) {
 
             sockets = socket
+            console.log(sockets);
+            fetchOnlineUsers()
         }
-        // fetchOnlineUsers()
+        
+        socket.onmessage = (event) => {
+                onMessage(event)
+            }
+   
     };
 }
 
@@ -307,6 +315,5 @@ export const headerEvents = () => {
     homeBtn.addEventListener('click', () => {
         navigateTo("/home")
     })
-    
     
 }

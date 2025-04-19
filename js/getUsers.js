@@ -23,24 +23,29 @@ const createChatBox = (div, user) => {
         const span = document.createElement('span')
         span.classList.add('connected')
         const userMessage = document.createElement('div')
+        userMessage.classList.add("user-message")
         const h2 = document.createElement('h2')
         h2.textContent = `${user.Username}`
+        h2.classList.add('username')
         const p = document.createElement('p')
-        p.textContent = `${user.LastMessage.String}`
+        p.classList.add('message')
+        // p.textContent = `${user.LastMessage.String}`
         userMessage.append(h2, p)
         imgUsername.append(img, span, userMessage)
-        const timeMsgNumber = document.createElement('time-msgNumber')
+        const timeMsgNumber = document.createElement('div')
         timeMsgNumber.classList.add('time-msgNumber')
         const time = document.createElement('div')
         time.classList.add('time')
-        time.textContent = `${getRightTime(parseInt(user.Time.String))}`
+        // time.textContent = `${getRightTime(parseInt(user.Time.String))}`
         const msgNmb = document.createElement('span')
         msgNmb.classList.add('msgNmb')
-        msgNmb.textContent = `${user.UnreadMessages}`
+        msgNmb.textContent = `1`
         timeMsgNumber.append(time, msgNmb)
         boxUser.setAttribute('data-user-id', user.Id)
         boxUser.append(imgUsername, timeMsgNumber)
 
         div.appendChild(boxUser)
+        console.log(userMessage);
+        
 
 }

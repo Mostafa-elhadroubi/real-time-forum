@@ -42,13 +42,13 @@ export const displayUsers = async(chatBox, messageContainer, socket) => {
                     <img src="../images/${item.Image}" alt="profile picture">
                     <span class="connected"></span>
                     <div class="user-message">
-                        <h2>${item.Username}</h2>
-                        <p>${item.LastMessage.String}</p>
+                        <h2 class="username">${item.Username}</h2>
+                        <p class="message"></p>
                     </div>
                 </div>
                 <div class="time-msgNumber">
-                    <div class="time">${getRightTime(parseInt(item.Time.String))}</div>
-                    <span class="msgNmb">${item.UnreadMessages}</span>
+                    <div class="time"></div>
+                    <span class="msgNmb"></span>
                 </div>
             </div>
         `;
@@ -69,20 +69,26 @@ export const displayUsers = async(chatBox, messageContainer, socket) => {
 
 export const displayMessages = (filteredData, socket, senderId) => {
     const chatContainer = document.querySelector('.chatContainer')
-    const messageContainer = document.createElement('div')
-    messageContainer.classList.add('messageContainer')
-    console.log(chatContainer, "rrrrr");
-    chatContainer.appendChild(messageContainer)
     
     const allUsers = document.querySelectorAll('.userBox');
     console.log([...allUsers]);
     allUsers.forEach((user, index) => {
         user.addEventListener('click', async () => {
+            
+            const allMsgContainer = document.querySelector('.messageContainer')
+            if(allMsgContainer) {
+                console.log(allMsgContainer);
+                allMsgContainer.remove()
+            }
+            const messageContainer = document.createElement('div')
+            messageContainer.classList.add('messageContainer')
+            console.log(chatContainer, "rrrrr");
+            chatContainer.appendChild(messageContainer)
             console.log(`${filteredData[index].Username}`);
             messageContainer.innerHTML = '';
             messageContainer.style.cssText = `width: 650px;`;
             messageContainer.innerHTML = `
-                <div class="username-arrowLeft">
+                <div class="username-arrowLeft" id="goBack">
                     <i class="fa-solid fa-arrow-left"></i>
                     <div class="username">${filteredData[index].Username}</div>
                 </div>
@@ -104,18 +110,26 @@ export const displayMessages = (filteredData, socket, senderId) => {
 
             // if(messageBox){
                 console.log(messageBox, "msg boxtrr");
+                if(messageBox){
                 // Define the debounced scroll handler
-                const handleScroll = debounce(() => {
-                    
-                    if (messageBox.scrollTop <= 5) {
-                        console.log("Fetching more messages...");
-                        fetchMessages(receiverId, msgNmb, senderId, messageBox, messageContainer);
+                    const handleScroll = debounce(() => {
+                        
+                        if (messageBox.scrollTop <= 5) {
+                            console.log("Fetching more messages...");
+                            fetchMessages(receiverId, msgNmb, senderId, messageBox, messageContainer);
 
+                        }
+                    }, 1000);
+                    messageBox.removeEventListener("scroll", handleScroll)
+                    messageBox.addEventListener("scroll", handleScroll)
             }
-            }, 1000);
-            messageBox.removeEventListener("scroll", handleScroll)
-                messageBox.addEventListener("scroll", handleScroll)
-            // }
+            const goBack = document.querySelector('#goBack')
+            goBack.addEventListener('click', () => {
+                if(allMsgContainer) {
+                    allMsgContainer.remove()
+                }
+                
+            })
         });
     });
 }

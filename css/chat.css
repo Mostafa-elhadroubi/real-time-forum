@@ -37,9 +37,7 @@ body{
 
 .userBox{
     width: 100%;
-    /* margin: 4px; */
     background: rgba(82, 79, 79, 0.829); 
-    /* background: red; */
     padding: 10px 0;
     border-radius: 10px;
     display: flex;
@@ -71,7 +69,20 @@ body{
     position: absolute;
     left: 50px;
     bottom: 5px;
+    /* background: rgba(0, 128, 0, 0.562); */
 }
+/* .img-username .user-message{
+    background: purple !important;
+    padding: 20px;
+    margin: 20px;
+} */
+/* .user-message .username{
+    color: red;
+    padding: 20px;
+}
+.user-message .message {
+    background: yellow;
+} */
 .time-msgNumber{
     margin-right: 8px;
 }
@@ -80,6 +91,7 @@ body{
     margin-bottom: 7px;
     color: whitesmoke;
     font-weight: 600;
+    /* background: red; */
 }
 .time-msgNumber span{
     display: block;
@@ -92,6 +104,7 @@ body{
     font-size: 18px;
     font-weight: 700;
     color: whitesmoke;
+    
 }
 .time-msgNumber .unreadMessage{
     background: rgba(120, 121, 119, 0.671);
@@ -117,8 +130,6 @@ body{
     color: whitesmoke;
 }
 .messageContainer .username-arrowLeft div{
-    /* flex-grow: 1fr; */
-    /* background: white; */
     width: 100%;
     text-align: center;
     font-size: 26px;
