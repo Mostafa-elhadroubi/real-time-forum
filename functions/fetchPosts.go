@@ -10,13 +10,13 @@ import (
 func FetchPosts(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		fmt.Println("Method invalid")
-		http.Error(w, "method invalid", http.StatusMethodNotAllowed)
+		Error(w,http.StatusMethodNotAllowed)
 		return
 	}
 	user_id, err := GetUserFromSession(w, r)
 	if err != nil {
 		fmt.Println("Error in getting user id")
-		http.Error(w, "Error in getting user id", http.StatusInternalServerError)
+		Error(w,http.StatusInternalServerError)
 		return
 	}
 	fmt.Println("yes it is")
@@ -27,7 +27,7 @@ func FetchPosts(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(postNum, "sdfsdfsd")
 	// fmt.Println(rows)
 	if err != nil {
-		http.Error(w, "error in selecting in the DB!", http.StatusInternalServerError)
+		Error(w,http.StatusInternalServerError)
 		return
 	}
 	fmt.Println("nesar")

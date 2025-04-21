@@ -1,5 +1,4 @@
-import { login } from "./login.js";
-import { navigateTo } from "./main.js";
+
 
 export const header = `
     <header>

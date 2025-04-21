@@ -48,36 +48,14 @@ const submitLoginForm = () => {
     .then(res => {
         console.log(res)
         if(!res.ok) {
-
-            const errorHTML = res.text();
-            document.body.innerHTML = errorHTML;
-            return;
+            // alert("user unregistered!!")
+            navigateTo("/signup")
+            
         } 
         navigateTo("/home")
-        // socket  = new WebSocket("ws://localhost:8082/ws")
-        // alert("")
-        
-        // ccc(socket)
-        // history.pushState({}, '', '/');
-        // socket.onopen = function(event) {
-        //     console.log("connectedgfgfgfg");
-         
-        //     console.log(socket);
-        // }
-        // if(res.redirected) {
-            
-        //     window.location.href = res.url
-        // }
     })
     .catch(error => {
         console.log('Error: ', error)
     })
 }
 
-const ccc = (socket) => {
-    socket.addEventListener('open', () =>{
-        console.log("connectedgfgfgfg");
-     
-        console.log(socket);
-    })
-}

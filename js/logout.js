@@ -4,8 +4,8 @@ export const logout = (app) => {
     fetch("/logout")
     .then(res => {
         if(!res.ok){
-            const errorHTML =  res.text();
-            document.body.innerHTML = errorHTML;
+            let obj =  res.json()
+            setError(obj.Message)  
             return;
         }
        navigateTo("/login")

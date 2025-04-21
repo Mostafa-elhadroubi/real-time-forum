@@ -11,27 +11,77 @@ import (
 func FetchUsers(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		fmt.Println("request")
-		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		Error(w,http.StatusMethodNotAllowed)
 		return
 	}
 	userId, err := GetUserFromSession(w, r)
 	if err != nil {
 		fmt.Println("Error in getting user id")
-		http.Error(w, "Error in getting user id", http.StatusInternalServerError)
+		Error(w,http.StatusInternalServerError)
 		return
 	}
 	if(userId == 0) {
 		return
 	}
 	conversations := []Conversation{}
-	query := `SELECT u.user_id, u.username, u.image, u.isConnected, m.message AS last_message, m.sent_at AS last_message_time, 
-    COALESCE(unread_messages.unread_count, 0) AS unread_count FROM users u LEFT JOIN messages m ON m.message_id = (
-    SELECT message_id FROM messages WHERE (receiver_id = u.user_id or sender_id = u.user_id) ORDER BY sent_at DESC 
-    LIMIT 1) LEFT JOIN (SELECT receiver_id AS user_id, COUNT(*) AS unread_count FROM messages WHERE isRead = 0 
-     GROUP BY receiver_id) unread_messages ON u.user_id = unread_messages.user_id ORDER BY m.sent_at DESC LIMIT 100;`
-	rows, err := DB.Query(query)
+	query := `SELECT 
+    u.user_id, 
+    u.username, 
+    u.image, 
+    u.isConnected, 
+    m.message AS last_message, 
+    m.sent_at AS last_message_time,
+    COALESCE(unread_messages.unread_count, 0) AS unread_count
+FROM 
+    users u
+LEFT JOIN (
+    SELECT 
+        m1.message_id, 
+        m1.message, 
+        m1.sent_at,
+        CASE 
+            WHEN m1.sender_id = ? THEN m1.receiver_id
+            ELSE m1.sender_id
+        END AS other_user_id
+    FROM 
+        messages m1
+    INNER JOIN (
+        SELECT 
+            MAX(sent_at) AS max_sent_at,
+            CASE WHEN sender_id < receiver_id THEN sender_id ELSE receiver_id END AS user1,
+            CASE WHEN sender_id < receiver_id THEN receiver_id ELSE sender_id END AS user2
+        FROM 
+            messages
+        WHERE 
+            ? IN (sender_id, receiver_id)
+        GROUP BY 
+            user1, user2
+    ) latest ON 
+        ((m1.sender_id = latest.user1 AND m1.receiver_id = latest.user2) OR
+         (m1.sender_id = latest.user2 AND m1.receiver_id = latest.user1)) AND
+        m1.sent_at = latest.max_sent_at
+    WHERE 
+        ? IN (m1.sender_id, m1.receiver_id)
+) m ON u.user_id = m.other_user_id
+LEFT JOIN (
+    SELECT 
+        sender_id AS user_id, 
+        COUNT(*) AS unread_count 
+    FROM 
+        messages 
+    WHERE 
+        isRead = 0 
+        AND receiver_id = ?
+    GROUP BY 
+        sender_id
+) unread_messages ON u.user_id = unread_messages.user_id
+ORDER BY 
+    CASE WHEN m.message_id IS NULL THEN 1 ELSE 0 END ASC,
+    COALESCE(m.sent_at, '1970-01-01') DESC,
+    u.username ASC;`
+	rows, err := DB.Query(query, userId, userId, userId, userId)
 	if err != nil {
-		http.Error(w, "Bad Request", http.StatusBadRequest)
+		Error(w,http.StatusInternalServerError)
 		return
 	}
 	fmt.Println(userId, "fetch user")
@@ -51,7 +101,7 @@ func FetchUsers(w http.ResponseWriter, r *http.Request) {
 			conversations = append(conversations, con)
 		}
 	}
-	// fmt.Println(conversations)
+	fmt.Println(conversations)
 	jsonData, err := json.Marshal(conversations)
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(jsonData)
@@ -78,20 +128,20 @@ func GetUserFromSession(w http.ResponseWriter, r *http.Request) (int, error) {
 
 func FetchMessages(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		Error(w,http.StatusMethodNotAllowed)
 		return
 	}
 	mu.Lock() // Lock the mutex to ensure exclusive access
 	defer mu.Unlock()
 	if err := json.NewDecoder(r.Body).Decode(&receiver); err != nil {
 		
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		Error(w,http.StatusInternalServerError)
 		return
 	}
 	userId, err := GetUserFromSession(w, r)
 	if err != nil {
 		fmt.Println("Error in getting user id")
-		http.Error(w, "Error in getting user id", http.StatusInternalServerError)
+		Error(w,http.StatusInternalServerError)
 		return
 	}
 	fmt.Println(receiver.ReceiverId, "get it")
@@ -100,14 +150,14 @@ func FetchMessages(w http.ResponseWriter, r *http.Request) {
 	rows, err := DB.Query(query, userId, receiver.ReceiverId, receiver.ReceiverId, userId, receiver.MsgNbr)
 	fmt.Println(receiver.MsgNbr, "msgnmb")
 	if err != nil {
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		Error(w,http.StatusInternalServerError)
 		return
 	}
 	defer rows.Close()
 	allMsg := []Messages{}
 	for rows.Next() {
 		if err := rows.Scan(&msg.Message_id, &msg.Sender_id, &msg.Receiver_id, &msg.Message, &msg.IsRead, &msg.Sent_at); err != nil {
-			http.Error(w, "Error scanning row", http.StatusInternalServerError)
+			Error(w,http.StatusInternalServerError)
 			return
 		}
 		allMsg = append(allMsg, msg)
@@ -115,7 +165,7 @@ func FetchMessages(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(allMsg, "allmsg")
 	jsonData, err := json.Marshal(allMsg)
 	if err != nil {
-		http.Error(w, "Error in marshling data", http.StatusBadRequest)
+		Error(w,http.StatusInternalServerError)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")

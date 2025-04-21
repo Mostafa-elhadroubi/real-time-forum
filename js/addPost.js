@@ -68,17 +68,10 @@ export const add_post = (app) => {
         })
         console.log(response);
         if(!response.ok) {
-            const errorHTML = await response.text();
-            document.body.innerHTML = errorHTML;
+            let obj = await response.json()
+            setError(obj.Message)  
             return;
-        }
-        if (response.redirected) {
-            window.location.href = response.url
-        }
-        
-        
-
-        
+        }   
     })
 
 }

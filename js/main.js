@@ -17,8 +17,10 @@ if(!await checkLogin()){
     const app = document.querySelector('.app')
     console.log(url);
     history.pushState({}, "", url)
+    if(app) {
 
-    app.innerHTML = ''
+        app.innerHTML = ''
+    }
     
     switch(url) {
         case "/signup":
@@ -54,7 +56,7 @@ addEventListener('DOMContentLoaded', () => {
 })
 const errorPage = () => {
     const app = document.querySelector('.app')
-    app.innerHTML = `<h1>page not found</h1>`
+    app.innerHTML = `<h1>page not fdfdfsdfsdnd</h1>`
 }
 
 addEventListener('popstate', () => {

@@ -13,11 +13,11 @@ import (
 func Login(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		fmt.Println("RRRRRRRRRRRRRR")
-		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		Error(w,http.StatusMethodNotAllowed)
 		return
 	}
 	if err := r.ParseMultipartForm(10); err != nil {
-		http.Error(w, "Unable to parse form data", http.StatusBadRequest)
+		Error(w,http.StatusBadRequest)
 	}
 	username := strings.ToLower(r.FormValue("username"))
 	password := r.FormValue("password")
@@ -33,7 +33,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 	token, err := uuid.NewV1()
 	if err != nil {
-		http.Error(w, "Error in generating a token", http.StatusInternalServerError)
+		Error(w,http.StatusInternalServerError)
 		return
 	}
 	http.SetCookie(w, &http.Cookie{

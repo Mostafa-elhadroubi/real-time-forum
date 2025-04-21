@@ -1,5 +1,5 @@
 import { debounce } from "./debounce.js";
-import { msgNmb, fetchMessages, convertTime, isScrolled } from "./fetchMessages.js";
+import { msgNmb, fetchMessages, convertTime } from "./fetchMessages.js";
 let receiverId;
 // export let messageBox
 export let senderId;
@@ -12,13 +12,9 @@ export const chatState = {
 export const fetchUsers = async() =>  {
     try {
         const response = await fetch("/api/users/", { method: 'POST' });
-        if (response.redirected) {
-            window.location.href = response.url; // Redirect to the login page
-            return;
-        }
         if (!response.ok) {
-            const errorHTML = await response.text();
-            document.body.innerHTML = errorHTML;
+            let obj = await response.json()
+            setError(obj.Message)  
             return;
         }
 
@@ -60,13 +56,7 @@ export const displayUsers = async(chatBox, messageContainer, socket) => {
         console.log(item)
         chatBox.innerHTML += content;
         chatState.senderId = item.ConnectedUserId;
-        displayUnredMsg(index)
-        // const unreadMessage = document.querySelectorAll(".msgNmb")
-        // if(unreadMessage[index].textContent == "0") {
-        //     unreadMessage[index].textContent = ""
-        // } else{
-        //     unreadMessage[index].classList.add('unreadMessage')
-        // }
+        
     });
     displayMessages(filteredData, socket)
    
@@ -153,17 +143,7 @@ export const displayMessages = (filteredData, socket) => {
     });
 }
 
-export const displayUnredMsg = (index)=> {
-    // senderId = item.ConnectedUserId;
-    const unreadMessage = document.querySelectorAll(".msgNmb")
-    console.log(unreadMessage);
-    
-    if(unreadMessage[index].textContent == "0") {
-        unreadMessage[index].textContent = ""
-    } else{
-        unreadMessage[index].classList.add('unreadMessage')
-    }
-}
+
 
 const updateMessageState = async(id) => {
     try{
@@ -176,8 +156,8 @@ const updateMessageState = async(id) => {
         })
         console.log(response)
         if(!response.ok) {
-            const errorHTML = await response.text();
-            document.body.innerHTML = errorHTML;
+            let obj = await response.json()
+            setError(obj.Message)  
             return;
         }
     }catch(error) {

@@ -3,8 +3,11 @@
     margin: 0;
     box-sizing: border-box;
 }
-
-.containerBody {
+/* .app{
+    width: 100vw;
+    height: 100vh;
+} */
+.app {
     background: rgb(24, 22, 22);
     width: 100vw;
     height: 100vh;

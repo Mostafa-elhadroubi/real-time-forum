@@ -8,7 +8,7 @@ import (
 
 func LikesComments(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		Error(w,http.StatusMethodNotAllowed)
 		return
 	}
 	fmt.Println("this like")
@@ -16,13 +16,13 @@ func LikesComments(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&resLike)
 	if err != nil {
 		fmt.Println("Error decoding JSON:", err)
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		Error(w,http.StatusInternalServerError)
 		return
 	}
 	fmt.Println(resLike)
 
 	if resLike.LikeValue != 0 && resLike.LikeValue != 1 {
-		http.Error(w, "Bad Request", http.StatusBadRequest)
+		Error(w,http.StatusInternalServerError)
 		return
 	}
 	user_id, err := GetUserFromSession(w, r)

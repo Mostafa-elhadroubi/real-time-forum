@@ -3,14 +3,12 @@ import { debounce } from "./debounce.js";
 import { chatState, displayMessages, fetchUsers, getRightTime } from "./fetchUsers.js";
 import { getUsers } from "./getUsers.js";
 import { header } from "./header.js"
-import { socket } from "./login.js";
 import { navigateTo } from "./main.js";
 let sockets = null
 
 let commentNum = 0
 let postNum = 0
 let dataResponse = []
-let commentData = []
 let commentState = {} // key: post_id, value: { commentNum: int, commentData: [] }
 
 const fetchPosts = async() => {
@@ -23,8 +21,8 @@ const fetchPosts = async() => {
     })
     console.log(postResponse);
     if(!postResponse.ok) {
-        const errorHTML = await postResponse.text();
-        document.body.innerHTML = errorHTML;
+        let obj = await postResponse.json()
+        setError(obj.Message)  
         return;
     }
     const data = await postResponse.json()
@@ -61,7 +59,7 @@ const fetchPosts = async() => {
                 </div>
                 <div class="comment-btn">
                     <textarea name="comment" class="bodyComment"></textarea>
-                    <button id="sendComment">send</button>
+                    <button class="sendComment">send</button>
                 </div>
                 
                </div>
@@ -97,8 +95,10 @@ const fetchPosts = async() => {
     likedOrDislikedPost(likes, dislikes, "1", 1)
     likedOrDislikedPost(dislikes, likes, "0", 0)
     // sendCommentPost()
-    const sendComment = document.querySelectorAll('#sendComment')
+    const sendComment = document.querySelectorAll('.sendComment')
     sendComment.forEach((item, index) => {
+        console.log(index);
+        
         item.addEventListener('click', async() => {
             const post_id = parseInt(item.parentElement.parentElement.parentElement.getAttribute('id'));
             let body_comment = document.querySelectorAll('.bodyComment')[index].value
@@ -108,19 +108,23 @@ const fetchPosts = async() => {
                 headers: {
                     'Content-Type' : 'application/json'
                 },
-                body: JSON.stringify({post_id: post_id, contentBody: body_comment})
+                //body: JSON.stringify({post_id: post_id, contentBody: body_comment})
             })
-            console.log(responseComment);
+            //console.log(await responseComment.json());
             if(responseComment.ok) {
                 document.querySelectorAll('.bodyComment')[index].value = "";
                 console.log(document.querySelectorAll('.commentPost')[index].childNodes[0].textContent, "hhhh");
                 
-                let totalComment = parseInt(document.querySelector('.commentPost').childNodes[0].textContent)
+                let totalComment = parseInt(document.querySelectorAll('.commentPost')[index].childNodes[0].textContent)
                 totalComment++
-                document.querySelector('.commentPost').childNodes[0].innerHTML = totalComment;
+                console.log(totalComment);
+                
+                document.querySelectorAll('.commentPost')[index].childNodes[0].innerHTML = totalComment;
             } else {
-                const errorHTML = await responseComment.text(); // get the HTML from Go server
-                document.body.innerHTML = errorHTML;     // display it manually
+                console.log("error");
+                
+                let obj = await responseComment.json()
+                setError(obj.Message)  
                 return;
             }  
         })
@@ -178,18 +182,14 @@ const fetchComment = async(item, index) => {
     })
     console.log(commentResponse, commentNum);
     if(!commentResponse.ok) {
-        const errorHTML = await commentResponse.text();
-        document.body.innerHTML = errorHTML;
+        let obj = await responseComment.json()
+        setError(obj.Message)  
         return;
     }
     let data = await commentResponse.json()
     console.log(data);
     commentState[post_id].commentData = [...commentData, ...data];
     commentState[post_id].commentNum += data.length;
-    // commentData = [...commentData, ...data];
-    // commentNum += data.length;
-    // const comments = document.querySelector('.comments')
-    // comments.innerHTML = ''
 
 
     data.forEach((item) => {
@@ -232,7 +232,8 @@ const fetchComment = async(item, index) => {
                 body: JSON.stringify({ comment_id: item.comment_id, like: 1 }),
             });
             if (!res.ok) {
-                document.body.innerHTML = await res.text();
+                let obj =  res.json()
+                setError(obj.Message)  
                 return;
             }
     
@@ -259,7 +260,8 @@ const fetchComment = async(item, index) => {
                 body: JSON.stringify({ comment_id: item.comment_id, like: 0 }),
             });
             if (!res.ok) {
-                document.body.innerHTML = await res.text();
+                let obj = await res.json()
+                setError(obj.Message)  
                 return;
             }
     
@@ -282,56 +284,7 @@ const fetchComment = async(item, index) => {
         comments[index].scrollTop = newScrollHeight - previousScrollHeight - 10;
     });
 }
-const likedOrDislikedComment = async(likes, dislikes, user_reaction, reactionValue, post_id) => {
-    if (!commentState[post_id]) return;
 
-    likes.forEach((item, index) => {
-
-    const comment_id = parseInt(item.parentElement.parentElement.getAttribute("id"));
-    const comm = commentState[post_id].commentData.find(c => c.comment_id === comment_id);
-
-    if (!comm) return; // Just in case
-
-        if (comm.user_reaction == user_reaction) {
-            item.childNodes[1].classList.remove("fa-regular")
-            item.childNodes[1].classList.add("fa-solid")
-        }
-        item.addEventListener('click', async() => {            
-            let comment_id = parseInt(item.parentElement.parentElement.getAttribute('id'))
-            console.log(comment_id);
-            
-            const likeResponse = await fetch("/api/likesComments", {
-                method: 'POST',
-                headers: {'Content-Type' : 'application/json'},
-                body: JSON.stringify({comment_id: comment_id, like : reactionValue})
-            }) 
-            console.log(likeResponse);
-            if(!likeResponse.ok) {
-                const errorHTML = await likeResponse.text();
-                document.body.innerHTML = errorHTML;
-        return;
-            }
-            if(item.childNodes[1].classList.contains("fa-solid")){
-                if (parseInt(item.childNodes[0].textContent) != 0) {
-                    item.childNodes[0].innerHTML = parseInt(item.childNodes[0].textContent) - 1
-                    item.childNodes[1].classList.remove("fa-solid")
-                    item.childNodes[1].classList.add("fa-regular")
-                }
-            } else {
-                item.childNodes[0].innerHTML = parseInt(item.childNodes[0].textContent) + 1
-                item.childNodes[1].classList.remove("fa-regular")
-                item.childNodes[1].classList.add("fa-solid")
-            }
-            if (dislikes[index].childNodes[1].classList.contains("fa-solid")) {
-                console.log(dislikes[index].childNodes[0]);
-                
-                dislikes[index].childNodes[0].innerHTML = parseInt(dislikes[index].childNodes[0].textContent) -1
-                dislikes[index].childNodes[1].classList.remove("fa-solid")
-                dislikes[index].childNodes[1].classList.add("fa-regular")  
-            }                               
-        })
-    })
-}
 export const home = async(app) => {
     document.head.innerHTML = `<link rel="stylesheet" href="../css/home.css">
                                 <link rel="stylesheet" href="../css/chat.css">
@@ -385,8 +338,8 @@ const likedOrDislikedPost = (likes, dislikes, user_reaction, reactionValue) => {
             }) 
             console.log(likeResponse);
             if(!likeResponse.ok) {
-                const errorHTML = await postResponse.text();
-                document.body.innerHTML = errorHTML;
+                let obj = await likeResponse.json()
+                setError(obj.Message)  
                 return;
             }
             if(item.childNodes[1].classList.contains("fa-solid")){
@@ -455,3 +408,17 @@ export const headerEvents = () => {
 }
 
 
+
+const setError = (ms) => {
+    console.log("error");
+    const msg = document.createElement('div')
+    msg.classList.add('msgError')
+    const pmsg = document.createElement('p')
+    pmsg.textContent = ms
+    msg.appendChild(pmsg)
+    document.body.appendChild(msg)
+    setTimeout(() => {
+        msg.remove()
+    }, 3000)
+
+}

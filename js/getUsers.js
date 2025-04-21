@@ -30,14 +30,14 @@ const createChatBox = (div, user) => {
         h2.classList.add('username')
         const p = document.createElement('p')
         p.classList.add('message')
-        p.textContent = `${user.LastMessage.String}`
+        // p.textContent = `${user.LastMessage.String}`
         userMessage.append(h2, p)
         imgUsername.append(img, span, userMessage)
         const timeMsgNumber = document.createElement('div')
         timeMsgNumber.classList.add('time-msgNumber')
         const time = document.createElement('div')
         time.classList.add('time')
-        time.textContent = `${getRightTime(parseInt(user.Time.String))}`
+        // time.textContent = `${getRightTime(parseInt(user.Time.String))}`
         const msgNmb = document.createElement('span')
         msgNmb.classList.add('msgNmb')
         timeMsgNumber.append(time, msgNmb)

@@ -23,12 +23,12 @@ func setErrorCookie(res http.ResponseWriter, message, path string, maxAge int) {
 
 func SignupAuth(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		Error(w,http.StatusMethodNotAllowed)
 		return
 	}
 
 	if err := r.ParseMultipartForm(10); err != nil {
-		http.Error(w, "Unable to parse form data", http.StatusBadRequest)
+		Error(w,http.StatusInternalServerError)
 	}
 
 	username := strings.ToLower(r.FormValue("username"))
@@ -59,7 +59,7 @@ func SignupAuth(w http.ResponseWriter, r *http.Request) {
 	query := `SELECT username, email FROM users`
 	rows, err := DB.Query(query)
 	if err != nil {
-		http.Error(w, "Unable to parse form data", http.StatusBadRequest)
+		Error(w,http.StatusInternalServerError)
 		return
 	}
 	for rows.Next() {

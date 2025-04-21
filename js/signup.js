@@ -1,7 +1,9 @@
 import { getCookie } from "./getcookie.js"
+import { navigateTo } from "./main.js"
 
 export const signup = () => {
     const signup = `
+        <div class="app"
                 <div class="containerBody">
                     <div class="signupContainer">
                         <h1 class="signupHeader">Sign Up</h1>
@@ -10,7 +12,7 @@ export const signup = () => {
                             <label>Username:<input type="text" name="username" placeholder="Enter your Username" required></label>
                             <label>First Name:<input type="text" name="firstName" placeholder="Enter your First Name" required></label>
                             <label>Last Name:<input type="text" name="lastName" placeholder="Enter your Last Name" required></label>
-                            <label>Age:<input type="text" name="age" placeholder="Enter your Age" required></label>
+                            <label>Age:<input type="number" name="age" placeholder="Enter your Age" required></label>
                             <label>Gender:
                                 <input type="radio" name="gender" value="Male" id="male"><label for="male">Male</label>
                                 <input type="radio" name="gender" value="Female" id="female"><label for="female">Female</label>
@@ -23,6 +25,7 @@ export const signup = () => {
                         </form>
                         <div class="hasAccount hasnotAccount">Already has an account? <a href="/login">Login</a></div>
                     </div>  
+                </div>
                 </div>
     `
     document.body.innerHTML = signup
@@ -62,13 +65,12 @@ const submitsignupForm = (emailError, passwordError) => {
         .then(response => {
             console.log(response)
             if(!response.ok) {
-                const errorHTML =  response.text();
-                document.body.innerHTML = errorHTML;
+                let obj =  response.json()
+                setError(obj.Message)  
                 return;
             }
-            if(response.redirected) {
-                window.location.href = response.url
-            }
+                navigateTo("/login")
+            
         })
         .catch(error => {
             console.log('Error: ', error)

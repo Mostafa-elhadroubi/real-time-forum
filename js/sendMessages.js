@@ -27,11 +27,6 @@ export const sendMessage = (senderId, receiverId, socket, messageBox) => {
             const span = document.createElement('span');
             span.textContent = `${data.timestamp}`
             messageDiv.appendChild(span);
-            // messageDiv.innerText = `
-            //     <p>${data.text}</p>
-            //     <span>${String(data.timestamp)}</span>
-            // `;
-
             
            chatState.messageBox.appendChild(messageDiv);
           

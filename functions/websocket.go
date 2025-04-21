@@ -19,7 +19,7 @@ func GetOnlineUsers(w http.ResponseWriter, r *http.Request) {
 	}
 	jsonData, err := json.Marshal(onlineUsers)
 	if err != nil {
-		http.Error(w, "Error encoding json", http.StatusInternalServerError)
+		Error(w,http.StatusInternalServerError)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -44,7 +44,7 @@ func userStatus(userId int, isOnline bool) {
 func HandleConnections(w http.ResponseWriter, r *http.Request) {
 	userId, err := GetUserFromSession(w, r)
 	if err!= nil {
-		fmt.Println("Error in getting user id")
+		Error(w,http.StatusNotFound)
 		return
 	}
 	conn, err := upgrader.Upgrade(w, r, nil)

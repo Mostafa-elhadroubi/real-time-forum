@@ -12,14 +12,14 @@ import (
 func AddPost(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		fmt.Println("method invalid")
-		http.Error(w, "Method Invalid", http.StatusMethodNotAllowed)
+		Error(w,http.StatusMethodNotAllowed)
 		return
 	}
 	fmt.Println("true")
 	err := r.ParseMultipartForm(10)
 	if err != nil {
 		fmt.Println("ERROR IN PARS FORM")
-		http.Error(w, "Failed to parse form data", http.StatusBadRequest)
+		Error(w,http.StatusBadRequest)
 		return
 	}
 	title := r.FormValue("title")
@@ -28,7 +28,7 @@ func AddPost(w http.ResponseWriter, r *http.Request) {
 
 	title, body = strings.TrimSpace(title), strings.TrimSpace(body)
 	if title == "" || len(title) > 400 || body == "" || len(body) > 5000 {
-		http.Error(w, "Failed to parse form data", http.StatusBadRequest)
+		Error(w,http.StatusBadRequest)
 		return
 	}
 	if len(categories) == 0 {
@@ -37,11 +37,11 @@ func AddPost(w http.ResponseWriter, r *http.Request) {
 		for _, categoryStr := range categories {
 			categoryNum, err := strconv.Atoi(categoryStr)
 			if err != nil {
-				http.Error(w, "can not be converted to intger", http.StatusInternalServerError)
+				Error(w,http.StatusInternalServerError)
 				return
 			}
 			if categoryNum < 1 || categoryNum > 5 {
-				http.Error(w, "category does not exist!!", http.StatusInternalServerError)
+				Error(w,http.StatusInternalServerError)
 				return
 			}
 
@@ -52,26 +52,26 @@ func AddPost(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(user_id)
 	if err != nil {
 		fmt.Println("Error in getting user id")
-		http.Error(w, "Error in getting user id", http.StatusInternalServerError)
+		Error(w,http.StatusInternalServerError)
 		return
 	}
 	query := "INSERT INTO posts VALUES (NULL, ?, ?, ?, ?)"
 	res, err := DB.Exec(query, user_id, title, body, time.Now().Unix())
 	if err != nil {
-		http.Error(w, "error in inserting in the DB!", http.StatusInternalServerError)
+		Error(w,http.StatusInternalServerError)
 		return
 	}
 	post_id, err := res.LastInsertId()
 	if err != nil {
 		fmt.Println("error in the last index!!")
-		http.Error(w, "error in the last index!!", http.StatusInternalServerError)
+		Error(w,http.StatusInternalServerError)
 		return
 	}
 	for _, category := range categories {
 		query := "INSERT INTO posts_categories VALUES (NULL, ?, ?)"
 		_, err = DB.Exec(query, post_id, category)
 		if err != nil {
-			http.Error(w, "error in inserting in the DB!", http.StatusInternalServerError)
+			Error(w,http.StatusInternalServerError)
 			return
 		}
 	}
