@@ -30,6 +30,7 @@ body{
     overflow-y: scroll;
     overflow-x: hidden;
     border-radius: 10px;
+    
 }
 .chatBox::-webkit-scrollbar{
     width: 0px; 
@@ -44,6 +45,8 @@ body{
     justify-content: space-between;
     align-items: center;
     margin-bottom: 5px;
+    overflow: hidden;
+    max-width: 350px;
 }
 .img-username{
     display: flex;
@@ -76,13 +79,21 @@ body{
     padding: 20px;
     margin: 20px;
 } */
-/* .user-message .username{
-    color: red;
-    padding: 20px;
+.user-message {
+    /* display: flex;
+    flex-direction: column; */
+    flex-grow: 1;
+    min-width: 0;
+    max-width: 200px;
 }
 .user-message .message {
-    background: yellow;
-} */
+    display: block;
+    width: 100%;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    min-width: 0;
+}
 .time-msgNumber{
     margin-right: 8px;
 }
