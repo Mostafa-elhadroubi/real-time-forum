@@ -1,4 +1,5 @@
 import { chat, fetchOnlineUsers, onMessage } from "./chat.js";
+import { debounce } from "./debounce.js";
 import { chatState, displayMessages, fetchUsers, getRightTime } from "./fetchUsers.js";
 import { getUsers } from "./getUsers.js";
 import { header } from "./header.js"
@@ -10,6 +11,8 @@ let commentNum = 0
 let postNum = 0
 let dataResponse = []
 let commentData = []
+let commentState = {} // key: post_id, value: { commentNum: int, commentData: [] }
+
 const fetchPosts = async() => {
     const postResponse = await fetch("/api/posts", {
         method: 'POST',
@@ -123,28 +126,49 @@ const fetchPosts = async() => {
         })
 
     })
-    const fetchCommentPost = document.querySelector('.commentPost')
-    fetchCommentPost.addEventListener('click', async() => {
-        const comments= document.querySelector('.comments')
-        fetchComment(fetchCommentPost)
-         comments.addEventListener('scroll', () => {
-            // console.log("scrolled", comments.scrollTop);
-            if(comments.scrollTop < 5) {
-                console.log(commentNum);
-                
-                fetchComment(fetchCommentPost)
-            }
-            
-         })
+    const fetchCommentPost = document.querySelectorAll('.commentPost')
+    fetchCommentPost.forEach((item, index) => {
+        item.addEventListener('click', async() => {
+            console.log(item);
+            const comments = document.querySelectorAll('.comments')
+            fetchComment(item, index)
+            const handleScroll = debounce(() => {
+                if(comments[index].scrollTop < 5) {
+                    console.log(commentNum);
+                    
+                    fetchComment(item,index)
+                }
+            },1000)
+            comments[index].addEventListener('scroll', handleScroll)
+        })
+
     })
     
 
 }
-const fetchComment = async(fetchCommentPost) => {
-    let post_id = parseInt(fetchCommentPost.parentElement.parentElement.getAttribute('id'))
-    console.log(fetchCommentPost.parentElement.parentElement.getAttribute('id'));
-    const comments= document.querySelector('.comments')
-    const previousScrollHeight = comments.scrollHeight
+const fetchComment = async(item, index) => {
+    let post_id = parseInt(item.parentElement.parentElement.getAttribute('id'))
+    console.log(item.parentElement.parentElement.getAttribute('id'));
+
+    if (!commentState[post_id]) {
+        commentState[post_id] = {
+            commentNum: 0,
+            commentData: []
+        }
+    }
+
+    const { commentNum, commentData } = commentState[post_id];
+    const comments= document.querySelectorAll('.comments')
+    // Hide comments of all other posts
+    document.querySelectorAll('.comments').forEach((commentsDiv, idx) => {
+        if (idx !== index) {
+            commentsDiv.style.display= 'none';  // Hide comments for other posts
+        }
+    });
+
+    // Show the clicked post's comments
+    comments[index].style.display = 'block';
+    const previousScrollHeight = comments[index].scrollHeight
     const commentResponse = await fetch("/api/comment", {
         method: 'POST',
         headers: {
@@ -160,52 +184,115 @@ const fetchComment = async(fetchCommentPost) => {
     }
     let data = await commentResponse.json()
     console.log(data);
-    commentData = commentData = [...commentData, ...data];
-    commentNum += data.length;
+    commentState[post_id].commentData = [...commentData, ...data];
+    commentState[post_id].commentNum += data.length;
+    // commentData = [...commentData, ...data];
+    // commentNum += data.length;
     // const comments = document.querySelector('.comments')
     // comments.innerHTML = ''
 
-    data.forEach((item )=> {
-    // Create full comment container
-    const commentContainer = document.createElement('div');
-    commentContainer.classList.add("commentContainer")
-    // Build innerHTML for the comment block
-    commentContainer.innerHTML = `
-        <div class="comment" id="${item.comment_id}">
-            <img src="../images/${item.image}" alt="profile image">
-            <div class="username-time">
-                <p>@${item.username}</p>
-                <p>${getRightTime(item.created_at)}</p>
+
+    data.forEach((item) => {
+        const commentContainer = document.createElement('div');
+        commentContainer.classList.add("commentContainer");
+        commentContainer.innerHTML = `
+            <div class="comment" id="${item.comment_id}">
+                <img src="../images/${item.image}" alt="profile image">
+                <div class="username-time">
+                    <p>@${item.username}</p>
+                    <p>${getRightTime(item.created_at)}</p>
+                </div>
             </div>
-        </div>
-        <div class="commentBody">${item.body}</div>
-        <div class="btnsComment">
-            <p class="likeComment"><span>${item.likedComment}</span><i class="fa-regular fa-thumbs-up"></i></p>
-            <p class="dislikeComment"><span>${item.dislikedComment}</span><i class="fa-regular fa-thumbs-down"></i></p>
-        </div>
-    `;
-
-    // Prepend to the top of comments container
-    comments.insertBefore(commentContainer, comments.firstChild);
-    const newScrollHeight = comments.scrollHeight
-    comments.scrollTop = newScrollHeight - previousScrollHeight - 10
-    // commentNum++;
-
-    })
-    console.log(commentNum);
+            <div class="commentBody">${item.body}</div>
+            <div class="btnsComment">
+                <p class="likeComment"><span>${item.likedComment}</span><i class="fa-regular fa-thumbs-up"></i></p>
+                <p class="dislikeComment"><span>${item.dislikedComment}</span><i class="fa-regular fa-thumbs-down"></i></p>
+            </div>
+        `;
     
-    // const newScrollHeight = comments.scrollHeight;
-    // comments.scrollTop += newScrollHeight - previousScrollHeight;
-
-    const likedComment = document.querySelectorAll('.likeComment')
-    const dislikedComment = document.querySelectorAll('.dislikeComment')
-    console.log(post_id, "dfgdfg");
-    likedOrDislikedComment(likedComment, dislikedComment, "1", 1)
-    likedOrDislikedComment(dislikedComment, likedComment, "0", 0)
+        comments[index].insertBefore(commentContainer, comments[index].firstChild);
+    
+        // Get buttons
+        const likeBtn = commentContainer.querySelector(".likeComment");
+        const dislikeBtn = commentContainer.querySelector(".dislikeComment");
+    
+        // Set initial state
+        if (item.user_reaction === "1") {
+            likeBtn.querySelector("i").classList.replace("fa-regular", "fa-solid");
+        }
+        if (item.user_reaction === "0") {
+            dislikeBtn.querySelector("i").classList.replace("fa-regular", "fa-solid");
+        }
+    
+        // Like button event
+        likeBtn.addEventListener("click", async () => {
+            const res = await fetch("/api/likesComments", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ comment_id: item.comment_id, like: 1 }),
+            });
+            if (!res.ok) {
+                document.body.innerHTML = await res.text();
+                return;
+            }
+    
+            const liked = likeBtn.querySelector("i").classList.contains("fa-solid");
+            if (liked) {
+                likeBtn.querySelector("span").textContent = parseInt(likeBtn.querySelector("span").textContent) - 1;
+                likeBtn.querySelector("i").classList.replace("fa-solid", "fa-regular");
+            } else {
+                likeBtn.querySelector("span").textContent = parseInt(likeBtn.querySelector("span").textContent) + 1;
+                likeBtn.querySelector("i").classList.replace("fa-regular", "fa-solid");
+                // Remove dislike if it exists
+                if (dislikeBtn.querySelector("i").classList.contains("fa-solid")) {
+                    dislikeBtn.querySelector("span").textContent = parseInt(dislikeBtn.querySelector("span").textContent) - 1;
+                    dislikeBtn.querySelector("i").classList.replace("fa-solid", "fa-regular");
+                }
+            }
+        });
+    
+        // Dislike button event
+        dislikeBtn.addEventListener("click", async () => {
+            const res = await fetch("/api/likesComments", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ comment_id: item.comment_id, like: 0 }),
+            });
+            if (!res.ok) {
+                document.body.innerHTML = await res.text();
+                return;
+            }
+    
+            const disliked = dislikeBtn.querySelector("i").classList.contains("fa-solid");
+            if (disliked) {
+                dislikeBtn.querySelector("span").textContent = parseInt(dislikeBtn.querySelector("span").textContent) - 1;
+                dislikeBtn.querySelector("i").classList.replace("fa-solid", "fa-regular");
+            } else {
+                dislikeBtn.querySelector("span").textContent = parseInt(dislikeBtn.querySelector("span").textContent) + 1;
+                dislikeBtn.querySelector("i").classList.replace("fa-regular", "fa-solid");
+                // Remove like if it exists
+                if (likeBtn.querySelector("i").classList.contains("fa-solid")) {
+                    likeBtn.querySelector("span").textContent = parseInt(likeBtn.querySelector("span").textContent) - 1;
+                    likeBtn.querySelector("i").classList.replace("fa-solid", "fa-regular");
+                }
+            }
+        });
+    
+        const newScrollHeight = comments[index].scrollHeight;
+        comments[index].scrollTop = newScrollHeight - previousScrollHeight - 10;
+    });
 }
-const likedOrDislikedComment = async(likes, dislikes, user_reaction, reactionValue) => {
+const likedOrDislikedComment = async(likes, dislikes, user_reaction, reactionValue, post_id) => {
+    if (!commentState[post_id]) return;
+
     likes.forEach((item, index) => {
-        if (commentData[index].user_reaction == user_reaction) {
+
+    const comment_id = parseInt(item.parentElement.parentElement.getAttribute("id"));
+    const comm = commentState[post_id].commentData.find(c => c.comment_id === comment_id);
+
+    if (!comm) return; // Just in case
+
+        if (comm.user_reaction == user_reaction) {
             item.childNodes[1].classList.remove("fa-regular")
             item.childNodes[1].classList.add("fa-solid")
         }
