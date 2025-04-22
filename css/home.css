@@ -12,7 +12,6 @@ header {
     justify-content: space-between;
     align-items: center;
     color: whitesmoke;
-    /* position: fixed; */
 }
 header .logo {
     margin-left: 20px;
@@ -21,7 +20,6 @@ header .logo img{
     width: 100px;
 }
 nav{
-    /* background: red; */
     width: 50%;
     padding: 10px 0;
 }
@@ -44,13 +42,10 @@ nav ul li a i{
     margin-right: 5px;
 }
 .post-chat-container{
-    /* background: white; */
     display: flex;
     flex-direction: column;
 }
 .posts {
-    /* background: green; */
-    /* width: 100%; */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -78,7 +73,6 @@ nav ul li a i{
     margin-left: 10px;
 }
 .username-time p:nth-child(1) {
-    /* color: #b8b4b4; */
     font-size: 18px;
 }
 .username-time p:nth-child(2) {
@@ -95,14 +89,12 @@ nav ul li a i{
     padding: 10px;
     font-size: 18px;
     color: rgb(226, 220, 220);
-    /* background: rgb(121, 118, 116);; */
 }
 .h3{
     padding: 5px;
     color: white;
 }
 .title, .postBody{
-    /* background:  rgb(121, 118, 116); */
     padding: 10px;
     font-size: 18px;
     color: white;
@@ -130,8 +122,6 @@ nav ul li a i{
 
 }
 .comments{
-    /* background: red; */
-    /* width: 400px; */
     max-height: 350px;
     overflow-y: auto;
 }
@@ -171,7 +161,6 @@ hr{
     border-radius: 50%;
 }
 .commentBody{
-    /* background:  rgb(121, 118, 116); */
     padding: 10px;
     margin: 5px 0px;
     color: white;
@@ -188,7 +177,6 @@ hr{
     margin-right: 5px;
 }
 .addPostContainer{
-    /* background: red; */
     margin-top: 20px;
     display: flex;
     justify-content: center;
@@ -210,7 +198,6 @@ hr{
     color: rgb(255, 255, 255);
 }
 .content {
-    /* background: blue; */
     padding: 10px;
 }
 .content h3{
