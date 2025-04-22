@@ -4,6 +4,7 @@ import { chatState, displayMessages, fetchUsers, getRightTime } from "./fetchUse
 import { getUsers } from "./getUsers.js";
 import { header } from "./header.js"
 import { navigateTo } from "./main.js";
+import { updateUserStatus } from "./sendMessages.js";
 let sockets = null
 
 let commentNum = 0
@@ -381,7 +382,15 @@ const connectSocket = () => {
         
         socket.onmessage = (event) => {
                 onMessage(event)
-            }
+        }
+
+        socket.onclose = (event) => {
+            console.log("Websocket connection is closed!")
+            console.log(chatState);
+            
+            sockets = null
+            updateUserStatus(chatState.senderId, false)
+        }
    
     };
 }
@@ -398,6 +407,10 @@ export const headerEvents = () => {
     })
     const logout = document.querySelector("#logout")
     logout.addEventListener('click', () => {
+        if (sockets && sockets.readyState === WebSocket.OPEN) {
+            sockets.close()
+        }
+    
         navigateTo("/logout")
     })
     const homeBtn = document.querySelector('#image')
