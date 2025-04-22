@@ -23,7 +23,7 @@ export const signup = () => {
                             <div class="passwordError"></div>
                             <button class="signupBtn">Sign Up</button>
                         </form>
-                        <div class="hasAccount hasnotAccount">Already has an account? <a href="/login">Login</a></div>
+                        <div class="hasAccount hasnotAccount">Already has an account? <button type="button" id="login">Login</button></div>
                     </div>  
                 </div>
                 </div>
@@ -44,6 +44,13 @@ export const signup = () => {
         submitsignupForm(emailError, passwordError)
         
     })
+    const login = document.querySelector('#login')
+    login.addEventListener('click', () => {
+        console.log("login clicked");
+        navigateTo('/login')
+        
+    })
+
 }
 
 const submitsignupForm = (emailError, passwordError) => {

@@ -16,7 +16,7 @@ export const login = (app) => {
                             <div class="passwordError"></div>
                             <button class="loginBtn">Login</button>
                         </form>
-                        <div class="hasAccount hasnotAccount">Has not an account yet? <a id="/signup">Sign Up</a></div>  
+                        <div class="hasAccount hasnotAccount">Have not an account yet? <button id="signup">Sign Up</button></div>  
                     </div>
                 </div>
     `

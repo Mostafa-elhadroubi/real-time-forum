@@ -89,6 +89,7 @@ button {
 .hasnotAccount {
     margin-bottom: 20px;
 }
-.hasAccount a{
-    text-decoration: none;
+.hasAccount button{
+    cursor: pointer;
+    background: rgb(24, 22, 22);
 }

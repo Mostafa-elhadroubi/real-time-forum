@@ -71,6 +71,7 @@ export const fetchMessages = async(receiverId, msgNbr, senderId, messageBox, mes
 export const updateLastMessage = (senderId, receiverId, message, timestamp) => {
     const userBoxes = document.querySelectorAll('.userBox')
     console.log(userBoxes);
+    const chatBox = document.querySelector('.chatBox')
     userBoxes.forEach((userBox, index) => {
         const userId = userBox.getAttribute("data-user-id")
         
@@ -92,33 +93,12 @@ export const updateLastMessage = (senderId, receiverId, message, timestamp) => {
                 console.log("try")
                 // if()
                 userBox.style.cssText = `border: 2px solid green; background-color: rgba(0, 128, 0, 0.3);`
+                chatBox.prepend(userBox)
             }
             
 
         }
-        if(userId == parseInt(receiverId)) {
-            console.log("Sender",senderId, "RECEV", receiverId, userId);
-
-            console.log(userBox);
-            
-            const lastMessage = userBox.querySelector('.user-message .message');
-            console.log(lastMessage);
-            const lastMessageTime = userBox.querySelector('.time')
-            console.log(lastMessageTime);
-            
-            if(lastMessage && lastMessageTime) {
-                lastMessage.textContent = message;
-                console.log(lastMessage);
-                console.log(message);
-                
-                lastMessageTime.textContent = timestamp;
-                console.log("try")
-                // if()
-                // userBox.style.cssText = `border: 2px solid green; background-color: rgba(0, 128, 0, 0.3);`
-            }
-            
-
-        }
+        
     })
 }
 
