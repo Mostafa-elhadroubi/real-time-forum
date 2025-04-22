@@ -61,10 +61,7 @@ type Conversation struct {
 	Id              int
 	Username        string
 	Image           string
-	IsConnected     bool
-	LastMessage     sql.NullString
 	Time            sql.NullString
-	UnreadMessages  int
 }
 type PageErrors struct {
 	Code    int

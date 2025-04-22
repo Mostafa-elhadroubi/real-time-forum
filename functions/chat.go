@@ -28,10 +28,7 @@ func FetchUsers(w http.ResponseWriter, r *http.Request) {
     u.user_id, 
     u.username, 
     u.image, 
-    u.isConnected, 
-    m.message AS last_message, 
-    m.sent_at AS last_message_time,
-    COALESCE(unread_messages.unread_count, 0) AS unread_count
+    m.sent_at AS last_message_time
 FROM 
     users u
 LEFT JOIN (
@@ -63,23 +60,11 @@ LEFT JOIN (
     WHERE 
         ? IN (m1.sender_id, m1.receiver_id)
 ) m ON u.user_id = m.other_user_id
-LEFT JOIN (
-    SELECT 
-        sender_id AS user_id, 
-        COUNT(*) AS unread_count 
-    FROM 
-        messages 
-    WHERE 
-        isRead = 0 
-        AND receiver_id = ?
-    GROUP BY 
-        sender_id
-) unread_messages ON u.user_id = unread_messages.user_id
 ORDER BY 
     CASE WHEN m.message_id IS NULL THEN 1 ELSE 0 END ASC,
     COALESCE(m.sent_at, '1970-01-01') DESC,
     u.username ASC;`
-	rows, err := DB.Query(query, userId, userId, userId, userId)
+	rows, err := DB.Query(query, userId, userId, userId)
 	if err != nil {
 		Error(w,http.StatusInternalServerError)
 		return
@@ -87,14 +72,14 @@ ORDER BY
 	fmt.Println(userId, "fetch user")
 	for rows.Next() {
 		con := Conversation{}
-		var lastMessage sql.NullString
+		// var lastMessage sql.NullString
 		var last_message_time sql.NullString
-		err := rows.Scan(&con.Id, &con.Username, &con.Image, &con.IsConnected, &lastMessage, &last_message_time, &con.UnreadMessages)
+		err := rows.Scan(&con.Id, &con.Username, &con.Image,  &last_message_time)
 		if err != nil {
 			log.Printf("Error scanning row: %v", err)
 			continue
 		}
-		con.LastMessage = lastMessage
+		// con.LastMessage = lastMessage
 		con.Time = last_message_time
 		if userId != con.Id {
 			con.ConnectedUserId = userId
