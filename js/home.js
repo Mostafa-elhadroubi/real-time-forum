@@ -109,7 +109,7 @@ const fetchPosts = async() => {
                 headers: {
                     'Content-Type' : 'application/json'
                 },
-                //body: JSON.stringify({post_id: post_id, contentBody: body_comment})
+                body: JSON.stringify({post_id: post_id, contentBody: body_comment})
             })
             //console.log(await responseComment.json());
             if(responseComment.ok) {
@@ -122,7 +122,7 @@ const fetchPosts = async() => {
                 
                 document.querySelectorAll('.commentPost')[index].childNodes[0].innerHTML = totalComment;
             } else {
-                console.log("error");
+                console.log("e777777777777777777rror");
                 
                 let obj = await responseComment.json()
                 setError(obj.Message)  

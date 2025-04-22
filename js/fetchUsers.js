@@ -91,7 +91,6 @@ export const displayMessages = (filteredData, socket) => {
             chatContainer.appendChild(messageContainer)
             console.log(`${filteredData[index].Username}`);
             messageContainer.innerHTML = '';
-            messageContainer.style.cssText = `width: 650px;`;
             messageContainer.innerHTML = `
                 <div class="username-arrowLeft goBack">
                     <i class="fa-solid fa-arrow-left"></i>

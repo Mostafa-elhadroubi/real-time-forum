@@ -48,7 +48,7 @@ func Error(w http.ResponseWriter, code int) {
 		Code: code,
 		Message: http.StatusText(code),
 	}
-	w.WriteHeader(http.StatusMethodNotAllowed)
+	w.WriteHeader(code)
 	jsonData, _ := json.Marshal(&error)
 	w.Write(jsonData)
 }

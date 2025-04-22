@@ -3,6 +3,7 @@ import { sendMessage } from "./sendMessages.js";
 export let msgNmb  = 0
 export let isScrolled = false
 export const fetchMessages = async(receiverId, msgNbr, senderId, messageBox, messageContainer, socket) => {
+    let lastDateDisplayed = null; 
     try {
         const previousScrollHeight = chatState.messageBox.scrollHeight
         const response = await fetch("/api/messages/", {
@@ -28,14 +29,32 @@ export const fetchMessages = async(receiverId, msgNbr, senderId, messageBox, mes
             let div = document.createElement('div');
             let parag = document.createElement('p');
             let span = document.createElement('span');
+            // let dateTime = document.createElement('p');
+
 
             div.className = item.Sender_id == senderId ? 'sender' : 'receiver';
             parag.textContent = `${item.Message}`;
             let date = convertTime(item.Sent_at);
             span.textContent = `${date.hours.toString().padStart(2, '0')}:${date.minutes.toString().padStart(2, '0')}`;
             msgNmb++
+            let dd = date.day.toString().padStart(2, '0');
+            let mm = (date.month).toString().padStart(2, '0')
+            let yyyy = date.year
+            const dateObj = `${dd}/${mm}/${yyyy}`;
+        
+            
+            // If the date is different from last displayed, insert a date separator
+            if (lastDateDisplayed !== dateObj) {
+                let dateSeparator = document.createElement('div');
+                dateSeparator.className = 'date-separator'; // style it in CSS
+                dateSeparator.textContent = dateObj;
+                messageBox.insertAdjacentElement("afterbegin", dateSeparator);
+                lastDateDisplayed = dateObj;
+            }
+            
             div.append(parag, span);
             messageBox.insertAdjacentElement("afterbegin", div);
+
             const newScrollHeight = messageBox.scrollHeight
             messageBox.scrollTop = newScrollHeight - previousScrollHeight - 10
         });
@@ -113,9 +132,11 @@ export const convertTime = (Time) => {
         minutes: date.getMinutes(),
         hours: date.getHours(),
         day: date.getDate(),
-        month: date.getMonth(),
+        month: date.getMonth() + 1,
         year: date.getFullYear(),
     }
     return dateObj
 
 }
+
+ 

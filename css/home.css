@@ -77,6 +77,13 @@ nav ul li a i{
 .username-time{
     margin-left: 10px;
 }
+.username-time p:nth-child(1) {
+    /* color: #b8b4b4; */
+    font-size: 18px;
+}
+.username-time p:nth-child(2) {
+    color: #b8b4b4;
+}
 .categories{
     color: white;
 
@@ -125,7 +132,7 @@ nav ul li a i{
 .comments{
     /* background: red; */
     /* width: 400px; */
-    max-height: 400px;
+    max-height: 350px;
     overflow-y: auto;
 }
 .comment-btn {
@@ -136,7 +143,7 @@ nav ul li a i{
 .comment-btn textarea{
     border-radius: 10px;
     border: none;
-    width: 350px;
+    width: 300px;
     outline: none;
     font-size: 20px;
 }
@@ -180,10 +187,6 @@ hr{
 .btnsComment p span {
     margin-right: 5px;
 }
-/* .comment-profile{
-    margin-top: 10px;
-    color: white;
-} */
 .addPostContainer{
     /* background: red; */
     margin-top: 20px;
@@ -239,4 +242,101 @@ hr{
     top: 0;
     margin: auto;
     color: white;
+}
+
+
+
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        height: auto;
+        padding: 10px;
+    }
+
+    header .logo {
+        margin: 10px 0;
+    }
+
+    nav {
+        width: 100%;
+        padding: 10px 0;
+    }
+
+    nav ul {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    nav ul li {
+        font-size: 18px;
+        margin: 10px 0;
+    }
+    nav ul li i {
+        margin: 0 5px;
+        font-size: 22px;
+    }
+    .post {
+        width: 90%;
+        margin: auto;
+    }
+
+    .posts {
+        align-items: flex-start;
+    }
+
+    .comment-btn textarea {
+        width: 100%;
+    }
+
+    .addPostContainer form {
+        width: 100%;
+    }
+
+    .content textarea {
+        width: 100%;
+    }
+
+    #addPost {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .post {
+        width: 90%;
+        margin: auto;
+    }
+
+    .comment-btn textarea {
+        width: 100%;
+    }
+
+    .addPostContainer form {
+        width: 90%;
+    }
+    .category, .content h3{
+        margin-top: 10px;
+    }
+    .content textarea {
+        width: 100%;
+    }
+
+    #addPost {
+        width: 40%;
+        display: block;
+        margin: 10px auto;
+    }
+
+    .btns p {
+        font-size: 18px;
+    }
+
+    .btnsComment p {
+        font-size: 18px;
+    }
+    .comment{
+        padding: 10px;
+    }
 }
