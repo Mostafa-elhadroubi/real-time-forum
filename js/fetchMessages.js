@@ -75,7 +75,7 @@ export const updateLastMessage = (senderId, receiverId, message, timestamp) => {
     userBoxes.forEach((userBox, index) => {
         const userId = userBox.getAttribute("data-user-id")
         
-        if(userId == parseInt(senderId)) {
+        if(userId == parseInt(senderId) || userId == parseInt(receiverId) ) {
             console.log("Sender",senderId, "RECEV", receiverId, userId);
 
             console.log(userBox);
@@ -92,11 +92,16 @@ export const updateLastMessage = (senderId, receiverId, message, timestamp) => {
                 lastMessageTime.textContent = timestamp;
                 console.log("try")
                 // if()
-                userBox.style.cssText = `border: 2px solid green; background-color: rgba(0, 128, 0, 0.3);`
-                chatBox.prepend(userBox)
+                // userBox.style.cssText = `border: 2px solid green; background-color: rgba(0, 128, 0, 0.3);`
+                console.log("sender placed");
+                chatBox.insertBefore(userBox, chatBox.firstChild)
             }
             
 
+        }
+        if(userId == parseInt(senderId)) {
+            console.log("receiver placed");
+            userBox.style.cssText = `border: 2px solid green; background-color: rgba(0, 128, 0, 0.3);`
         }
         
     })
