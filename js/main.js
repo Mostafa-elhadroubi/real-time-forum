@@ -10,7 +10,6 @@ import { logout } from "./logout.js";
 
 export const navigateTo = async(url) => {
 if(!await checkLogin() && url != "/signup"){
-    setError("Go to sign up")
     url = "/login"
     
 }

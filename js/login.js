@@ -1,4 +1,5 @@
 import { getCookie } from "./getcookie.js"
+import { setError } from "./home.js"
 import { navigateTo } from "./main.js"
 
 export let socket = null
@@ -55,8 +56,8 @@ const submitLoginForm = () => {
     .then(res => {
         console.log(res)
         if(!res.ok) {
-            navigateTo("/signup")
-            
+            console.log("false");
+            setError("Invalid data!!!")         
         } 
         navigateTo("/home")
     })
