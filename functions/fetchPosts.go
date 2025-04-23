@@ -9,13 +9,11 @@ import (
 
 func FetchPosts(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		fmt.Println("Method invalid")
 		Error(w,http.StatusMethodNotAllowed)
 		return
 	}
 	user_id, err := GetUserFromSession(w, r)
 	if err != nil {
-		fmt.Println("Error in getting user id")
 		Error(w,http.StatusInternalServerError)
 		return
 	}
@@ -23,7 +21,7 @@ func FetchPosts(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&postNum)
 	query := "SELECT p.post_id, p.title, p.body, p.created_at, (SELECT GROUP_CONCAT(c.category_name, ', ') FROM posts_categories pc JOIN categories c ON pc.category_id = c.category_id WHERE pc.post_id = p.post_id) AS categories, u.username, u.image, COUNT(DISTINCT CASE WHEN l.like = 1 THEN l.user_id END) AS liked,COUNT(DISTINCT CASE WHEN l.like = 0 THEN l.user_id END) AS disliked,MAX(CASE WHEN l.user_id = ? THEN l.like END) AS user_reaction, COUNT(DISTINCT cm.comment_id) AS totalComments FROM `posts` p INNER JOIN users u ON u.user_id = p.user_id LEFT JOIN `likes` l ON p.post_id = l.post_id LEFT JOIN `comments` cm ON cm.post_id = p.post_id GROUP BY p.post_id, p.title, p.body, p.created_at, u.username, u.image ORDER BY p.created_at DESC LIMIT ? OFFSET ?"
 	rows,err := DB.Query(query, user_id, 10, postNum.PostNum)
-defer rows.Close()
+	defer rows.Close()
 	if err != nil {
 		Error(w,http.StatusInternalServerError)
 		return
@@ -43,7 +41,6 @@ defer rows.Close()
 		}
 		posts = append(posts, post)
 	}
-	fmt.Println(posts)
 	jsonData, err := json.Marshal(posts)
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(jsonData)

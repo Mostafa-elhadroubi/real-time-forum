@@ -2,26 +2,24 @@ package functions
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 )
 
 func LikesComments(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		Error(w,http.StatusMethodNotAllowed)
+		Error(w, http.StatusMethodNotAllowed)
 		return
 	}
 
 	resLike := ResponseLike{}
 	err := json.NewDecoder(r.Body).Decode(&resLike)
 	if err != nil {
-		Error(w,http.StatusInternalServerError)
+		Error(w, http.StatusInternalServerError)
 		return
 	}
-	fmt.Println(resLike)
 
 	if resLike.LikeValue != 0 && resLike.LikeValue != 1 {
-		Error(w,http.StatusInternalServerError)
+		Error(w, http.StatusInternalServerError)
 		return
 	}
 	user_id, err := GetUserFromSession(w, r)
@@ -42,6 +40,4 @@ func LikesComments(w http.ResponseWriter, r *http.Request) {
 			DB.Exec(query, resLike.LikeValue, user_id, resLike.Comment_id)
 		}
 	}
-
 }
-

@@ -48,7 +48,7 @@ func FetchUsers(w http.ResponseWriter, r *http.Request) {
 			conversations = append(conversations, con)
 		}
 	}
-	fmt.Println(conversations)
+
 	jsonData, err := json.Marshal(conversations)
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(jsonData)
