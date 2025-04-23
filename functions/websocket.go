@@ -62,9 +62,7 @@ func HandleConnections(w http.ResponseWriter, r *http.Request) {
 		if err := conn.ReadJSON(&wsMsg); err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway) {
 				log.Println("WebSocket connection closed:", err)
-			} else {
-				log.Println("Error reading message:", err)
-			}
+			} 
 			mu.Lock()
 			delete(clients, userId)
 			mu.Unlock()
