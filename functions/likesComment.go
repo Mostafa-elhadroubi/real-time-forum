@@ -11,11 +11,10 @@ func LikesComments(w http.ResponseWriter, r *http.Request) {
 		Error(w,http.StatusMethodNotAllowed)
 		return
 	}
-	fmt.Println("this like")
+
 	resLike := ResponseLike{}
 	err := json.NewDecoder(r.Body).Decode(&resLike)
 	if err != nil {
-		fmt.Println("Error decoding JSON:", err)
 		Error(w,http.StatusInternalServerError)
 		return
 	}
@@ -26,7 +25,6 @@ func LikesComments(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	user_id, err := GetUserFromSession(w, r)
-	fmt.Println(user_id, "likes")
 	query := "SELECT like FROM likes WHERE user_id = ? AND comment_id = ? AND post_id ISNULL"
 	row := DB.QueryRow(query, user_id, resLike.Comment_id)
 	liked := false
@@ -45,6 +43,5 @@ func LikesComments(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// http.Redirect(res, req, strings.Split(req.Referer(), ":8080")[1]+"#comment"+comment_id, http.StatusFound)
 }
 

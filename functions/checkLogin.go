@@ -1,7 +1,6 @@
 package functions
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 )
@@ -21,19 +20,15 @@ func CheckLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Get the token value from the cookie
 	token := cookie.Value
-fmt.Println(token, "token")
-	// Query the database to check if the token is valid
+
 	if !isTokenValid(token) {
 		// If the token is not valid
 		w.WriteHeader(http.StatusUnauthorized) // 401 Unauthorized
 		return
 	}
 
-	// Token is valid, proceed to the requested resource
-	w.WriteHeader(http.StatusOK) // 200 O
-
+	w.WriteHeader(http.StatusOK)
 
 }
 

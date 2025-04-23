@@ -29,7 +29,6 @@ export const chat = (app) => {
 
     
     const socket = new WebSocket("ws://localhost:8082/ws")
-    // aaaaa()
     // When the WebSocket connection is open
     socket.onopen = function(event) {
         console.log("WebSocket connection established.");
@@ -49,8 +48,6 @@ export const chat = (app) => {
 }
 
 export const onMessage = (event) => {
-    console.log("ddddddddddddddd");
-    
     console.log("received message: ", event.data)
     const data = JSON.parse(event.data)
     console.log(data)

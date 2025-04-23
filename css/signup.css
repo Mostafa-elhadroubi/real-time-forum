@@ -3,10 +3,6 @@
     margin: 0;
     box-sizing: border-box;
 }
-/* .app{
-    width: 100vw;
-    height: 100vh;
-} */
 .app {
     background: rgb(24, 22, 22);
     width: 100vw;
@@ -23,7 +19,6 @@
     align-items: center;
     padding-top: 20px;
     border-radius: 10px;
-    /* justify-content: center; */
 }
 .loginHeader, .signupHeader{
     margin-bottom: 20px;
@@ -79,7 +74,7 @@ button {
 .loginBtn, .signupBtn{
     margin-bottom: 20px;
 }
-.emailError, .passwordError{
+.emailError, .passwordError, .genderError, .ageError{
     color: red;
 }
 .hasAccount {
@@ -92,4 +87,16 @@ button {
 .hasAccount button{
     cursor: pointer;
     background: rgb(24, 22, 22);
+}
+.msgError{
+    background: rgba(156, 8, 8, 0.774);
+    position: absolute;
+    width: 300px;
+    padding: 20px;
+    left: 50%;
+    top: 200px;
+    margin: auto;
+    color: white;
+    border-radius: 10px;
+    border: 2px solid red;
 }

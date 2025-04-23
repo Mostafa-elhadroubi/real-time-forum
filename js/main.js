@@ -11,7 +11,6 @@ import { logout } from "./logout.js";
 export const navigateTo = async(url) => {
 if(!await checkLogin() && url != "/signup"){
     url = "/login"
-    // console.log(await checkLogin());
     
 }
     const app = document.querySelector('.app')

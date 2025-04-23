@@ -55,14 +55,11 @@ const submitLoginForm = () => {
     .then(res => {
         console.log(res)
         if(!res.ok) {
-            // alert("user unregistered!!")
             navigateTo("/signup")
             
         } 
         navigateTo("/home")
     })
-    .catch(error => {
-        console.log('Error: ', error)
-    })
+    
 }
 

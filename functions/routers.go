@@ -33,11 +33,9 @@ func Routers() {
 	http.HandleFunc("/ws", HandleConnections) // The WebSocket handler
 
 	http.HandleFunc("/api/messages/", FetchMessages)
-	http.HandleFunc("/js/", AAA)
-	http.HandleFunc("/css/", AAA)
-	http.HandleFunc("/images/", AAA)
-	// http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("css"))))
-	// http.Handle("/images/", http.StripPrefix("/images/", http.FileServer(http.Dir("images"))))
+	http.HandleFunc("/js/", Static)
+	http.HandleFunc("/css/", Static)
+	http.HandleFunc("/images/", Static)
 	
 	fmt.Println("Server is running on http://localhost:8082/signup")
 	if err := http.ListenAndServe(":8082", nil); err != nil {
@@ -46,14 +44,11 @@ func Routers() {
 }
 
 
-func AAA(w http.ResponseWriter, r *http.Request) {
-	// fmt.Println(r.URL.Path)
-	fmt.Println("HHHHHHHHHHHHH")
+func Static(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path == "/js/" || r.URL.Path == "/css/" || r.URL.Path == "/images/" {
 		w.WriteHeader(404)
 		return
 	}
 	fmt.Println()
 	http.ServeFile(w, r, "."+r.URL.Path)
-	// ("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("js"))))
 }

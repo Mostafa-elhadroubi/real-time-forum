@@ -1,16 +1,18 @@
 import { chat, fetchOnlineUsers, onMessage } from "./chat.js";
 import { debounce } from "./debounce.js";
+import { fetchComment } from "./fetchComment.js";
 import { chatState, displayMessages, fetchUsers, getRightTime } from "./fetchUsers.js";
 import { getUsers } from "./getUsers.js";
 import { header } from "./header.js"
+import { likedOrDislikedPost } from "./likePost.js";
 import { navigateTo } from "./main.js";
 import { updateUserStatus } from "./sendMessages.js";
 let sockets = null
 
 let commentNum = 0
 let postNum = 0
-let dataResponse = []
-let commentState = {} // key: post_id, value: { commentNum: int, commentData: [] }
+export let dataResponse = []
+// key: post_id, value: { commentNum: int, commentData: [] }
 
 const fetchPosts = async() => {
     const postResponse = await fetch("/api/posts", {
@@ -95,7 +97,6 @@ const fetchPosts = async() => {
     console.log(likes, dislikes);
     likedOrDislikedPost(likes, dislikes, "1", 1)
     likedOrDislikedPost(dislikes, likes, "0", 0)
-    // sendCommentPost()
     const sendComment = document.querySelectorAll('.sendComment')
     sendComment.forEach((item, index) => {
         console.log(index);
@@ -151,140 +152,7 @@ const fetchPosts = async() => {
     
 
 }
-const fetchComment = async(item, index) => {
-    let post_id = parseInt(item.parentElement.parentElement.getAttribute('id'))
-    console.log(item.parentElement.parentElement.getAttribute('id'));
 
-    if (!commentState[post_id]) {
-        commentState[post_id] = {
-            commentNum: 0,
-            commentData: []
-        }
-    }
-
-    const { commentNum, commentData } = commentState[post_id];
-    const comments= document.querySelectorAll('.comments')
-    // Hide comments of all other posts
-    document.querySelectorAll('.comments').forEach((commentsDiv, idx) => {
-        if (idx !== index) {
-            commentsDiv.style.display= 'none';  // Hide comments for other posts
-        }
-    });
-
-    // Show the clicked post's comments
-    comments[index].style.display = 'block';
-    const previousScrollHeight = comments[index].scrollHeight
-    const commentResponse = await fetch("/api/comment", {
-        method: 'POST',
-        headers: {
-            'Content-Type' : 'application/json'
-        },
-        body: JSON.stringify({post_id: post_id, commentNum: commentNum})
-    })
-    console.log(commentResponse, commentNum);
-    if(!commentResponse.ok) {
-        let obj = await responseComment.json()
-        setError(obj.Message)  
-        return;
-    }
-    let data = await commentResponse.json()
-    console.log(data);
-    commentState[post_id].commentData = [...commentData, ...data];
-    commentState[post_id].commentNum += data.length;
-
-
-    data.forEach((item) => {
-        const commentContainer = document.createElement('div');
-        commentContainer.classList.add("commentContainer");
-        commentContainer.innerHTML = `
-            <div class="comment" id="${item.comment_id}">
-                <img src="../images/${item.image}" alt="profile image">
-                <div class="username-time">
-                    <p>@${item.username}</p>
-                    <p>${getRightTime(item.created_at)}</p>
-                </div>
-            </div>
-            <div class="commentBody">${item.body}</div>
-            <div class="btnsComment">
-                <p class="likeComment"><span>${item.likedComment}</span><i class="fa-regular fa-thumbs-up"></i></p>
-                <p class="dislikeComment"><span>${item.dislikedComment}</span><i class="fa-regular fa-thumbs-down"></i></p>
-            </div>
-        `;
-    
-        comments[index].insertBefore(commentContainer, comments[index].firstChild);
-    
-        // Get buttons
-        const likeBtn = commentContainer.querySelector(".likeComment");
-        const dislikeBtn = commentContainer.querySelector(".dislikeComment");
-    
-        // Set initial state
-        if (item.user_reaction === "1") {
-            likeBtn.querySelector("i").classList.replace("fa-regular", "fa-solid");
-        }
-        if (item.user_reaction === "0") {
-            dislikeBtn.querySelector("i").classList.replace("fa-regular", "fa-solid");
-        }
-    
-        // Like button event
-        likeBtn.addEventListener("click", async () => {
-            const res = await fetch("/api/likesComments", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ comment_id: item.comment_id, like: 1 }),
-            });
-            if (!res.ok) {
-                let obj =  res.json()
-                setError(obj.Message)  
-                return;
-            }
-    
-            const liked = likeBtn.querySelector("i").classList.contains("fa-solid");
-            if (liked) {
-                likeBtn.querySelector("span").textContent = parseInt(likeBtn.querySelector("span").textContent) - 1;
-                likeBtn.querySelector("i").classList.replace("fa-solid", "fa-regular");
-            } else {
-                likeBtn.querySelector("span").textContent = parseInt(likeBtn.querySelector("span").textContent) + 1;
-                likeBtn.querySelector("i").classList.replace("fa-regular", "fa-solid");
-                // Remove dislike if it exists
-                if (dislikeBtn.querySelector("i").classList.contains("fa-solid")) {
-                    dislikeBtn.querySelector("span").textContent = parseInt(dislikeBtn.querySelector("span").textContent) - 1;
-                    dislikeBtn.querySelector("i").classList.replace("fa-solid", "fa-regular");
-                }
-            }
-        });
-    
-        // Dislike button event
-        dislikeBtn.addEventListener("click", async () => {
-            const res = await fetch("/api/likesComments", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ comment_id: item.comment_id, like: 0 }),
-            });
-            if (!res.ok) {
-                let obj = await res.json()
-                setError(obj.Message)  
-                return;
-            }
-    
-            const disliked = dislikeBtn.querySelector("i").classList.contains("fa-solid");
-            if (disliked) {
-                dislikeBtn.querySelector("span").textContent = parseInt(dislikeBtn.querySelector("span").textContent) - 1;
-                dislikeBtn.querySelector("i").classList.replace("fa-solid", "fa-regular");
-            } else {
-                dislikeBtn.querySelector("span").textContent = parseInt(dislikeBtn.querySelector("span").textContent) + 1;
-                dislikeBtn.querySelector("i").classList.replace("fa-regular", "fa-solid");
-                // Remove like if it exists
-                if (likeBtn.querySelector("i").classList.contains("fa-solid")) {
-                    likeBtn.querySelector("span").textContent = parseInt(likeBtn.querySelector("span").textContent) - 1;
-                    likeBtn.querySelector("i").classList.replace("fa-solid", "fa-regular");
-                }
-            }
-        });
-    
-        const newScrollHeight = comments[index].scrollHeight;
-        comments[index].scrollTop = newScrollHeight - previousScrollHeight - 10;
-    });
-}
 
 export const home = async(app) => {
     document.head.innerHTML = `<link rel="stylesheet" href="../css/home.css">
@@ -317,53 +185,16 @@ export const home = async(app) => {
     headerEvents()
     
     console.log(await fetchUsers(), "ttttttt");
-    chatState.senderId = usersArr[0].ConnectedUserId
+    console.log(usersArr, "users");
+    if(usersArr.length != 0) {
+        chatState.senderId = usersArr[0].ConnectedUserId
+        displayMessages(usersArr, sockets)
+    }
+    fetchPosts()
     console.log(usersArr);
     
-    displayMessages(usersArr, sockets)
-    fetchPosts()
 }
 
-const likedOrDislikedPost = (likes, dislikes, user_reaction, reactionValue) => {
-    likes.forEach((item, index) => {
-        if (dataResponse[index].user_reaction == user_reaction) {
-            item.childNodes[1].classList.remove("fa-regular")
-            item.childNodes[1].classList.add("fa-solid")
-        }
-        item.addEventListener('click', async() => {            
-            let post_id = parseInt(item.parentElement.parentElement.getAttribute('id'))
-            const likeResponse = await fetch("/api/likes", {
-                method: 'POST',
-                headers: {'Content-Type' : 'application/json'},
-                body: JSON.stringify({post_id: post_id, like : reactionValue})
-            }) 
-            console.log(likeResponse);
-            if(!likeResponse.ok) {
-                let obj = await likeResponse.json()
-                setError(obj.Message)  
-                return;
-            }
-            if(item.childNodes[1].classList.contains("fa-solid")){
-                if (parseInt(item.childNodes[0].textContent) != 0) {
-                    item.childNodes[0].innerHTML = parseInt(item.childNodes[0].textContent) - 1
-                    item.childNodes[1].classList.remove("fa-solid")
-                    item.childNodes[1].classList.add("fa-regular")
-                }
-            } else {
-                item.childNodes[0].innerHTML = parseInt(item.childNodes[0].textContent) + 1
-                item.childNodes[1].classList.remove("fa-regular")
-                item.childNodes[1].classList.add("fa-solid")
-            }
-            if (dislikes[index].childNodes[1].classList.contains("fa-solid")) {
-                console.log(dislikes[index].childNodes[0]);
-                
-                dislikes[index].childNodes[0].innerHTML = parseInt(dislikes[index].childNodes[0].textContent) -1
-                dislikes[index].childNodes[1].classList.remove("fa-solid")
-                dislikes[index].childNodes[1].classList.add("fa-regular")  
-            }                               
-        })
-    })
-}
 
 const connectSocket = () => {
     const socket = new WebSocket("ws://localhost:8082/ws")
@@ -422,7 +253,7 @@ export const headerEvents = () => {
 
 
 
-const setError = (ms) => {
+export const setError = (ms) => {
     console.log("error");
     const msg = document.createElement('div')
     msg.classList.add('msgError')

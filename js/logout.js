@@ -1,3 +1,4 @@
+import { setError } from "./home.js";
 import { navigateTo } from "./main.js";
 
 export const logout = (app) => {

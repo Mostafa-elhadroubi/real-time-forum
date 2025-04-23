@@ -1,4 +1,5 @@
 import { chatState } from "./fetchUsers.js";
+import { setError } from "./home.js";
 import { sendMessage } from "./sendMessages.js";
 export let msgNmb  = 0
 export let isScrolled = false
@@ -28,9 +29,7 @@ export const fetchMessages = async(receiverId, msgNbr, senderId, messageBox, mes
         data.forEach(item => {
             let div = document.createElement('div');
             let parag = document.createElement('p');
-            let span = document.createElement('span');
-            // let dateTime = document.createElement('p');
-
+            let span = document.createElement('span')
 
             div.className = item.Sender_id == senderId ? 'sender' : 'receiver';
             parag.textContent = `${item.Message}`;
@@ -64,7 +63,6 @@ export const fetchMessages = async(receiverId, msgNbr, senderId, messageBox, mes
         const sendButton = messageContainer.querySelector('input[type="button"]');
         const messageInput = messageContainer.querySelector('input[type="text"]');
         messageInput.addEventListener('keyup', (e) => {
-            // const msgRead = document.querySelectorAll('.userBox')[receiverId]
             const userBox = document.querySelector(`.userBox[data-user-id="${receiverId}"]`);
             console.log(userBox);
             if (userBox) {
@@ -72,7 +70,7 @@ export const fetchMessages = async(receiverId, msgNbr, senderId, messageBox, mes
                 userBox.style.border = '';
                 userBox.style.backgroundColor = '';
             }
-            // console.log('input is  clicked', messageInput.value.trim(),messageInput.value.trim().length)
+
             if(e.key == 'Enter' && messageInput.value.trim() != ''){
             sendMessage(chatState.senderId, chatState.receiverId, socket, chatState.messageBox)
             }
@@ -91,14 +89,10 @@ export const updateLastMessage = (senderId, receiverId, message, timestamp) => {
     const userBoxes = document.querySelectorAll('.userBox')
     console.log(userBoxes);
     const chatBox = document.querySelector('.chatBox')
-    userBoxes.forEach((userBox, index) => {
+    userBoxes.forEach((userBox) => {
         const userId = userBox.getAttribute("data-user-id")
         
         if(userId == parseInt(senderId) || userId == parseInt(receiverId) ) {
-            console.log("Sender",senderId, "RECEV", receiverId, userId);
-
-            console.log(userBox);
-            
             const lastMessage = userBox.querySelector('.user-message .message');
             console.log(lastMessage);
             const lastMessageTime = userBox.querySelector('.time')
@@ -109,9 +103,6 @@ export const updateLastMessage = (senderId, receiverId, message, timestamp) => {
                 
                 console.log(lastMessage.textContent);
                 lastMessageTime.textContent = timestamp;
-                console.log("try")
-                // if()
-                // userBox.style.cssText = `border: 2px solid green; background-color: rgba(0, 128, 0, 0.3);`
                 console.log("sender placed");
                 chatBox.insertBefore(userBox, chatBox.firstChild)
             }

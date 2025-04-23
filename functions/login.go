@@ -1,7 +1,6 @@
 package functions
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -12,45 +11,39 @@ import (
 
 func Login(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		fmt.Println("RRRRRRRRRRRRRR")
-		Error(w,http.StatusMethodNotAllowed)
+		Error(w, http.StatusMethodNotAllowed)
 		return
 	}
 	if err := r.ParseMultipartForm(10); err != nil {
-		Error(w,http.StatusBadRequest)
+		Error(w, http.StatusBadRequest)
 	}
 	username := strings.ToLower(r.FormValue("username"))
 	password := r.FormValue("password")
 	query := `SELECT user_id, username, email, password FROM users WHERE username = ? OR email = ?`
 	row := DB.QueryRow(query, username, username)
 	err := row.Scan(&user.Id, &user.Username, &user.Email, &user.Password)
-	fmt.Println(user.Id, "before hash")
-	if err != nil || bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))  != nil {
-		fmt.Println("there is an error!!!", err, user.Password, password)
+	if err != nil || bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)) != nil {
 		setErrorCookie(w, "Invalid credentials!", "/login", 5)
-		// http.Redirect(w, r, "/login", http.StatusFound)
 		return
 	}
 	token, err := uuid.NewV1()
 	if err != nil {
-		Error(w,http.StatusInternalServerError)
+		Error(w, http.StatusInternalServerError)
 		return
 	}
 	http.SetCookie(w, &http.Cookie{
-		Name: "token",
-		Value: token.String(),
+		Name:    "token",
+		Value:   token.String(),
 		Expires: time.Now().Add(tokenAge),
-		Path: "/",
+		Path:    "/",
 	})
-	
+
 	query = `UPDATE users SET token = ?, token_exp = ?, isConnected = ? WHERE user_id = ?`
 	_, err = DB.Exec(query, token, time.Now().Add(24*time.Hour).Unix(), 1, user.Id)
 	if err != nil {
 		setErrorCookie(w, "Unexpected error! Try Again", "/login", 5)
-		// http.Redirect(w, r, "/login", http.StatusFound)
 		return
 	}
 	user.Log = 1
 	setErrorCookie(w, "", "/login", -1)
-	// http.Redirect(w, r, "/home", http.StatusFound)
 }

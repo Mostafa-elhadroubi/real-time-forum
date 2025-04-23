@@ -2,7 +2,6 @@ package functions
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -15,11 +14,11 @@ func GetOnlineUsers(w http.ResponseWriter, r *http.Request) {
 	defer mu.Unlock()
 	onlineUsers := []int{}
 	for id, _ := range clients {
-		onlineUsers= append(onlineUsers, id)
+		onlineUsers = append(onlineUsers, id)
 	}
 	jsonData, err := json.Marshal(onlineUsers)
 	if err != nil {
-		Error(w,http.StatusInternalServerError)
+		Error(w, http.StatusInternalServerError)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -28,7 +27,7 @@ func GetOnlineUsers(w http.ResponseWriter, r *http.Request) {
 func userStatus(userId int, isOnline bool) {
 	mu.Lock()
 	defer mu.Unlock()
-	fmt.Println(userId, "userstate")
+
 	userState := UserStatus{}
 	userState.UserID = userId
 	userState.IsOnline = isOnline
@@ -39,12 +38,12 @@ func userStatus(userId int, isOnline bool) {
 			}
 		}
 	}
-	
+
 }
 func HandleConnections(w http.ResponseWriter, r *http.Request) {
 	userId, err := GetUserFromSession(w, r)
-	if err!= nil {
-		Error(w,http.StatusNotFound)
+	if err != nil {
+		Error(w, http.StatusNotFound)
 		return
 	}
 	conn, err := upgrader.Upgrade(w, r, nil)
@@ -52,12 +51,11 @@ func HandleConnections(w http.ResponseWriter, r *http.Request) {
 		log.Println("Error upgrading connection:", err)
 		return
 	}
-	fmt.Println("connected")
 	defer conn.Close()
 	mu.Lock()
 	clients[userId] = conn
 	mu.Unlock()
-	
+
 	userStatus(userId, true)
 	for {
 		var wsMsg WsMessages
@@ -73,8 +71,8 @@ func HandleConnections(w http.ResponseWriter, r *http.Request) {
 			userStatus(userId, false)
 			break
 		}
-		fmt.Printf("Received message: %s\n", msg)
-		if storeMessage(wsMsg.Sender_id, wsMsg.Receiver_id, wsMsg.Text){
+
+		if storeMessage(wsMsg.Sender_id, wsMsg.Receiver_id, wsMsg.Text) {
 			mu.Lock()
 			if conn, exists := clients[wsMsg.Receiver_id]; exists {
 				if err := conn.WriteJSON(wsMsg); err != nil {

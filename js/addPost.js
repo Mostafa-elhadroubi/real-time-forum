@@ -1,6 +1,6 @@
-import { chat } from "./chat.js"
 import { header } from "./header.js"
-import { headerEvents } from "./home.js"
+import { headerEvents, setError } from "./home.js"
+import { navigateTo } from "./main.js"
 
 export const add_post = (app) => {
     const post = `
@@ -45,14 +45,11 @@ export const add_post = (app) => {
     ${header}
     ${post}
     `
-    // chat()
-    
     headerEvents()
-    // document.head.innerHTML = ''
     const ul = document.querySelector('ul').childNodes[0]
     ul.innerHTML = ""
     ul.innerHTML = `<li><a href="/home"><i class="fa-solid fa-circle-plus"></i>Home</a></li>`
-    // const addPostBtn = document.querySelector("#addPost")
+
     const formData = document.querySelector('form')
     formData.addEventListener('submit', async(e) => {
         e.preventDefault()
@@ -71,7 +68,9 @@ export const add_post = (app) => {
             let obj = await response.json()
             setError(obj.Message)  
             return;
-        }   
+        }  else{
+            navigateTo("/home")
+        } 
     })
 
 }

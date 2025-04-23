@@ -110,10 +110,8 @@ var (
 	user    User
 	msg     Messages
 	allUser []User
-	// allMsg    []Messages
 	receiver Receiver
 
-	// userState UserStatus
 	upgrader = websocket.Upgrader{
 		CheckOrigin: func(r *http.Request) bool {
 			return true

@@ -23,4 +23,17 @@ func CreateDatabase() {
 	if err != nil {
 		log.Fatal("Error: ", err)
 	}
+	CreateCategories()
+}
+
+func CreateCategories() {
+	categories := []string{"Arts", "Events", "Buisness", "Articles", "Others"}
+	query := "INSERT INTO categories VALUES(?, ?)"
+	for id, category := range categories {
+		_, err := DB.Exec(query, id+1, category)
+		if err != nil {
+			break
+		}
+
+	}
 }

@@ -11,14 +11,11 @@ import (
 
 func AddPost(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		fmt.Println("method invalid")
 		Error(w,http.StatusMethodNotAllowed)
 		return
 	}
-	fmt.Println("true")
 	err := r.ParseMultipartForm(10)
 	if err != nil {
-		fmt.Println("ERROR IN PARS FORM")
 		Error(w,http.StatusBadRequest)
 		return
 	}
@@ -51,7 +48,6 @@ func AddPost(w http.ResponseWriter, r *http.Request) {
 	user_id, err := GetUserFromSession(w, r)
 	fmt.Println(user_id)
 	if err != nil {
-		fmt.Println("Error in getting user id")
 		Error(w,http.StatusInternalServerError)
 		return
 	}
@@ -63,7 +59,6 @@ func AddPost(w http.ResponseWriter, r *http.Request) {
 	}
 	post_id, err := res.LastInsertId()
 	if err != nil {
-		fmt.Println("error in the last index!!")
 		Error(w,http.StatusInternalServerError)
 		return
 	}
@@ -75,16 +70,7 @@ func AddPost(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	// Printing the received data
-	fmt.Printf("Title: %s\n", title)
-	fmt.Printf("Body: %s\n", body)
-	fmt.Printf("Categories: %v\n", categories)
-	http.Redirect(w, r, "/home", http.StatusFound)
 
-	// Respond with a JSON object (for success)
-	// w.Header().Set("Content-Type", "application/json")
-	// w.WriteHeader(http.StatusOK)
-	// w.Write([]byte(`{"message": "Post successfully received"}`))
 }
 
 func FetchCategories() []Category {

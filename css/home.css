@@ -209,6 +209,8 @@ hr{
     border-radius: 10px;
     border: none;
     width: 600px;
+    outline: none;
+    font-size: 18px;
 }
 #addPost{
     background: whitesmoke;
@@ -218,17 +220,22 @@ hr{
     margin: 10px;
     border: none;
     font-size: 20px;
+    width: auto;
+    cursor: pointer;
+    display: inline-block;
 }
 
 .msgError{
-    background: red;
+    background: rgba(156, 8, 8, 0.774);
     position: absolute;
     width: 300px;
     padding: 20px;
-    left: 0;
-    top: 0;
+    left: 50%;
+    top: 200px;
     margin: auto;
     color: white;
+    border-radius: 10px;
+    border: 2px solid red;
 }
 
 
@@ -285,9 +292,6 @@ hr{
         width: 100%;
     }
 
-    #addPost {
-        width: 100%;
-    }
 }
 
 @media (max-width: 480px) {

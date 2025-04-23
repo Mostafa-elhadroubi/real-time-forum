@@ -1,6 +1,5 @@
 import { updateLastMessage } from "./fetchMessages.js";
 import { chatState } from "./fetchUsers.js";
-// import { senderId } from "./fetchUsers.js";
 
 export const sendMessage = (senderId, receiverId, socket, messageBox) => {
     const input = document.querySelector('.inputContainer input[type="text"]');

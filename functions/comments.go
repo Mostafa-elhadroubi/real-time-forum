@@ -17,11 +17,10 @@ func Comments(w http.ResponseWriter, r *http.Request) {
 		Error(w,http.StatusInternalServerError)
 		return
 	}
-	fmt.Println("comment")
+
 	comment := ResponseComment{}
 	err = json.NewDecoder(r.Body).Decode(&comment)
 	if err != nil {
-		fmt.Println("JSON decode error:", err)
 		Error(w,http.StatusInternalServerError)
 		return
 	}

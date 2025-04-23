@@ -1,7 +1,7 @@
 import { debounce } from "./debounce.js";
 import { msgNmb, fetchMessages, convertTime } from "./fetchMessages.js";
+import { setError } from "./home.js";
 let receiverId;
-// export let messageBox
 export let senderId;
 export const chatState = {
     senderId: null,
@@ -35,7 +35,7 @@ export const displayUsers = async(chatBox, messageContainer, socket) => {
 
     chatBox.innerHTML = '';
     const filteredData = await fetchUsers()
-    filteredData.forEach((item, index) => {
+    filteredData.forEach((item) => {
 
         const content = `
             <div class="userBox" data-user-id=${item.Id}>
@@ -66,11 +66,8 @@ export const displayMessages = (filteredData, socket) => {
     const chatContainer = document.querySelector('.chatContainer')
     
     const allUsers = document.querySelectorAll('.userBox');
-    console.log([...allUsers]);
     allUsers.forEach((user, index) => {
         user.addEventListener('click', async () => {
-            // const userBox = document.querySelector(`.userBox[data-user-id="${receiverId}"]`);
-            console.log(user);
             chatState.receiverId = filteredData[index].Id
             if (user) {
                 
@@ -106,16 +103,12 @@ export const displayMessages = (filteredData, socket) => {
             chatState.messageBox = document.querySelector('.messageBox');
             chatState.senderId = filteredData[index].ConnectedUserId
             chatState.receiverId = filteredData[index].Id
-            // receiverId = filteredData[index].Id;
             let msgNbr = 0;
             console.log(receiverId, "jsnnnnn");
             await updateMessageState(receiverId)
             await fetchMessages(chatState.receiverId, msgNbr, chatState.senderId, chatState.messageBox, messageContainer, socket);
-            // const goBack = 
-            console.log(chatState.messageBox, "msg box");
 
-            // if(messageBox){
-                console.log(chatContainer.messageBox, "msg boxtrr");
+
                 if(chatState.messageBox){
                 // Define the debounced scroll handler
                     const handleScroll = debounce(() => {

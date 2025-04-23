@@ -1,7 +1,6 @@
 package functions
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"regexp"
@@ -17,18 +16,17 @@ func setErrorCookie(res http.ResponseWriter, message, path string, maxAge int) {
 		Value:  message,
 		Path:   path,
 		MaxAge: maxAge,
-		// HttpOnly: true, // Secure the cookie, not accessible by JS
 	})
 }
 
 func SignupAuth(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		Error(w,http.StatusMethodNotAllowed)
+		Error(w, http.StatusMethodNotAllowed)
 		return
 	}
 
 	if err := r.ParseMultipartForm(10); err != nil {
-		Error(w,http.StatusInternalServerError)
+		Error(w, http.StatusInternalServerError)
 	}
 
 	username := strings.ToLower(r.FormValue("username"))
@@ -43,9 +41,8 @@ func SignupAuth(w http.ResponseWriter, r *http.Request) {
 	emailRg := regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
 	usernameRg := regexp.MustCompile(`^[a-zA-Z0-9-]{3,100}$`)
 	if !usernameRg.MatchString(username) || !emailRg.MatchString(email) || len(email) > 100 ||
-		len(username) > 50 || len(password) < 8 || len(password) > 100 {
+		len(username) > 50 || len(password) < 8 || len(password) > 100 || (gender != "Male" && gender != "Female") {
 		setErrorCookie(w, "Invalid Data!", "/signup", 2)
-		// http.Redirect(w, r, "/signup", http.StatusFound)
 		return
 	}
 
@@ -59,26 +56,22 @@ func SignupAuth(w http.ResponseWriter, r *http.Request) {
 	query := `SELECT username, email FROM users`
 	rows, err := DB.Query(query)
 	if err != nil {
-		Error(w,http.StatusInternalServerError)
+		Error(w, http.StatusInternalServerError)
 		return
 	}
 	for rows.Next() {
 		rows.Scan(&user.Username, &user.Email)
 		if user.Username == username || user.Email == email {
 			setErrorCookie(w, "Username or email already exists!", "/signup", 2)
-			// http.Redirect(w, r, "/signup", http.StatusFound)
 			return
 		}
 	}
 	query = `INSERT INTO users VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, 'profile.jpg', NULL, NULL, 0, ?)`
 	_, err = DB.Exec(query, username, firstName, lastName, age, gender, email, string(pswd), time.Now().Unix())
 	if err != nil {
-		fmt.Println("insert into???")
 		log.Fatalf("Error executing query: %v", err)
 		setErrorCookie(w, "Invalid Data", "/signup", 2)
-		// http.Redirect(w, r, "/signup", http.StatusFound)
 		return
 	}
 	setErrorCookie(w, "", "/signup", -1)
-	// http.Redirect(w, r, "/login", http.StatusFound)
 }
