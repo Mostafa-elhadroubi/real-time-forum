@@ -94,9 +94,11 @@ button {
     width: 300px;
     padding: 20px;
     left: 50%;
-    top: 200px;
+    transform: translateX(-50%);
+    top: 100px;
     margin: auto;
     color: white;
     border-radius: 10px;
     border: 2px solid red;
+    text-align: center;
 }
