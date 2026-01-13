@@ -20,7 +20,7 @@ go.mod manages Go dependencies.
 To run the project locally, follow these steps:
 
 Clone the repository:
-git clone https://github.com/your-username/real-time-forum.git
+git clone https://github.com/Mostafa-elhadroubi/real-time-forum.git
 
 Move into the project directory:
 cd real-time-forum
